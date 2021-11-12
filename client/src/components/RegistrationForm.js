@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import axios from "axios";
 import { Link } from "react-router-dom";
 
 export const RegistrationForm = () => {
@@ -19,6 +20,30 @@ export const RegistrationForm = () => {
       setVisible(true);
     } else {
       setVisible(false);
+    }
+  };
+
+  const sendForm = (e) => {
+    e.preventDefault();
+    if (isVisible === true) {
+      axios({
+        config: {
+          headers: {
+            "Content-Type": "application/json",
+          },
+        },
+        method: "POST",
+        url: "/reg",
+        data: {
+          email: eMail,
+          name: name,
+          password: password,
+        },
+      }).then((response) => {
+        if (response.data === "OK") {
+          // need redirect client to main page
+        }
+      });
     }
   };
 
@@ -56,7 +81,7 @@ export const RegistrationForm = () => {
             />
           </div>
           <div className="sendform">
-            <button>SIGN UP</button>
+            <button onClick={sendForm}>SIGN UP</button>
           </div>
           <div className="have Account">
             Already have an account?
