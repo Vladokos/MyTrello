@@ -1,22 +1,54 @@
 import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import axios from "axios";
+import { Link, useNavigate } from "react-router-dom";
 
 export const SignInFrom = () => {
   const [eMail, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [isVisible, setVisible] = useState(true);
+  const [isVisible, setVisible] = useState(false);
 
-  const onEmailChange = (e) => setEmail(e.target.value);
-  const onPasswordChange = (e) => setPassword(e.target.value);
+  const navigate = useNavigate();
 
   const validateMail =
     /[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?/;
 
+  const onEmailChange = (e) => setEmail(e.target.value);
+  const onPasswordChange = (e) => setPassword(e.target.value);
+
   const validate = (e) => {
     if (validateMail.test(e.target.value)) {
-      setVisible(true);
-    } else {
       setVisible(false);
+    } else {
+      setVisible(true);
+    }
+  };
+
+  const sendForm = (e) => {
+    e.preventDefault();
+    if (isVisible === false && password.length > 6) {
+      axios({
+        config: {
+          headers: {
+            "Content-Type": "application/json",
+          },
+        },
+        method: "POST",
+        url: "/sig",
+        data: {
+          email: eMail,
+          password: password,
+        },
+      })
+        .then((response) => {
+          if (response.data === "OK") {
+            navigate("/boards");
+          }
+        })
+        .catch((error) => {
+          if (error.response.data === "Bad Request") {
+            // Need add a message let client know his email or password incorrect
+          }
+        });
     }
   };
 
@@ -29,7 +61,7 @@ export const SignInFrom = () => {
             <div className="inccorectMail">
               <span
                 className={
-                  isVisible ? "inccorectMessage" : "inccorectMessage active"
+                  !isVisible ? "inccorectMessage" : "inccorectMessage active"
                 }
               >
                 incorrect email
@@ -54,7 +86,7 @@ export const SignInFrom = () => {
             Forgot: <Link to="/forg"> Username / Password? </Link>
           </div>
           <div className="sendform">
-            <button>SIGN IN</button>
+            <button onClick={sendForm}>SIGN IN</button>
           </div>
           <div className="no Account">
             Don’t have an account?

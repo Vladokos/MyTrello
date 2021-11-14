@@ -10,6 +10,7 @@ export const RegistrationForm = () => {
   const [isExists, setExists] = useState(false);
 
   const navigate = useNavigate();
+  
   const validateMail =
     /[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?/;
 
@@ -32,7 +33,7 @@ export const RegistrationForm = () => {
 
   const sendForm = (e) => {
     e.preventDefault();
-    if (isVisible === false && name.length > 0 && password > 6) {
+    if (isVisible === false && name.length > 0 && password.length > 6) {
       axios({
         config: {
           headers: {

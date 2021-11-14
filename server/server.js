@@ -11,10 +11,20 @@ const dataUsersSchema = new Schema(
   {
     email: String,
     name: String,
-    password: Number,
+    password: String,
   },
   { versionKey: false }
 );
+
+const transporter = nodemailer.createTransport({
+  host: "smtp.mail.ru",
+  port: 465,
+  secure: true,
+  auth: {
+    user: "testmailnode@mail.ru",
+    pass: "wrx3eM96NDKAfnpFq810",
+  },
+});
 
 const dataUsers = mongoose.model("DataUser", dataUsersSchema);
 
@@ -28,16 +38,11 @@ app.post("/reg", jsonParser, (req, res) => {
   const name = req.body.name;
   const password = req.body.password;
 
-  let transporter = nodemailer.createTransport({
-    service: "Gmail",
-    auth: {
-      user: "tt0356617@gmail.com",
-      pass: "123qwerasdzX",
-    },
-  });
-
   dataUsers.findOne({ email: email }, (err, doc) => {
-    if (err) return res.sendStatus(500);
+    if (err) {
+      console.log(err);
+      return res.sendStatus(500);
+    }
     if (doc) return res.send("Exists");
 
     const data = new dataUsers({
@@ -46,22 +51,66 @@ app.post("/reg", jsonParser, (req, res) => {
       password: password,
     });
 
-    let result = transporter.sendMail({
-      from: "Test <tt0356617@gmail.com>",
-      to: "vladnothepaver@gmail.com",
-      subject: "Message title",
-      text: "Plaintext version of the message",
-      html: "<p>HTML version of the message</p>",
-    });
-
-    console.log(result);
+    transporter.sendMail(
+      {
+        from: "MyTrello <testmailnode@mail.ru>",
+        to: email,
+        subject: "Thank you for registering",
+        text: "Thank you for registering on my service",
+      },
+      (err, info) => {
+        if (err) return console.log(err);
+        return console.log(info);
+      }
+    );
 
     data.save((err) => {
       if (err) {
+        console.log(err);
         return res.sendStatus(500);
       }
       return res.sendStatus(200);
     });
+  });
+});
+
+app.post("/sig", jsonParser, (req, res) => {
+  const email = req.body.email;
+  const password = req.body.password;
+
+  dataUsers.findOne({ email: email, password: password }, (err, doc) => {
+    if (err) {
+      console.log(err);
+      return res.sendStatus(500);
+    }
+    if (doc != null) {
+      return res.sendStatus(200);
+    }
+    return res.sendStatus(400);
+  });
+});
+
+app.post("/forg", jsonParser, (req, res) => {
+  const email = req.body.email;
+
+  dataUsers.findOne({ email: email }, (err, doc) => {
+    if (err) {
+      console.log(err);
+      return res.sendStatus(500);
+    }
+    if (doc != null) {
+      // need send reset password link
+      transporter.sendMail({
+        from: "MyTrello <testmailnode@mail.ru>",
+        to: email,
+        subject: "your data",
+        text: "link to reset your password\n " + "http://localhost:3000/reset/" + doc._id,
+      });
+      console.log(doc);
+      return res.sendStatus(200);
+    }
+
+    return res.sendStatus(400);
   });
 });
 

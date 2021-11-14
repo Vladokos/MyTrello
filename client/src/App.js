@@ -4,6 +4,7 @@ import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { SignInFrom } from "./components/SignInFrom";
 import { RegistrationForm } from "./components/RegistrationForm";
 import { ForgotForm } from "./components/ForgotForm";
+import { ResetForm } from "./components/ResetForm";
 
 import "./styles/formStyles.css";
 
@@ -15,6 +16,7 @@ function App() {
           <Route path="/sig" element={<SignInFrom />} />
           <Route path="/reg" element={<RegistrationForm />} />
           <Route path="/forg" element={<ForgotForm />} />
+          <Route path="/reset/:id" element={<ResetForm />} />
           <Route path="/" element={<Navigate replace to="/sig" />} />
         </Routes>
       </div>

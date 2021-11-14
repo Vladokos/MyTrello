@@ -1,14 +1,15 @@
 import React, { useState } from "react";
-import { Link} from "react-router-dom";
+import axios from "axios";
+import { Link } from "react-router-dom";
 
 export const ForgotForm = () => {
   const [eMail, setEmail] = useState("");
   const [isVisible, setVisible] = useState(true);
 
-  const onEmailChange = (e) => setEmail(e.target.value);
-
   const validateMail =
     /[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?/;
+
+  const onEmailChange = (e) => setEmail(e.target.value);
 
   const validate = (e) => {
     if (validateMail.test(e.target.value)) {
@@ -16,6 +17,31 @@ export const ForgotForm = () => {
     } else {
       setVisible(false);
     }
+  };
+
+  const sendForm = (e) => {
+    e.preventDefault();
+    axios({
+      config: {
+        headers: { "Content-Type": "application/json" },
+      },
+      method: "POST",
+      url: "/forg",
+      data: {
+        email: eMail,
+      },
+    })
+      .then((response) => {
+        if (response.data === "OK") {
+          // need add message "on your email sended link to restroe password"
+        }
+      })
+      .catch((error) => {
+        if (error.response.data === "Bad Request") {
+          // Need add message "this email is not exist"
+          console.log("error");
+        }
+      });
   };
 
   return (
@@ -43,7 +69,7 @@ export const ForgotForm = () => {
             />
           </div>
           <div className="sendform">
-            <button>Send data</button>
+            <button onClick={sendForm}>Send data</button>
           </div>
           <div className="have Account">
             Back to
