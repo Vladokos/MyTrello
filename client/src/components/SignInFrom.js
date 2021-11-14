@@ -26,20 +26,23 @@ export const SignInFrom = () => {
         <form className="signFrom">
           <div className="title">Sign In</div>
           <div className="inputs">
+            <div className="inccorectMail">
+              <span
+                className={
+                  isVisible ? "inccorectMessage" : "inccorectMessage active"
+                }
+              >
+                incorrect email
+              </span>
+            </div>
             <input
               type="text"
+              name="email"
               placeholder="E-mail"
               value={eMail}
               onChange={onEmailChange}
               onBlur={validate}
             />
-            <span
-              className={
-                isVisible ? "inccorectMessage" : "inccorectMessage active"
-              }
-            >
-              incorrect email
-            </span>
             <input
               type="text"
               placeholder="Password"

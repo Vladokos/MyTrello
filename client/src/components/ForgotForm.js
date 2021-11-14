@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link} from "react-router-dom";
 
 export const ForgotForm = () => {
   const [eMail, setEmail] = useState("");
@@ -24,20 +24,23 @@ export const ForgotForm = () => {
         <form className="forgetForm">
           <div className="title">Recover data</div>
           <div className="inputs">
+            <div className="inccorectMail">
+              <span
+                className={
+                  isVisible ? "inccorectMessage" : "inccorectMessage active"
+                }
+              >
+                incorrect email
+              </span>
+            </div>
             <input
               type="text"
+              name="email"
               placeholder="E-mail"
               value={eMail}
               onChange={onEmailChange}
               onBlur={validate}
             />
-            <span
-              className={
-                isVisible ? "inccorectMessage" : "inccorectMessage active"
-              }
-            >
-              incorrect email
-            </span>
           </div>
           <div className="sendform">
             <button>Send data</button>

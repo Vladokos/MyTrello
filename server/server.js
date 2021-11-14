@@ -1,5 +1,6 @@
 const express = require("express");
 const mongoose = require("mongoose");
+const nodemailer = require("nodemailer");
 
 const Schema = mongoose.Schema;
 
@@ -27,14 +28,40 @@ app.post("/reg", jsonParser, (req, res) => {
   const name = req.body.name;
   const password = req.body.password;
 
-  const data = new dataUsers({ email: email, name: name, password: password });
+  let transporter = nodemailer.createTransport({
+    service: "Gmail",
+    auth: {
+      user: "tt0356617@gmail.com",
+      pass: "123qwerasdzX",
+    },
+  });
 
-  data.save((err) => {
-    if (err) {
-      res.sendStatus(500);
-      throw err;
-    }
-    res.sendStatus(200);
+  dataUsers.findOne({ email: email }, (err, doc) => {
+    if (err) return res.sendStatus(500);
+    if (doc) return res.send("Exists");
+
+    const data = new dataUsers({
+      email: email,
+      name: name,
+      password: password,
+    });
+
+    let result = transporter.sendMail({
+      from: "Test <tt0356617@gmail.com>",
+      to: "vladnothepaver@gmail.com",
+      subject: "Message title",
+      text: "Plaintext version of the message",
+      html: "<p>HTML version of the message</p>",
+    });
+
+    console.log(result);
+
+    data.save((err) => {
+      if (err) {
+        return res.sendStatus(500);
+      }
+      return res.sendStatus(200);
+    });
   });
 });
 
