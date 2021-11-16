@@ -10,7 +10,7 @@ export const RegistrationForm = () => {
   const [isExists, setExists] = useState(false);
 
   const navigate = useNavigate();
-  
+
   const validateMail =
     /[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?/;
 
@@ -38,6 +38,7 @@ export const RegistrationForm = () => {
         config: {
           headers: {
             "Content-Type": "application/json",
+            Accept: "application/json",
           },
         },
         method: "POST",
@@ -48,15 +49,10 @@ export const RegistrationForm = () => {
           password: password,
         },
       }).then((response) => {
-        switch (response.data) {
-          case "OK":
-            navigate("/boards");
-            break;
-          case "Exists":
-            setExists(true);
-            break;
-          default:
-            break;
+        if (response.data._id) {
+          navigate("/" + response.data._id + "/board");
+        } else if (response.data === "Exists") {
+          setExists(true);
         }
       });
     }

@@ -16,7 +16,8 @@ function App() {
           <Route path="/sig" element={<SignInFrom />} />
           <Route path="/reg" element={<RegistrationForm />} />
           <Route path="/forg" element={<ForgotForm />} />
-          <Route path="/reset/:id" element={<ResetForm />} />
+          <Route path="/:id/reset/" element={<ResetForm />} />
+          <Route path="/:name/boards" element={<ResetForm />} />
           <Route path="/" element={<Navigate replace to="/sig" />} />
         </Routes>
       </div>

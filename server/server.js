@@ -1,6 +1,9 @@
 const express = require("express");
 const mongoose = require("mongoose");
 const nodemailer = require("nodemailer");
+const process = require("dotenv");
+const bcrypt = require("bcryptjs");
+const jwt = require("jsonwebtoken");
 
 const Schema = mongoose.Schema;
 
@@ -12,6 +15,7 @@ const dataUsersSchema = new Schema(
     email: String,
     name: String,
     password: String,
+    token: String,
   },
   { versionKey: false }
 );
@@ -33,67 +37,90 @@ mongoose.connect("mongodb://localhost:27017/dataUsers", {
   useNewUrlParser: true,
 });
 
-app.post("/reg", jsonParser, (req, res) => {
-  const email = req.body.email;
-  const name = req.body.name;
-  const password = req.body.password;
+app.post("/reg", jsonParser, async (req, res) => {
+  const { email, name, password } = req.body;
 
-  dataUsers.findOne({ email: email }, (err, doc) => {
+  const oldUser = await dataUsers.findOne({ email });
+
+  if (oldUser) {
+    return res.send("Exists").status(409);
+  }
+
+  const encryptPassword = await bcrypt.hash(password, 12);
+
+  const data = await new dataUsers({
+    email: email.toLowerCase(),
+    name,
+    password: encryptPassword,
+  });
+
+  const token = jwt.sign(
+    {
+      user_id: data._id,
+      email,
+    },
+    "2020",
+    {
+      expiresIn: "1h",
+    }
+  );
+
+  data.token = token;
+
+  transporter.sendMail(
+    {
+      from: "MyTrello <testmailnode@mail.ru>",
+      to: email,
+      subject: "Thank you for registering",
+      text: "Thank you for registering on my service",
+    },
+    (err, info) => {
+      if (err) return console.log(err);
+      return console.log(info);
+    }
+  );
+
+  data.save((err) => {
     if (err) {
       console.log(err);
       return res.sendStatus(500);
     }
-    if (doc) return res.send("Exists");
 
-    const data = new dataUsers({
-      email: email,
-      name: name,
-      password: password,
-    });
+    return res.json(data).status(201);
+  });
+});
 
-    transporter.sendMail(
+app.post("/sig", jsonParser, async (req, res) => {
+  const { email, password } = req.body;
+
+  const user = await dataUsers.findOne({ email });
+
+  const decryptPassword = await bcrypt.compare(password, user.password);
+
+  if (user && decryptPassword) {
+    const token = jwt.sign(
       {
-        from: "MyTrello <testmailnode@mail.ru>",
-        to: email,
-        subject: "Thank you for registering",
-        text: "Thank you for registering on my service",
+        user_id: user._id,
+        email,
       },
-      (err, info) => {
-        if (err) return console.log(err);
-        return console.log(info);
+      "2020",
+      {
+        expiresIn: "1h",
       }
     );
 
-    data.save((err) => {
-      if (err) {
-        console.log(err);
-        return res.sendStatus(500);
-      }
-      return res.sendStatus(200);
-    });
-  });
-});
+    user.token = token;
 
-app.post("/sig", jsonParser, (req, res) => {
-  const email = req.body.email;
-  const password = req.body.password;
+    return res.json(user).status(20);
+  }
 
-  dataUsers.findOne({ email: email, password: password }, (err, doc) => {
-    if (err) {
-      console.log(err);
-      return res.sendStatus(500);
-    }
-    if (doc != null) {
-      return res.sendStatus(200);
-    }
-    return res.sendStatus(400);
-  });
+  return res.sendStatus(400);
 });
 
 app.post("/forg", jsonParser, (req, res) => {
-  const email = req.body.email;
+  const { email } = req.body;
 
-  dataUsers.findOne({ email: email }, (err, doc) => {
+  dataUsers.findOne({ email }, (err, doc) => {
     if (err) {
       console.log(err);
       return res.sendStatus(500);
@@ -104,7 +131,11 @@ app.post("/forg", jsonParser, (req, res) => {
         from: "MyTrello <testmailnode@mail.ru>",
         to: email,
         subject: "your data",
-        text: "link to reset your password\n " + "http://localhost:3000/reset/" + doc._id,
+        text:
+          "link to reset your password\n " +
+          "http://localhost:3000/" +
+          doc._id +
+          "/reset/",
       });
       console.log(doc);
       return res.sendStatus(200);
@@ -113,6 +144,13 @@ app.post("/forg", jsonParser, (req, res) => {
     return res.sendStatus(400);
   });
 });
+// for test
+const auth = require("./middleware/auth");
+app.post("/welcome", jsonParser, auth, (req, res) => {
+  console.log("test2");
+  res.status(200).send("Welcome 🙌 ");
+});
+// it's working 
 
 app.listen(5000, () => {
   console.log("Server is running");
