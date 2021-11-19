@@ -3,7 +3,7 @@ import axios from "axios";
 import { Link, useNavigate } from "react-router-dom";
 
 export const SignInFrom = () => {
-  const [eMail, setEmail] = useState("");
+  const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [isVisible, setVisible] = useState(false);
   const [isExists, setExists] = useState(false);
@@ -42,13 +42,14 @@ export const SignInFrom = () => {
         method: "POST",
         url: "/sig",
         data: {
-          email: eMail,
+          email: email,
           password: password,
         },
       })
         .then((response) => {
+          console.log(response);
           if (response.statusText === "OK") {
-            navigate("/" + response.data._id + "/board");
+            navigate("/" + response.data.user._id + "/boards");
           }
         })
         .catch((error) => {
@@ -78,7 +79,7 @@ export const SignInFrom = () => {
               type="text"
               name="email"
               placeholder="E-mail"
-              value={eMail}
+              value={email}
               onChange={onEmailChange}
               onBlur={validate}
             />

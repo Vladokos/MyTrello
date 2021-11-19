@@ -1,156 +1,137 @@
 const express = require("express");
-const mongoose = require("mongoose");
 const nodemailer = require("nodemailer");
-const process = require("dotenv");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 
-const Schema = mongoose.Schema;
+require("./config/database").connect();
+const dataUsers = require("./model/user");
 
 const app = express();
 const jsonParser = express.json();
 
-const dataUsersSchema = new Schema(
-  {
-    email: String,
-    name: String,
-    password: String,
-    token: String,
-  },
-  { versionKey: false }
-);
+const generateAccessToken = (user_id, email) => {
+  const payloda = {
+    user_id,
+    email,
+  };
+
+  return jwt.sign(payloda, process.env.TOKEN_KEY, { expiresIn: "10s" });
+};
 
 const transporter = nodemailer.createTransport({
-  host: "smtp.mail.ru",
+  host: "smtp.yandex.ru",
   port: 465,
   secure: true,
   auth: {
-    user: "testmailnode@mail.ru",
-    pass: "wrx3eM96NDKAfnpFq810",
+    user: "t7estes@yandex.ru",  
+    pass: "bmjninkovzefmdbu",
   },
 });
 
-const dataUsers = mongoose.model("DataUser", dataUsersSchema);
-
-mongoose.connect("mongodb://localhost:27017/dataUsers", {
-  useUnifiedTopology: true,
-  useNewUrlParser: true,
-});
-
 app.post("/reg", jsonParser, async (req, res) => {
-  const { email, name, password } = req.body;
+  try {
+    const { email, name, password } = req.body;
 
-  const oldUser = await dataUsers.findOne({ email });
+    const oldUser = await dataUsers.findOne({ email });
 
-  if (oldUser) {
-    return res.send("Exists").status(409);
-  }
-
-  const encryptPassword = await bcrypt.hash(password, 12);
-
-  const data = await new dataUsers({
-    email: email.toLowerCase(),
-    name,
-    password: encryptPassword,
-  });
-
-  const token = jwt.sign(
-    {
-      user_id: data._id,
-      email,
-    },
-    "2020",
-    {
-      expiresIn: "1h",
-    }
-  );
-
-  data.token = token;
-
-  transporter.sendMail(
-    {
-      from: "MyTrello <testmailnode@mail.ru>",
-      to: email,
-      subject: "Thank you for registering",
-      text: "Thank you for registering on my service",
-    },
-    (err, info) => {
-      if (err) return console.log(err);
-      return console.log(info);
-    }
-  );
-
-  data.save((err) => {
-    if (err) {
-      console.log(err);
-      return res.sendStatus(500);
+    if (oldUser) {
+      return res.status(409).json({ message: "Exists" });
     }
 
-    return res.json(data).status(201);
-  });
-});
+    const encryptPassword = await bcrypt.hash(password, 12);
 
-app.post("/sig", jsonParser, async (req, res) => {
-  const { email, password } = req.body;
+    const information = await new dataUsers({
+      email: email.toLowerCase(),
+      name,
+      password: encryptPassword,
+    });
 
-  const user = await dataUsers.findOne({ email });
+    const token = generateAccessToken(information._id, email);
 
-  const decryptPassword = await bcrypt.compare(password, user.password);
+    information.token = token;
 
-  if (user && decryptPassword) {
-    const token = jwt.sign(
+    transporter.sendMail(
       {
-        user_id: user._id,
-        email,
+        from: "MyTrello <t7estes@yandex.ru>",
+        to: email,
+        subject: "Thank you for registering",
+        text: "Thank you for registering on my service",
       },
-      "2020",
-      {
-        expiresIn: "1h",
+      (err, info) => {
+        if (err) return console.log(err);
+        return console.log(info);
       }
     );
 
-    user.token = token;
+    information.save((err) => {
+      if (err) {
+        console.log(err);
+        return res.sendStatus(500);
+      }
 
-    return res.json(user).status(20);
+      return res.status(201).json({ information });
+    });
+  } catch (error) {
+    console.log(error);
   }
-
-  return res.sendStatus(400);
 });
 
-app.post("/forg", jsonParser, (req, res) => {
-  const { email } = req.body;
+app.post("/sig", jsonParser, async (req, res) => {
+  try {
+    const { email, password } = req.body;
 
-  dataUsers.findOne({ email }, (err, doc) => {
-    if (err) {
-      console.log(err);
-      return res.sendStatus(500);
-    }
-    if (doc != null) {
-      // need send reset password link
-      transporter.sendMail({
-        from: "MyTrello <testmailnode@mail.ru>",
-        to: email,
-        subject: "your data",
-        text:
-          "link to reset your password\n " +
-          "http://localhost:3000/" +
-          doc._id +
-          "/reset/",
-      });
-      console.log(doc);
-      return res.sendStatus(200);
+    const user = await dataUsers.findOne({ email });
+
+    const decryptPassword = await bcrypt.compare(password, user.password);
+
+    if (user && decryptPassword) {
+      const token = generateAccessToken(user._id, email);
+
+      user.token = token;
+
+      return res.status(200).json({ user });
     }
 
     return res.sendStatus(400);
-  });
+  } catch (error) {
+    console.log(error);
+  }
 });
+// need change this
+app.post("/forg", jsonParser, async (req, res) => {
+  try {
+    const { email } = req.body;
+
+    const user = await dataUsers.findOne({ email });
+
+    if (!user) return res.status(400).json({ message: "User not found" });
+
+    // need generate token to reset password link
+    transporter.sendMail({
+      from: "MyTrello <testmailnode@mail.ru>",
+      to: email,
+      subject: "your data",
+      text:
+        "link to reset your password\n " +
+        "http://localhost:3000/" +
+        doc._id +
+        "/reset/",
+    });
+
+    return res.sendStatus(200);
+  } catch (error) {
+    console.log(error);
+  }
+});
+
+// need change this
 // for test
 const auth = require("./middleware/auth");
 app.post("/welcome", jsonParser, auth, (req, res) => {
   console.log("test2");
   res.status(200).send("Welcome 🙌 ");
 });
-// it's working 
+// it's working
 
 app.listen(5000, () => {
   console.log("Server is running");

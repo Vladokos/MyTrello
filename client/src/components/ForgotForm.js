@@ -3,8 +3,8 @@ import axios from "axios";
 import { Link } from "react-router-dom";
 
 export const ForgotForm = () => {
-  const [eMail, setEmail] = useState("");
-  const [isVisible, setVisible] = useState(true);
+  const [email, setEmail] = useState("");
+  const [isVisible, setVisible] = useState(false);
 
   const validateMail =
     /[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?/;
@@ -13,35 +13,40 @@ export const ForgotForm = () => {
 
   const validate = (e) => {
     if (validateMail.test(e.target.value)) {
-      setVisible(true);
-    } else {
       setVisible(false);
+    } else {
+      setVisible(true);
     }
   };
 
   const sendForm = (e) => {
     e.preventDefault();
-    axios({
-      config: {
-        headers: { "Content-Type": "application/json" },
-      },
-      method: "POST",
-      url: "/forg",
-      data: {
-        email: eMail,
-      },
-    })
-      .then((response) => {
-        if (response.data === "OK") {
-          // need add message "on your email sended link to restroe password"
-        }
+    if (isVisible === false && email.length > 0) {
+      axios({
+        config: {
+          headers: {
+            "Content-Type": "application/json",
+            Accept: "application/json",
+          },
+        },
+        method: "POST",
+        url: "/forg",
+        data: {
+          email: email,
+        },
       })
-      .catch((error) => {
-        if (error.response.data === "Bad Request") {
-          // Need add message "this email is not exist"
-          console.log("error");
-        }
-      });
+        .then((response) => {
+          if (response.data === "OK") {
+            // need add message "on your email sended link to restroe password"
+          }
+        })
+        .catch((error) => {
+          if (error.response.data === "Bad Request") {
+            // Need add message "this email is not exist"
+            console.log("error");
+          }
+        });
+    }
   };
 
   return (
@@ -53,7 +58,7 @@ export const ForgotForm = () => {
             <div className="inccorectMail">
               <span
                 className={
-                  isVisible ? "inccorectMessage" : "inccorectMessage active"
+                  !isVisible ? "inccorectMessage" : "inccorectMessage active"
                 }
               >
                 incorrect email
@@ -63,7 +68,7 @@ export const ForgotForm = () => {
               type="text"
               name="email"
               placeholder="E-mail"
-              value={eMail}
+              value={email}
               onChange={onEmailChange}
               onBlur={validate}
             />

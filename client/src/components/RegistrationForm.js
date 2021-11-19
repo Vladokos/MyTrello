@@ -3,7 +3,7 @@ import axios from "axios";
 import { Link, useNavigate } from "react-router-dom";
 
 export const RegistrationForm = () => {
-  const [eMail, setEmail] = useState("");
+  const [email, setEmail] = useState("");
   const [name, setName] = useState("");
   const [password, setPassword] = useState("");
   const [isVisible, setVisible] = useState(false);
@@ -44,17 +44,21 @@ export const RegistrationForm = () => {
         method: "POST",
         url: "/reg",
         data: {
-          email: eMail,
+          email: email,
           name: name,
           password: password,
         },
-      }).then((response) => {
-        if (response.data._id) {
-          navigate("/" + response.data._id + "/board");
-        } else if (response.data === "Exists") {
-          setExists(true);
-        }
-      });
+      })
+        .then((response) => {
+          if (response.data.information._id && response.status === 201) {
+            navigate("/" + response.data.information._id + "/boards");
+          }
+        })
+        .catch((error) => {
+          if (error.response.data.message === "Exists") {
+            setExists(true);
+          }
+        });
     }
   };
 
@@ -77,7 +81,7 @@ export const RegistrationForm = () => {
               type="text"
               name="email"
               placeholder="E-mail"
-              value={eMail}
+              value={email}
               onChange={onEmailChange}
               onBlur={validate}
             />
