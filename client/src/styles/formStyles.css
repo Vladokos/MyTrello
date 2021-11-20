@@ -41,7 +41,7 @@ input:focus {
   padding: 0 55px 0 55px;
 }
 
-.inccorectMessage {
+.incorrectMessage {
   font-family: "Montserrat", sans-serif;
   font-size: 15px;
   font-weight: bold;
@@ -51,7 +51,7 @@ input:focus {
   width: 200px;
   visibility: hidden;
 }
-.inccorectMessage.active {
+.incorrectMessage.active {
   visibility: visible;
 }
 

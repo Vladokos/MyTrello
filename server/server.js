@@ -10,12 +10,21 @@ const app = express();
 const jsonParser = express.json();
 
 const generateAccessToken = (user_id, email) => {
-  const payloda = {
+  const payload = {
     user_id,
     email,
   };
 
-  return jwt.sign(payloda, process.env.TOKEN_KEY, { expiresIn: "10s" });
+  return jwt.sign(payload, process.env.TOKEN_KEY, { expiresIn: "2h" });
+};
+
+const generateResetPasswordToken = (user_id, email) => {
+  const payload = {
+    user_id,
+    email,
+  };
+
+  return jwt.sign(payload, process.env.TOKEN_KEY, { expiresIn: "30m" });
 };
 
 const transporter = nodemailer.createTransport({
@@ -23,7 +32,7 @@ const transporter = nodemailer.createTransport({
   port: 465,
   secure: true,
   auth: {
-    user: "t7estes@yandex.ru",  
+    user: "t7estes@yandex.ru",
     pass: "bmjninkovzefmdbu",
   },
 });
@@ -89,6 +98,12 @@ app.post("/sig", jsonParser, async (req, res) => {
 
       user.token = token;
 
+      user.save((err) => {
+        if (err) {
+          console.log(err);
+          return res.sendStatus(500);
+        }
+      });
       return res.status(200).json({ user });
     }
 
@@ -106,15 +121,26 @@ app.post("/forg", jsonParser, async (req, res) => {
 
     if (!user) return res.status(400).json({ message: "User not found" });
 
+    const token = generateAccessToken(user._id, email);
+
+    user.token = token;
+
+    user.save((error) => {
+      if (error) {
+        console.log(error);
+        return res.sendStatus(500);
+      }
+    });
+
     // need generate token to reset password link
     transporter.sendMail({
-      from: "MyTrello <testmailnode@mail.ru>",
+      from: "MyTrello <t7estes@yandex.ru>",
       to: email,
       subject: "your data",
       text:
         "link to reset your password\n " +
         "http://localhost:3000/" +
-        doc._id +
+        user.token +
         "/reset/",
     });
 
@@ -126,11 +152,23 @@ app.post("/forg", jsonParser, async (req, res) => {
 
 // need change this
 // for test
-const auth = require("./middleware/auth");
-app.post("/welcome", jsonParser, auth, (req, res) => {
-  console.log("test2");
-  res.status(200).send("Welcome 🙌 ");
+app.post("/welcome", jsonParser, async (req, res) => {
+  try {
+    const { id } = req.body;
+
+    const { token } = await dataUsers.findOne({ _id: id });
+
+    if (!token) return res.status(404).json({ message: "User not found" });
+
+    const decode = jwt.verify(token, process.env.TOKEN_KEY);
+    console.log(decode);
+    res.status(200).send("Welcome");
+  } catch (error) {
+    console.log(error);
+    res.status(400).send("Error");
+  }
 });
+
 // it's working
 
 app.listen(5000, () => {

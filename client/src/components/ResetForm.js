@@ -1,20 +1,32 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import axios from "axios";
-import { Link } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 
 export const ResetForm = () => {
+  const params = useParams();
+  console.log(params);
+
   const [name, setName] = useState("");
   const [isVisible, setVisible] = useState(true);
 
+  // useEffect(() => {
+  //   axios({
+  //     config: {
+  //       headers: {
+  //         "Content-Type": "application/json",
+  //         Accept: "application/json",
+  //       },
+  //       method: "POST",
+  //       url: "/welcome",
+  //       data: {},
+  //     },
+  //   });
+  // });
 
-
-  const validate = (e) => {
-    
-  };
+  const validate = (e) => {};
 
   const sendForm = (e) => {
     e.preventDefault();
-   
   };
 
   return (
@@ -23,12 +35,11 @@ export const ResetForm = () => {
         <form className="forgetForm">
           <div className="title">Recover password</div>
           <div className="inputs">
-           
             <input
               type="text"
               placeholder="Name"
               value={name}
-            //   onChange={}
+              //   onChange={}
             />
           </div>
           <div className="sendform">

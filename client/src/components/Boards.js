@@ -1,12 +1,14 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import { useSearchParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 
-export const Boards = () => {
-  const [searchParams, setSearchParams] = useSearchParams();
+export const Boards = (token) => {
+  console.log(token)
+  const navigate = useNavigate();
+  const params = useParams();
 
   useEffect(() => {
-    console.log(searchParams);
+    const { id } = params;
     axios({
       config: {
         headers: {
@@ -16,8 +18,19 @@ export const Boards = () => {
       },
       method: "POST",
       url: "/welcome",
-      data: {},
-    });
+      data: {
+        id: id,
+      },
+    })
+      .then((response) => {
+        console.log(response);
+      })
+      .catch((error) => {
+        if (error.response.data === "Error" || error.response.status === 400) {
+          navigate("/sig");
+        }
+        console.log(error.response);
+      });
   });
 
   return (

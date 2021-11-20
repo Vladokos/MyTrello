@@ -47,7 +47,6 @@ export const SignInFrom = () => {
         },
       })
         .then((response) => {
-          console.log(response);
           if (response.statusText === "OK") {
             navigate("/" + response.data.user._id + "/boards");
           }
@@ -66,10 +65,10 @@ export const SignInFrom = () => {
         <form className="signFrom">
           <div className="title">Sign In</div>
           <div className="inputs">
-            <div className="inccorectMail">
+            <div className="incorrectMail">
               <span
                 className={
-                  !isVisible ? "inccorectMessage" : "inccorectMessage active"
+                  !isVisible ? "incorrectMessage" : "incorrectMessage active"
                 }
               >
                 incorrect email
