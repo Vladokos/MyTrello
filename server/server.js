@@ -3,6 +3,8 @@ const nodemailer = require("nodemailer");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 
+const verifyToken = require("./middleware/verifyToken");
+
 require("./config/database").connect();
 const dataUsers = require("./model/user");
 
@@ -18,9 +20,10 @@ const generateAccessToken = (user_id, email) => {
   return jwt.sign(payload, process.env.TOKEN_KEY, { expiresIn: "2h" });
 };
 
-const generateResetPasswordToken = (user_id, email) => {
+const generateResetPasswordToken = (user_id, name, email) => {
   const payload = {
     user_id,
+    name,
     email,
   };
 
@@ -66,15 +69,15 @@ app.post("/reg", jsonParser, async (req, res) => {
         subject: "Thank you for registering",
         text: "Thank you for registering on my service",
       },
-      (err, info) => {
-        if (err) return console.log(err);
+      (error, info) => {
+        if (error) return console.log(error);
         return console.log(info);
       }
     );
 
-    information.save((err) => {
-      if (err) {
-        console.log(err);
+    information.save((error) => {
+      if (error) {
+        console.log(error);
         return res.sendStatus(500);
       }
 
@@ -82,6 +85,7 @@ app.post("/reg", jsonParser, async (req, res) => {
     });
   } catch (error) {
     console.log(error);
+    res.status(400).send("Error");
   }
 });
 
@@ -98,9 +102,9 @@ app.post("/sig", jsonParser, async (req, res) => {
 
       user.token = token;
 
-      user.save((err) => {
-        if (err) {
-          console.log(err);
+      user.save((error) => {
+        if (error) {
+          console.log(error);
           return res.sendStatus(500);
         }
       });
@@ -110,20 +114,21 @@ app.post("/sig", jsonParser, async (req, res) => {
     return res.sendStatus(400);
   } catch (error) {
     console.log(error);
+    res.status(400).send("Error");
   }
 });
 // need change this
 app.post("/forg", jsonParser, async (req, res) => {
   try {
-    const { email } = req.body;
+    const { email, name } = req.body;
 
-    const user = await dataUsers.findOne({ email });
+    const user = await dataUsers.findOne({ email, name });
 
     if (!user) return res.status(400).json({ message: "User not found" });
 
-    const token = generateAccessToken(user._id, email);
+    const resetToken = generateResetPasswordToken(user._id, name, email);
 
-    user.token = token;
+    user.resetToken = resetToken;
 
     user.save((error) => {
       if (error) {
@@ -138,30 +143,29 @@ app.post("/forg", jsonParser, async (req, res) => {
       to: email,
       subject: "your data",
       text:
-        "link to reset your password\n " +
+        "link to reset your password\n you have 30 minutes " +
         "http://localhost:3000/" +
-        user.token +
+        user.resetToken +
         "/reset/",
     });
 
     return res.sendStatus(200);
   } catch (error) {
     console.log(error);
+    res.status(400).send("Error");
   }
 });
 
 // need change this
 // for test
-app.post("/welcome", jsonParser, async (req, res) => {
+app.post("/welcome", jsonParser, verifyToken, async (req, res) => {
   try {
-    const { id } = req.body;
+    const { token } = req.body;
 
-    const { token } = await dataUsers.findOne({ _id: id });
+    const { resetToken } = await dataUsers.findOne({ resetToken: token });
 
-    if (!token) return res.status(404).json({ message: "User not found" });
+    if (!resetToken) return res.status(404).json({ message: "User not found" });
 
-    const decode = jwt.verify(token, process.env.TOKEN_KEY);
-    console.log(decode);
     res.status(200).send("Welcome");
   } catch (error) {
     console.log(error);

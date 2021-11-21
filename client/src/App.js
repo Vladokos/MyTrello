@@ -1,10 +1,13 @@
 import React from "react";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 
-import { SignInFrom } from "./components/SignInFrom";
-import { RegistrationForm } from "./components/RegistrationForm";
-import { ForgotForm } from "./components/ForgotForm";
-import { ResetForm } from "./components/ResetForm";
+import { SignInFrom } from "./components/form/SignInFrom";
+import { RegistrationForm } from "./components/form/RegistrationForm";
+import { ForgotForm } from "./components/form/ForgotForm";
+import { ResetForm } from "./components/form/ResetForm";
+
+import { NotFound } from "./components/NotFound";
+
 import { Boards } from "./components/Boards";
 
 import "./styles/formStyles.css";
@@ -17,8 +20,9 @@ function App() {
           <Route path="/sig" element={<SignInFrom />} />
           <Route path="/reg" element={<RegistrationForm />} />
           <Route path="/forg" element={<ForgotForm />} />
-          <Route path="/:id/reset/" element={<ResetForm />} />
+          <Route path="/:token/reset/" element={<ResetForm />} />
           <Route path="/:id/boards" element={<Boards />} />
+          <Route path="/error/:code" element={<NotFound />} />
           <Route path="/" element={<Navigate replace to="/sig" />} />
         </Routes>
       </div>

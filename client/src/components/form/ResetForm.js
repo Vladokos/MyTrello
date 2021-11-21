@@ -1,27 +1,38 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import { Link, useParams } from "react-router-dom";
+import { Link, useParams, useNavigate } from "react-router-dom";
 
 export const ResetForm = () => {
   const params = useParams();
-  console.log(params);
+  const navigate = useNavigate();
 
-  const [name, setName] = useState("");
+  const [password, setPassword] = useState("");
   const [isVisible, setVisible] = useState(true);
 
-  // useEffect(() => {
-  //   axios({
-  //     config: {
-  //       headers: {
-  //         "Content-Type": "application/json",
-  //         Accept: "application/json",
-  //       },
-  //       method: "POST",
-  //       url: "/welcome",
-  //       data: {},
-  //     },
-  //   });
-  // });
+  useEffect(() => {
+    axios({
+      config: {
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "application/json",
+        },
+      },
+      method: "POST",
+      url: "/welcome",
+      data: {
+        token: params.token,
+      },
+    })
+      .then((response) => {
+        console.log(response);
+      })
+      .catch((error) => {
+        const response = error.response;
+        if (/4([0-9]+)/.test(response.status)) {
+          navigate("/error/404")
+        }
+      });
+  });
 
   const validate = (e) => {};
 
@@ -37,9 +48,9 @@ export const ResetForm = () => {
           <div className="inputs">
             <input
               type="text"
-              placeholder="Name"
-              value={name}
-              //   onChange={}
+              placeholder="New password"
+              value={password}
+              onChange={validate}
             />
           </div>
           <div className="sendform">
