@@ -68,7 +68,7 @@ input:focus {
   color: #57b846;
   transition: 0.3s cubic-bezier(0.65, 0, 0.35, 1);
 }
-.forgot a:hover{
+.forgot a:hover {
   color: #368726;
 }
 .sendform button {
@@ -104,10 +104,11 @@ input:focus {
 .Account a:hover {
   color: #368726;
 }
-
+.unsuccessful,
 .notExist {
   display: none;
 }
+.successfully,
 .exist {
   display: grid;
   position: absolute;
@@ -123,7 +124,7 @@ input:focus {
   font-weight: bold;
   text-align: center;
 }
-.exist.forgot{
+.exist.forgot {
   transform: translateX(446px) translateY(-496px);
 }
 
@@ -223,4 +224,48 @@ input:focus {
 }
 .closePopup:hover {
   background-color: #368726;
+}
+
+.SmallLine,
+.BigLine {
+  stroke: #fff;
+}
+
+.SmallLine {
+  stroke-dasharray: 1000;
+  stroke-dashoffset: 1000;
+  animation: dash 0.9s 1.1s ease-in forwards;
+}
+.BigLine {
+  stroke-dasharray: 1000;
+  stroke-dashoffset: 1000;
+  animation: dashReverse 0.9s 0.7s cubic-bezier(0.65, 0, 0.35, 1) forwards;
+}
+
+.check {
+  display: block;
+  align-self: center;
+  margin: 0 auto;
+  width: 150px;
+  height: 150px;
+  border-radius: 50%;
+  stroke-width: 2;
+  stroke: #fff;
+  stroke-miterlimit: 10;
+  box-shadow: inset 0px 0px 0px #70d060;
+  animation: fillCheck 0.55s ease-in-out 0.65s forwards,
+    scale 0.35s ease-in-out 0.9s both;
+}
+
+.StokeRound {
+  stroke-dasharray: 1000;
+  stroke-dashoffset: 1000;
+  animation: dash 0.9s ease-in-out forwards;
+  stroke: #70d060;
+}
+
+@keyframes fillCheck {
+  100% {
+    box-shadow: inset 0px 0px 0px 200px #70d060;
+  }
 }

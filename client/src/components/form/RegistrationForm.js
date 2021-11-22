@@ -55,7 +55,9 @@ export const RegistrationForm = () => {
           }
         })
         .catch((error) => {
-          if (error.response.data.message === "Exists") {
+          const response = error.response;
+
+          if (response.status === 409) {
             setExists(true);
           }
         });

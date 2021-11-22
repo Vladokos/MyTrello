@@ -47,12 +47,14 @@ export const SignInFrom = () => {
         },
       })
         .then((response) => {
-          if (response.statusText === "OK") {
+          if (response.status === 200) {
             navigate("/" + response.data.user._id + "/boards");
           }
         })
         .catch((error) => {
-          if (error.response.statusText === "Bad Request") {
+          const response = error.response;
+
+          if (response.status === 400) {
             setExists(true);
           }
         });

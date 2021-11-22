@@ -41,6 +41,7 @@ const transporter = nodemailer.createTransport({
 });
 
 app.post("/reg", jsonParser, async (req, res) => {
+  password / reset;
   try {
     const { email, name, password } = req.body;
 
@@ -143,7 +144,7 @@ app.post("/forg", jsonParser, async (req, res) => {
       to: email,
       subject: "your data",
       text:
-        "link to reset your password\n you have 30 minutes " +
+        "link to reset your password\n you have 30 minutes\n " +
         "http://localhost:3000/" +
         user.resetToken +
         "/reset/",
@@ -156,9 +157,7 @@ app.post("/forg", jsonParser, async (req, res) => {
   }
 });
 
-// need change this
-// for test
-app.post("/welcome", jsonParser, verifyToken, async (req, res) => {
+app.post("/password/validate", jsonParser, verifyToken, async (req, res) => {
   try {
     const { token } = req.body;
 
@@ -166,14 +165,44 @@ app.post("/welcome", jsonParser, verifyToken, async (req, res) => {
 
     if (!resetToken) return res.status(404).json({ message: "User not found" });
 
-    res.status(200).send("Welcome");
+    res.status(200).send("Valid");
   } catch (error) {
     console.log(error);
     res.status(400).send("Error");
   }
 });
 
-// it's working
+app.post("/password/reset", jsonParser, verifyToken, async (req, res) => {
+  try {
+    const { token, password } = req.body;
+
+    const data = await dataUsers.findOne({ resetToken: token });
+
+    if (!data) return res.status(404).json({ message: "User not found" });
+
+    const decryptPassword = await bcrypt.compare(password, data.password);
+
+    if (decryptPassword) {
+      return res.status(400).send({ message: "Need another password" });
+    }
+
+    const encryptPassword = await bcrypt.hash(password, 12);
+
+    data.password = encryptPassword;
+
+    data.save((error) => {
+      if (error) {
+        console.log(error);
+        return res.sendStatus(500);
+      }
+    });
+
+    res.status(200).send({ message: "successfully" });
+  } catch (error) {
+    console.log(error);
+    res.status(400).send("Error");
+  }
+});
 
 app.listen(5000, () => {
   console.log("Server is running");
