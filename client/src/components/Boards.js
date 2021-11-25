@@ -16,7 +16,7 @@ export const Boards = () => {
         },
       },
       method: "POST",
-      url: "/welcome",
+      url: "/test",
       data: {
         id: id,
       },
@@ -26,11 +26,11 @@ export const Boards = () => {
       })
       .catch((error) => {
         if (error.response.data === "Error" || error.response.status === 400) {
-          navigate("/sig");
+          navigate("/error/404");
         }
         console.log(error.response);
       });
-  });
+  },[]);
 
   return (
     <div>

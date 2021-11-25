@@ -8,6 +8,7 @@ const dataUsersSchema = new Schema(
     name: String,
     password: String,
     token: String,
+    refreshToken: String,
     resetToken: String,
   },
   { versionKey: false }

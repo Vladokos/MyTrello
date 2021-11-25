@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { Link, useNavigate } from "react-router-dom";
 
@@ -31,6 +31,38 @@ export const RegistrationForm = () => {
     setDataExists(false);
   };
 
+  useEffect(() => {
+    const refreshToken = localStorage.getItem("refreshToken");
+
+    if (refreshToken !== "undefined") {
+      axios({
+        config: {
+          headers: {
+            "Content-Type": "application/json",
+            Accept: "application/json",
+          },
+        },
+        method: "POST",
+        url: "/reg/oldUser",
+        data: {
+          refreshToken: JSON.parse(refreshToken),
+        },
+      })
+        .then((response) => {
+          if (response.status === 200) {
+            const { id, refreshToken } = response.data;
+
+            localStorage.setItem("refreshToken", JSON.stringify(refreshToken));
+
+            navigate("/" + id + "/boards");
+          }
+        })
+        .catch((error) => {
+          console.log(error.response);
+        });
+    }
+  }, []);
+
   const sendForm = (e) => {
     e.preventDefault();
     if (incorrect === false && name.length > 0 && password.length >= 6) {
@@ -50,11 +82,15 @@ export const RegistrationForm = () => {
         },
       })
         .then((response) => {
-          if (response.data.information._id && response.status === 201) {
-            navigate("/" + response.data.information._id + "/boards");
+          if (response.status === 201) {
+            const { id, refreshToken } = response.data;
+
+            localStorage.setItem("refreshToken", JSON.stringify(refreshToken));
+            navigate("/" + id + "/boards");
           }
         })
         .catch((error) => {
+          console.log(error);
           const response = error.response;
 
           if (response.status === 409) {
@@ -101,6 +137,10 @@ export const RegistrationForm = () => {
                 onChange={onPasswordChange}
               />
             </div>
+            {/* <div className="rememberUser">
+              <input type="checkbox" />
+              remember me
+            </div> */}
             <div className="sendform">
               <button onClick={sendForm}>SIGN UP</button>
             </div>

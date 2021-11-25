@@ -1,4 +1,4 @@
-a{
+a {
   text-decoration: none;
 }
 .container {
@@ -271,11 +271,24 @@ input:focus {
   }
 }
 
-.notFound__inner{
+.notFound__inner {
   font-family: "Montserrat", sans-serif;
   font-weight: bold;
   font-size: 30px;
+  text-align: center;
 }
-.notFound__inner div{
-  font-size: 20px;
+.notFound__inner h1 {
+  font-weight: 500;
+  font-size: 186px;
+  color: transparent;
+  background: linear-gradient(183deg, #70d060, #398ce3);
+  background-clip: text;
+  margin-bottom: 80px;
+}
+.notFound__inner div {
+  font-size: 32px;
+  margin-bottom: 28px;
+}
+.notFound__inner a{
+  color: #70d060;
 }

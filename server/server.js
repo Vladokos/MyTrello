@@ -17,7 +17,7 @@ const generateAccessToken = (user_id, email) => {
     email,
   };
 
-  return jwt.sign(payload, process.env.TOKEN_KEY, { expiresIn: "2h" });
+  return jwt.sign(payload, process.env.TOKEN_KEY, { expiresIn: "1h" });
 };
 
 const generateResetPasswordToken = (user_id, name, email) => {
@@ -27,7 +27,16 @@ const generateResetPasswordToken = (user_id, name, email) => {
     email,
   };
 
-  return jwt.sign(payload, process.env.TOKEN_KEY, { expiresIn: "30m" });
+  return jwt.sign(payload, process.env.RESETTOKEN_KEY, { expiresIn: "30m" });
+};
+
+const generateRefreshToken = (user_id, email) => {
+  const payload = {
+    user_id,
+    email,
+  };
+
+  return jwt.sign(payload, process.env.REFRESHTOKEN_KEY, { expiresIn: "15d" });
 };
 
 const transporter = nodemailer.createTransport({
@@ -38,6 +47,35 @@ const transporter = nodemailer.createTransport({
     user: "t7estes@yandex.ru",
     pass: "bmjninkovzefmdbu",
   },
+});
+
+app.post("/reg/oldUser", jsonParser, async (req, res) => {
+  try {
+    const { refreshToken } = req.body;
+
+    jwt.verify(refreshToken, process.env.REFRESHTOKEN_KEY);
+
+    const data = await dataUsers.findOne({ refreshToken });
+
+    if (!data) return res.sendStatus(400);
+
+    data.token = generateAccessToken(data._id, data.email);
+    data.refreshToken = generateRefreshToken(data._id, data.email);
+
+    data.save((error) => {
+      if (error) {
+        console.log(error);
+        return res.sendStatus(500);
+      }
+
+      return res
+        .status(200)
+        .json({ id: data.id, refreshToken: data.refreshToken });
+    });
+  } catch (error) {
+    console.log(error);
+    res.status(400).send("Error");
+  }
 });
 
 app.post("/reg", jsonParser, async (req, res) => {
@@ -59,8 +97,10 @@ app.post("/reg", jsonParser, async (req, res) => {
     });
 
     const token = generateAccessToken(information._id, email);
+    const refreshToken = generateRefreshToken(information._id, email);
 
     information.token = token;
+    information.refreshToken = refreshToken;
 
     transporter.sendMail(
       {
@@ -81,7 +121,7 @@ app.post("/reg", jsonParser, async (req, res) => {
         return res.sendStatus(500);
       }
 
-      return res.status(201).json({ information });
+      return res.status(201).json({ id: information.id, refreshToken });
     });
   } catch (error) {
     console.log(error);
@@ -108,7 +148,7 @@ app.post("/sig", jsonParser, async (req, res) => {
           return res.sendStatus(500);
         }
       });
-      return res.status(200).json({ user });
+      return res.status(200).json({});
     }
 
     return res.sendStatus(400);
@@ -186,8 +226,11 @@ app.post("/password/reset", jsonParser, verifyToken, async (req, res) => {
 
     const encryptPassword = await bcrypt.hash(password, 12);
 
+    const newToken = generateAccessToken(data._id, data.email);
+
     data.password = encryptPassword;
     data.resetToken = null;
+    data.token = newToken;
 
     data.save((error) => {
       if (error) {
@@ -197,6 +240,21 @@ app.post("/password/reset", jsonParser, verifyToken, async (req, res) => {
     });
 
     res.status(200).send({ message: "successfully" });
+  } catch (error) {
+    console.log(error);
+    res.status(400).send("Error");
+  }
+});
+
+app.post("/test", jsonParser, async (req, res) => {
+  try {
+    const { id } = req.body;
+
+    const { token } = await dataUsers.findOne({ _id: id });
+
+    if (token) {
+      jwt.verify(token, process.env.TOKEN_KEY);
+    }
   } catch (error) {
     console.log(error);
     res.status(400).send("Error");
