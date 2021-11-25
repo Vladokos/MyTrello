@@ -10,6 +10,7 @@ import { NotFound } from "./components/NotFound";
 
 import { Boards } from "./components/Boards";
 
+import "./styles/reset.css";
 import "./styles/formStyles.css";
 
 function App() {

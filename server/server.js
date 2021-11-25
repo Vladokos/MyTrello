@@ -41,7 +41,6 @@ const transporter = nodemailer.createTransport({
 });
 
 app.post("/reg", jsonParser, async (req, res) => {
-  password / reset;
   try {
     const { email, name, password } = req.body;
 
@@ -118,7 +117,7 @@ app.post("/sig", jsonParser, async (req, res) => {
     res.status(400).send("Error");
   }
 });
-// need change this
+
 app.post("/forg", jsonParser, async (req, res) => {
   try {
     const { email, name } = req.body;
@@ -138,7 +137,6 @@ app.post("/forg", jsonParser, async (req, res) => {
       }
     });
 
-    // need generate token to reset password link
     transporter.sendMail({
       from: "MyTrello <t7estes@yandex.ru>",
       to: email,
@@ -189,6 +187,7 @@ app.post("/password/reset", jsonParser, verifyToken, async (req, res) => {
     const encryptPassword = await bcrypt.hash(password, 12);
 
     data.password = encryptPassword;
+    data.resetToken = null;
 
     data.save((error) => {
       if (error) {
