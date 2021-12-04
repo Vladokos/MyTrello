@@ -11,7 +11,9 @@ import { NotFound } from "./components/NotFound";
 import { Boards } from "./components/Boards";
 
 import "./styles/reset.css";
+import "./styles/blanks.css";
 import "./styles/formStyles.css";
+import "./styles/menu.css";
 
 function App() {
   return (

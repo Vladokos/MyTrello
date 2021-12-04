@@ -131,6 +131,7 @@ app.post("/reg", jsonParser, async (req, res) => {
 
 app.post("/sig", jsonParser, async (req, res) => {
   try {
+
     const { email, password } = req.body;
 
     const user = await dataUsers.findOne({ email });
@@ -139,8 +140,10 @@ app.post("/sig", jsonParser, async (req, res) => {
 
     if (user && decryptPassword) {
       const token = generateAccessToken(user._id, email);
+      const refreshToken = generateRefreshToken(user._id, email);
 
       user.token = token;
+      user.refreshToken = refreshToken;
 
       user.save((error) => {
         if (error) {
@@ -148,7 +151,7 @@ app.post("/sig", jsonParser, async (req, res) => {
           return res.sendStatus(500);
         }
       });
-      return res.status(200).json({});
+      return res.status(200).json({id: user.id, refreshToken});
     }
 
     return res.sendStatus(400);
@@ -246,7 +249,7 @@ app.post("/password/reset", jsonParser, verifyToken, async (req, res) => {
   }
 });
 
-app.post("/test", jsonParser, async (req, res) => {
+app.post("/verify", jsonParser, async (req, res) => {
   try {
     const { id } = req.body;
 
@@ -264,3 +267,4 @@ app.post("/test", jsonParser, async (req, res) => {
 app.listen(5000, () => {
   console.log("Server is running");
 });
+

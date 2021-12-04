@@ -1,0 +1,20 @@
+.header {
+  background-color: #026aa7;
+  color: #EEFCFF;
+  font-family: "Montserrat", sans-serif;
+  padding: 20px;
+}
+.header__inner{
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    align-items: center;
+}
+.account{
+    justify-self: end;
+}
+.account-avatar{
+    width: 64px;
+}
+.account__Menu{
+
+}

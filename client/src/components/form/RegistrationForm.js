@@ -34,7 +34,7 @@ export const RegistrationForm = () => {
   useEffect(() => {
     const refreshToken = localStorage.getItem("refreshToken");
 
-    if (refreshToken !== "undefined") {
+    if (refreshToken !== "undefined" && refreshToken !== null) {
       axios({
         config: {
           headers: {
@@ -58,7 +58,7 @@ export const RegistrationForm = () => {
           }
         })
         .catch((error) => {
-          console.log(error.response);
+          console.log(error.response.data);
         });
     }
   }, []);
@@ -90,7 +90,6 @@ export const RegistrationForm = () => {
           }
         })
         .catch((error) => {
-          console.log(error);
           const response = error.response;
 
           if (response.status === 409) {

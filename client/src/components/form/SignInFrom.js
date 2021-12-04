@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { Link, useNavigate } from "react-router-dom";
 
@@ -29,6 +29,38 @@ export const SignInFrom = () => {
     setDataExists(false);
   };
 
+  useEffect(() => {
+    const refreshToken = localStorage.getItem("refreshToken");
+
+    if (refreshToken !== "undefined" && refreshToken !== null) {
+      axios({
+        config: {
+          headers: {
+            "Content-Type": "application/json",
+            Accept: "application/json",
+          },
+        },
+        method: "POST",
+        url: "/reg/oldUser",
+        data: {
+          refreshToken: JSON.parse(refreshToken),
+        },
+      })
+        .then((response) => {
+          if (response.status === 200) {
+            const { id, refreshToken } = response.data;
+
+            localStorage.setItem("refreshToken", JSON.stringify(refreshToken));
+
+            navigate("/" + id + "/boards");
+          }
+        })
+        .catch((error) => {
+          console.log(error.response.data);
+        });
+    }
+  }, []);
+
   const sendForm = (e) => {
     e.preventDefault();
     if (incorrect === false && password.length >= 6) {
@@ -42,13 +74,17 @@ export const SignInFrom = () => {
         method: "POST",
         url: "/sig",
         data: {
-          email: email,
-          password: password,
+          email,
+          password,
         },
       })
         .then((response) => {
+          const { id, refreshToken } = response.data;
+
           if (response.status === 200) {
-            navigate("/" + response.data.user._id + "/boards");
+            localStorage.setItem("refreshToken", JSON.stringify(refreshToken));
+
+            navigate("/" + id + "/boards");
           }
         })
         .catch((error) => {
