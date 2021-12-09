@@ -1,10 +1,20 @@
+*,
+body,
+html {
+  font-family: "Montserrat", sans-serif;
+}
 a {
   text-decoration: none;
 }
 .container {
   max-width: 1450px;
+
   margin: 0 auto;
 }
 .hidden {
   display: none;
+}
+button {
+  border: none;
+  outline: none;
 }

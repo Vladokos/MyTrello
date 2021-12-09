@@ -1,9 +1,12 @@
-
 form {
   text-align: center;
+
   width: 500px;
+
   margin: 0 auto;
+
   box-shadow: 0 3px 20px 0px rgb(0 0 0 / 10%);
+
   border-radius: 15px;
 }
 .title {
@@ -12,26 +15,34 @@ form {
   font-size: 30px;
   line-height: 1.2;
   color: #fff;
+
   padding: 50px 0 39px 0;
+
   background-color: #57b846;
+
   border-radius: 15px 15px 0 0;
 }
 .inputs {
   margin: 40px 0 20px 0;
 }
 input {
-  height: 55px;
-  width: 300px;
-  padding: 0 35px 0 35px;
-  margin-bottom: 20px;
-  border-radius: 35px;
   font-family: "Montserrat", sans-serif;
   font-size: 15px;
   font-weight: bold;
   color: #1b3815;
-  background-color: #ebebeb;
+
+  height: 55px;
+  width: 300px;
+
+  padding: 0 35px 0 35px;
+  margin-bottom: 20px;
+
+  border-radius: 35px;
   border: none;
   outline: none;
+
+  background-color: #ebebeb;
+
   transition: 0.6s cubic-bezier(0.68, -0.6, 0.32, 1.6);
 }
 input:focus {
@@ -42,10 +53,13 @@ input:focus {
   font-family: "Montserrat", sans-serif;
   font-size: 15px;
   font-weight: bold;
+  color: #e77e26d1;
+
   position: absolute;
   transform: translateX(-190px) translateY(-21px);
-  color: #e77e26d1;
+
   width: 200px;
+
   visibility: hidden;
 }
 .incorrectMessage.active {
@@ -57,40 +71,47 @@ input:focus {
   font-weight: bold;
   text-align: right;
   color: #999999;
+
   margin: 0 20px 43px 0;
 }
 .forgot a {
   font-size: 15px;
   color: #57b846;
+
   transition: 0.3s cubic-bezier(0.65, 0, 0.35, 1);
 }
 .forgot a:hover {
   color: #368726;
 }
 .sendform button {
-  border: none;
-  outline: none;
-  background-color: #31bf37;
-  border-radius: 20px;
-  padding: 15px 171px;
   font-family: "Montserrat", sans-serif;
   font-weight: bold;
   font-size: 15px;
   color: #fff;
+  
+  border-radius: 20px;
+
+  background-color: #31bf37;
+
+  padding: 15px 171px;
+
   cursor: pointer;
+
   transition: 0.3s cubic-bezier(0.65, 0, 0.35, 1);
 }
 .sendform button:hover {
   background-color: #368726;
 }
 .Account {
-  display: grid;
-  grid-gap: 10px;
-  padding: 170px 0 50px 0;
   font-family: "Montserrat", sans-serif;
   font-size: 15px;
   font-weight: bold;
   color: #999999;
+
+  display: grid;
+  grid-gap: 10px;
+
+  padding: 170px 0 50px 0;
 }
 .Account a {
   color: #57b846;
@@ -105,19 +126,26 @@ input:focus {
 }
 .successfully,
 .exist {
-  display: grid;
-  position: absolute;
-  background-color: #fff;
-  color: #000;
-  box-shadow: 0 3px 20px 0px rgb(0 0 0 / 10%);
-  transform: translateX(446px) translateY(-430px);
-  width: 560px;
-  height: 316px;
-  border-radius: 20px;
   font-family: "Montserrat", sans-serif;
   font-size: 28px;
   font-weight: bold;
+  color: #000;
   text-align: center;
+
+  display: grid;
+
+  position: absolute;
+
+  background-color: #fff;
+
+  box-shadow: 0 3px 20px 0px rgb(0 0 0 / 10%);
+
+  transform: translateX(446px) translateY(-430px);
+
+  width: 560px;
+  height: 316px;
+
+  border-radius: 20px;
 }
 .exist.forgot {
   transform: translateX(446px) translateY(-496px);
@@ -126,15 +154,22 @@ input:focus {
 /* svg cross */
 .checkmark {
   display: block;
+
   align-self: center;
+
   margin: 0 auto;
+
   width: 150px;
   height: 150px;
+
   border-radius: 50%;
+
   stroke-width: 2;
   stroke: #fff;
   stroke-miterlimit: 10;
+
   box-shadow: inset 0px 0px 0px #d06079;
+
   animation: fill 0.55s ease-in-out 0.65s forwards,
     scale 0.35s ease-in-out 0.9s both;
 }
@@ -146,21 +181,24 @@ input:focus {
 .Ellipse {
   stroke-dasharray: 1000;
   stroke-dashoffset: 0;
+
   animation: dash 0.9s ease-in-out;
 }
 
 .Line1 {
   stroke-dasharray: 1000;
   stroke-dashoffset: 1000;
-  animation: dash 0.9s 1.1s ease-in-out forwards;
   stroke: #fff;
+
+  animation: dash 0.9s 1.1s ease-in-out forwards;
 }
 
 .Line2 {
   stroke-dasharray: 1000;
   stroke-dashoffset: 1000;
-  animation: dashReverse 0.9s 0.7s ease-in-out forwards;
   stroke: #fff;
+
+  animation: dashReverse 0.9s 0.7s ease-in-out forwards;
 }
 
 @keyframes dash {
@@ -203,18 +241,25 @@ input:focus {
 }
 /* svg cross */
 .closePopup {
-  border: none;
-  outline: none;
-  background-color: #31bf37;
-  border-radius: 20px;
-  padding: 15px 65px;
   font-family: "Montserrat", sans-serif;
   font-weight: bold;
   font-size: 15px;
   color: #fff;
+
+  border: none;
+  border-radius: 20px;
+
+  outline: none;
+
+  background-color: #31bf37;
+
+  padding: 15px 65px;
+
   cursor: pointer;
+
   align-self: center;
   justify-self: center;
+
   transition: 0.3s cubic-bezier(0.65, 0, 0.35, 1);
 }
 .closePopup:hover {
@@ -229,25 +274,34 @@ input:focus {
 .SmallLine {
   stroke-dasharray: 1000;
   stroke-dashoffset: 1000;
+
   animation: dash 0.9s 1.1s ease-in forwards;
 }
 .BigLine {
   stroke-dasharray: 1000;
   stroke-dashoffset: 1000;
+
   animation: dashReverse 0.9s 0.7s cubic-bezier(0.65, 0, 0.35, 1) forwards;
 }
 
 .check {
   display: block;
+
   align-self: center;
+
   margin: 0 auto;
+
   width: 150px;
   height: 150px;
+
   border-radius: 50%;
+
   stroke-width: 2;
   stroke: #fff;
   stroke-miterlimit: 10;
+
   box-shadow: inset 0px 0px 0px #70d060;
+
   animation: fillCheck 0.55s ease-in-out 0.65s forwards,
     scale 0.35s ease-in-out 0.9s both;
 }
@@ -255,8 +309,9 @@ input:focus {
 .StokeRound {
   stroke-dasharray: 1000;
   stroke-dashoffset: 1000;
-  animation: dash 0.9s ease-in-out forwards;
   stroke: #70d060;
+
+  animation: dash 0.9s ease-in-out forwards;
 }
 
 @keyframes fillCheck {
@@ -275,14 +330,17 @@ input:focus {
   font-weight: 500;
   font-size: 186px;
   color: transparent;
+
   background: linear-gradient(183deg, #70d060, #398ce3);
   background-clip: text;
+
   margin-bottom: 80px;
 }
 .notFound__inner div {
   font-size: 32px;
+
   margin-bottom: 28px;
 }
-.notFound__inner a{
+.notFound__inner a {
   color: #70d060;
 }

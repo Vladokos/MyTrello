@@ -29,7 +29,11 @@ export const Boards = () => {
   const createBoard = () => {
     const { id } = params;
 
+    if (nameBoard.length < 1) return;
+
     dispatch(addBoards({ id, nameBoard }));
+
+    setCreateVisibility(false);
   };
 
   useEffect(() => {
@@ -85,8 +89,24 @@ export const Boards = () => {
       <div className="workspace">
         <div className="container">
           <div className="workspace__inner">
-            <div className="createBoards">
-              <button onClick={visibleCreateMenu}>Create a new board</button>
+            <div className="boards">
+              <ul>
+                {boards.map((board) => (
+                  <li className="board" key={board.nameBoard}>
+                    <Link
+                      to={"/board/" + board._id + "/" + board.nameBoard}
+                      key={board._id}
+                    >
+                      {board.nameBoard}
+                    </Link>
+                  </li>
+                ))}
+                <li className="createBoards">
+                  <button onClick={visibleCreateMenu}>
+                    Create a new board
+                  </button>
+                </li>
+              </ul>
             </div>
           </div>
         </div>
@@ -96,9 +116,22 @@ export const Boards = () => {
       >
         <div className="container">
           <div className="menuCreateBoard__inner">
-            <input type="text" value={nameBoard} onChange={onNameBoardChange} />
-            <button onClick={createBoard}>Create</button>
-            <button onClick={cancelCreateBoard}>Cancel</button>
+            <div className="settingsBoard">
+              <input
+                type="text"
+                placeholder="Add a board name"
+                value={nameBoard}
+                onChange={onNameBoardChange}
+              />
+            </div>
+
+            <button
+              onClick={createBoard}
+              className={nameBoard.length > 0 ? "activeCreate" : ""}
+            >
+              Create
+            </button>
+            <button onClick={cancelCreateBoard}>X</button>
           </div>
         </div>
       </div>
