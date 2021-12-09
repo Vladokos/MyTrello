@@ -7,6 +7,7 @@ const verifyToken = require("./middleware/verifyToken");
 
 require("./config/database").connect();
 const dataUsers = require("./model/user");
+const dataBoards = require("./model/boards");
 
 const app = express();
 const jsonParser = express.json();
@@ -131,7 +132,6 @@ app.post("/reg", jsonParser, async (req, res) => {
 
 app.post("/sig", jsonParser, async (req, res) => {
   try {
-
     const { email, password } = req.body;
 
     const user = await dataUsers.findOne({ email });
@@ -151,7 +151,7 @@ app.post("/sig", jsonParser, async (req, res) => {
           return res.sendStatus(500);
         }
       });
-      return res.status(200).json({id: user.id, refreshToken});
+      return res.status(200).json({ id: user.id, refreshToken });
     }
 
     return res.sendStatus(400);
@@ -248,16 +248,57 @@ app.post("/password/reset", jsonParser, verifyToken, async (req, res) => {
     res.status(400).send("Error");
   }
 });
-
+// change the link request 
 app.post("/verify", jsonParser, async (req, res) => {
   try {
-    const { id } = req.body;
+    const { id, refreshToken } = req.body;
 
-    const { token } = await dataUsers.findOne({ _id: id });
+    const data = await dataUsers.findOne({ _id: id, refreshToken });
 
-    if (token) {
-      jwt.verify(token, process.env.TOKEN_KEY);
-    }
+    if (!data) return res.status(400).send("Error");
+    // maybe need generate new access and refresh token
+    jwt.verify(refreshToken, process.env.REFRESHTOKEN_KEY);
+
+    return res.status(200).send({ message: "successfully" });
+  } catch (error) {
+    console.log(error);
+    res.status(400).send("Error");
+  }
+});
+
+app.get("/boards/:id/all", async (req, res) => {
+  try {
+    const idUser = req.params.id;
+    const boardsData = await dataBoards.find({
+      idUser,
+    });
+
+    if (!boardsData) return res.status(400).send("Error");
+
+    return res.status(200).send(boardsData);
+  } catch (error) {
+    console.log(error);
+    res.status(400).send("Error");
+  }
+});
+
+app.post("/boards/create", jsonParser, async (req, res) => {
+  try {
+    const { nameBoard, idUser } = req.body;
+
+    const newBoard = await new dataBoards({
+      nameBoard,
+      idUser,
+    });
+
+    newBoard.save((error) => {
+      if (error) {
+        console.log(error);
+        return res.sendStatus(500);
+      }
+    });
+
+    res.status(200).send(newBoard);
   } catch (error) {
     console.log(error);
     res.status(400).send("Error");
@@ -267,4 +308,3 @@ app.post("/verify", jsonParser, async (req, res) => {
 app.listen(5000, () => {
   console.log("Server is running");
 });
-

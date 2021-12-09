@@ -1,20 +1,58 @@
 .header {
   background-color: #026aa7;
-  color: #EEFCFF;
+  color: #eefcff;
+
   font-family: "Montserrat", sans-serif;
   padding: 20px;
 }
-.header__inner{
-    display: grid;
-    grid-template-columns: repeat(5, 1fr);
-    align-items: center;
+.header__inner {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  align-items: center;
 }
-.account{
-    justify-self: end;
+.account {
+  justify-self: end;
 }
-.account-avatar{
-    width: 64px;
+.account-avatar {
+  width: 64px;
 }
-.account__Menu{
 
+.createBoards {
+  margin-top: 40px;
+
+  text-align: center;
 }
+.createBoards button {
+  cursor: pointer;
+
+  width: 196px;
+  height: 96px;
+
+  border: none;
+  outline: none;
+  background-color: #e7e9ed;
+  border-radius: 3px;
+
+  font-size: 14px;
+  font-weight: 400;
+  color: #172b4d;
+}
+
+.menuCreateBoard {
+  position: absolute;
+}
+.menuCreateBoard__inner {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+}
+.menuCreateBoard__inner input{
+  grid-column: 1/3;
+}
+.menuCreateBoard__inner button:nth-child(2) {
+  grid-area: 2 / 2 / 2 / 2;
+}
+.menuCreateBoard__inner button:nth-child(3) {
+  grid-area: 2 / 1 / 2 / 1;
+}
+
+
