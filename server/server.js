@@ -50,7 +50,7 @@ const transporter = nodemailer.createTransport({
   },
 });
 
-app.post("/reg/oldUser", jsonParser, async (req, res) => {
+app.post("/form/oldUser", jsonParser, async (req, res) => {
   try {
     const { refreshToken } = req.body;
 
@@ -69,9 +69,11 @@ app.post("/reg/oldUser", jsonParser, async (req, res) => {
         return res.sendStatus(500);
       }
 
-      return res
-        .status(200)
-        .json({ id: data.id, refreshToken: data.refreshToken });
+      return res.status(200).json({
+        id: data.id,
+        refreshToken: data.refreshToken,
+        accessToken: data.token,
+      });
     });
   } catch (error) {
     console.log(error);
@@ -79,7 +81,7 @@ app.post("/reg/oldUser", jsonParser, async (req, res) => {
   }
 });
 
-app.post("/reg", jsonParser, async (req, res) => {
+app.post("/form/registration/newUser", jsonParser, async (req, res) => {
   try {
     const { email, name, password } = req.body;
 
@@ -122,7 +124,9 @@ app.post("/reg", jsonParser, async (req, res) => {
         return res.sendStatus(500);
       }
 
-      return res.status(201).json({ id: information.id, refreshToken });
+      return res
+        .status(201)
+        .json({ id: information.id, refreshToken, accessToken: token });
     });
   } catch (error) {
     console.log(error);
@@ -130,7 +134,7 @@ app.post("/reg", jsonParser, async (req, res) => {
   }
 });
 
-app.post("/sig", jsonParser, async (req, res) => {
+app.post("/form/signIn", jsonParser, async (req, res) => {
   try {
     const { email, password } = req.body;
 
@@ -151,7 +155,9 @@ app.post("/sig", jsonParser, async (req, res) => {
           return res.sendStatus(500);
         }
       });
-      return res.status(200).json({ id: user.id, refreshToken });
+      return res
+        .status(200)
+        .json({ id: user.id, refreshToken, accessToken: token });
     }
 
     return res.sendStatus(400);
@@ -161,7 +167,7 @@ app.post("/sig", jsonParser, async (req, res) => {
   }
 });
 
-app.post("/forg", jsonParser, async (req, res) => {
+app.post("/form/password/forgot", jsonParser, async (req, res) => {
   try {
     const { email, name } = req.body;
 
@@ -198,22 +204,27 @@ app.post("/forg", jsonParser, async (req, res) => {
   }
 });
 
-app.post("/password/validate", jsonParser, verifyToken, async (req, res) => {
-  try {
-    const { token } = req.body;
+app.post(
+  "/form/password/reset/token/validate",
+  jsonParser,
+  async (req, res) => {
+    try {
+      const { token } = req.body;
 
-    const { resetToken } = await dataUsers.findOne({ resetToken: token });
+      const { resetToken } = await dataUsers.findOne({ resetToken: token });
 
-    if (!resetToken) return res.status(404).json({ message: "User not found" });
+      if (!resetToken)
+        return res.status(404).json({ message: "User not found" });
 
-    res.status(200).send("Valid");
-  } catch (error) {
-    console.log(error);
-    res.status(400).send("Error");
+      res.status(200).send("Valid");
+    } catch (error) {
+      console.log(error);
+      res.status(400).send("Error");
+    }
   }
-});
+);
 
-app.post("/password/reset", jsonParser, verifyToken, async (req, res) => {
+app.post("/form/password/reset", jsonParser, async (req, res) => {
   try {
     const { token, password } = req.body;
 
@@ -230,10 +241,12 @@ app.post("/password/reset", jsonParser, verifyToken, async (req, res) => {
     const encryptPassword = await bcrypt.hash(password, 12);
 
     const newToken = generateAccessToken(data._id, data.email);
+    const refreshToken = generateRefreshToken(data._id, data.email);
 
     data.password = encryptPassword;
     data.resetToken = null;
     data.token = newToken;
+    data.refreshToken = refreshToken;
 
     data.save((error) => {
       if (error) {
@@ -248,20 +261,41 @@ app.post("/password/reset", jsonParser, verifyToken, async (req, res) => {
     res.status(400).send("Error");
   }
 });
-// change the link request 
-app.post("/verify", jsonParser, async (req, res) => {
+// change the link request
+app.post("/token/verify", jsonParser, async (req, res) => {
   try {
-    const { id, refreshToken } = req.body;
+    const { id, accessToken } = req.body;
 
-    const data = await dataUsers.findOne({ _id: id, refreshToken });
+    var data = await dataUsers.findOne({ _id: id, accessToken });
 
     if (!data) return res.status(400).send("Error");
     // maybe need generate new access and refresh token
-    jwt.verify(refreshToken, process.env.REFRESHTOKEN_KEY);
+    jwt.verify(accessToken, process.env.TOKEN_KEY);
 
     return res.status(200).send({ message: "successfully" });
   } catch (error) {
-    console.log(error);
+    if (error.message === "jwt expired" || error.name === "TokenExpiredError") {
+      const { refreshToken } = data;
+
+      jwt.verify(refreshToken, process.env.REFRESHTOKEN_KEY, (error) => {
+        if (error) return error;
+      });
+      
+      const newToken = generateAccessToken(data._id, data.email);
+      const newRefreshToken = generateRefreshToken(data._id, data.email);
+
+      data.token = newToken;
+      data.refreshToken = newRefreshToken;
+
+      data.save((error) => {
+        if (error) {
+          console.log(error);
+          return res.sendStatus(500);
+        }
+      });
+      return res.status(200).send({ message: "successfully" });
+    }
+
     res.status(400).send("Error");
   }
 });

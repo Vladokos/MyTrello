@@ -40,10 +40,10 @@ export const ForgotForm = () => {
           },
         },
         method: "POST",
-        url: "/forg",
+        url: "/form/password/forgot",
         data: {
-          email: email,
-          name: name,
+          email,
+          name,
         },
       })
         .then((response) => {

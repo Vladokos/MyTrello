@@ -43,14 +43,16 @@ export const RegistrationForm = () => {
           },
         },
         method: "POST",
-        url: "/reg/oldUser",
+        url: "/form/oldUser",
         data: {
           refreshToken: JSON.parse(refreshToken),
         },
       })
         .then((response) => {
           if (response.status === 200) {
-            const { id, refreshToken } = response.data;
+            const { id, refreshToken, accessToken } = response.data;
+
+            sessionStorage.setItem("accessToken", JSON.stringify(accessToken));
 
             localStorage.setItem("refreshToken", JSON.stringify(refreshToken));
 
@@ -74,7 +76,7 @@ export const RegistrationForm = () => {
           },
         },
         method: "POST",
-        url: "/reg",
+        url: "/form/registration/newUser",
         data: {
           email: email,
           name: name,
@@ -83,9 +85,12 @@ export const RegistrationForm = () => {
       })
         .then((response) => {
           if (response.status === 201) {
-            const { id, refreshToken } = response.data;
+            const { id, refreshToken, accessToken } = response.data;
+
+            sessionStorage.setItem("accessToken", JSON.stringify(accessToken));
 
             localStorage.setItem("refreshToken", JSON.stringify(refreshToken));
+
             navigate("/" + id + "/boards");
           }
         })

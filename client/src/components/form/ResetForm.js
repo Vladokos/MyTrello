@@ -25,7 +25,7 @@ export const ResetForm = () => {
         },
       },
       method: "POST",
-      url: "/password/validate",
+      url: "/form/password/reset/token/validate",
       data: {
         token: params.token,
       },
@@ -50,7 +50,7 @@ export const ResetForm = () => {
           },
         },
         method: "POST",
-        url: "/password/reset",
+        url: "/form/password/reset",
         data: {
           token: params.token,
           password,

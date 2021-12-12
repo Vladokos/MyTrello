@@ -1,3 +1,6 @@
+.boardsMenu {
+  background-color: #fafbfc;
+}
 .header {
   background-color: #026aa7;
 
@@ -10,13 +13,44 @@
   grid-template-columns: repeat(5, 1fr);
   align-items: center;
 }
+.header__inner div:nth-child(4) {
+  cursor: pointer;
+}
 .account {
   justify-self: end;
+
+  cursor: pointer;
 }
 .account-avatar {
   width: 64px;
 }
+.account__menu {
+  position: absolute;
 
+  text-align: center;
+  color: #172b4d;
+
+  width: 304px;
+
+  background-color: #ffffff;
+
+  box-shadow: 0 8px 16px -4px rgb(9 30 66 / 25%), 0 0 0 1px rgb(9 30 66 / 8%);
+}
+.account__menu-title {
+  margin: 15px 0 15px 0;
+}
+.account__menu-title::after {
+  content: "";
+
+  position: absolute;
+
+  background-color: #dfe2e7;
+
+  width: 280px;
+  height: 2px;
+
+  transform: translateX(-169px) translateY(21px);
+}
 .boards ul {
   margin-top: 120px;
 
@@ -28,9 +62,10 @@
 
 .board {
   display: grid;
+  grid-template-rows: 1fr;
+
   text-align: start;
 
-  padding: 8px;
   font-weight: 700;
 
   background-color: rgb(0, 121, 191);
@@ -40,10 +75,10 @@
 
   opacity: 0;
 
-  transform: translateX(-8px) translateY(-56px);
+  transform: translateX(-1px) translateY(-96px);
 
-  width: calc(100% + 16px);
-  height: calc(100% + 64px);
+  width: calc(100% + 1px);
+  height: calc(100% + 96px);
 
   background-color: rgba(0, 0, 0, 0.22);
 
@@ -54,12 +89,13 @@
 }
 .board a {
   color: #fff;
+
+  padding: 8px;
+
   z-index: 1;
 }
 
 .createBoards {
-  /* margin-top: 40px; */
-
   text-align: center;
 }
 .createBoards button {
@@ -86,13 +122,13 @@
   grid-gap: 10px;
 
   position: absolute;
+  z-index: 2;
 
   transform: translateX(544px) translateY(-100px);
 }
-.menuCreateBoard::before {
-  content: "";
-
+.blackBG {
   position: absolute;
+  z-index: 1;
   top: 0;
 
   width: 100%;

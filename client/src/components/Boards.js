@@ -21,10 +21,6 @@ export const Boards = () => {
   const onNameBoardChange = (e) => setNameBoard(e.target.value);
 
   const visibleCreateMenu = () => setCreateVisibility(!createVisibility);
-  const cancelCreateBoard = () => {
-    setCreateVisibility(false);
-    setNameBoard("");
-  };
 
   const createBoard = () => {
     const { id } = params;
@@ -37,10 +33,10 @@ export const Boards = () => {
   };
 
   useEffect(() => {
-    const refreshToken = localStorage.getItem("refreshToken");
+    const accessToken = sessionStorage.getItem("accessToken");
     const { id } = params;
 
-    if (refreshToken === "undefined" || refreshToken === null) navigate("/sig");
+    if (accessToken === "undefined" || accessToken === null) navigate("/sig");
 
     axios({
       config: {
@@ -50,14 +46,14 @@ export const Boards = () => {
         },
       },
       method: "POST",
-      url: "/verify",
+      url: "/token/verify",
       data: {
         id,
-        refreshToken: JSON.parse(refreshToken),
+        accessToken: JSON.parse(accessToken),
       },
     })
       .then((response) => {
-        if (response.status === 200) {
+        if (response.status === 200 && boards.length === 0) {
           dispatch(getBoards(id));
         }
       })
@@ -69,19 +65,27 @@ export const Boards = () => {
   }, []);
 
   return (
-    <div>
+    <div className="boardsMenu">
       <header className="header">
         <div className="container">
           <div className="header__inner">
             <div className="logo">MyTrello</div>
             <div> recent </div>
             <div> favorites </div>
-            <div> create button </div>
+            <div onClick={visibleCreateMenu}>Create</div>
             <div className="account">
               <div className="account-avatar">
                 <img src={avatar} />
               </div>
-              <div className="account__Menu"></div>
+              <div className="account__menu">
+                <div className="account__menu-title">
+                  Account
+                </div>
+                <ul>
+                  <li>Profile</li>
+                  <li>Log out</li>
+                </ul>
+              </div>
             </div>
           </div>
         </div>
@@ -114,6 +118,7 @@ export const Boards = () => {
       <div
         className={createVisibility === false ? "hidden" : "menuCreateBoard"}
       >
+        <div className="blackBG" onClick={visibleCreateMenu}></div>
         <div className="container">
           <div className="menuCreateBoard__inner">
             <div className="settingsBoard">
@@ -131,7 +136,7 @@ export const Boards = () => {
             >
               Create
             </button>
-            <button onClick={cancelCreateBoard}>X</button>
+            <button onClick={visibleCreateMenu}>X</button>
           </div>
         </div>
       </div>

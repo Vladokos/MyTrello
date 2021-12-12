@@ -41,14 +41,16 @@ export const SignInFrom = () => {
           },
         },
         method: "POST",
-        url: "/reg/oldUser",
+        url: "/form/oldUser",
         data: {
           refreshToken: JSON.parse(refreshToken),
         },
       })
         .then((response) => {
           if (response.status === 200) {
-            const { id, refreshToken } = response.data;
+            const { id, refreshToken, accessToken } = response.data;
+
+            sessionStorage.setItem("accessToken", JSON.stringify(accessToken));
 
             localStorage.setItem("refreshToken", JSON.stringify(refreshToken));
 
@@ -64,6 +66,7 @@ export const SignInFrom = () => {
   const sendForm = (e) => {
     e.preventDefault();
     if (incorrect === false && password.length >= 6) {
+      console.log("test");
       axios({
         config: {
           headers: {
@@ -72,16 +75,18 @@ export const SignInFrom = () => {
           },
         },
         method: "POST",
-        url: "/sig",
+        url: "/form/signIn",
         data: {
           email,
           password,
         },
       })
         .then((response) => {
-          const { id, refreshToken } = response.data;
-
           if (response.status === 200) {
+            const { id, refreshToken, accessToken } = response.data;
+
+            sessionStorage.setItem("accessToken", JSON.stringify(accessToken));
+
             localStorage.setItem("refreshToken", JSON.stringify(refreshToken));
 
             navigate("/" + id + "/boards");
