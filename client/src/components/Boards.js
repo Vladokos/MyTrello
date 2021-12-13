@@ -15,22 +15,14 @@ export const Boards = () => {
   const dispatch = useDispatch();
   const { boards, status } = useSelector((state) => state.boards);
 
+  const [profileVisibility, setProfileVisibility] = useState(false);
   const [createVisibility, setCreateVisibility] = useState(false);
   const [nameBoard, setNameBoard] = useState("");
 
-  const onNameBoardChange = (e) => setNameBoard(e.target.value);
-
+  const visibleProfileMenu = () => setProfileVisibility(!profileVisibility);
   const visibleCreateMenu = () => setCreateVisibility(!createVisibility);
 
-  const createBoard = () => {
-    const { id } = params;
-
-    if (nameBoard.length < 1) return;
-
-    dispatch(addBoards({ id, nameBoard }));
-
-    setCreateVisibility(false);
-  };
+  const onNameBoardChange = (e) => setNameBoard(e.target.value);
 
   useEffect(() => {
     const accessToken = sessionStorage.getItem("accessToken");
@@ -64,6 +56,24 @@ export const Boards = () => {
       });
   }, []);
 
+  const logOut = () => {
+    sessionStorage.removeItem("accessToken");
+
+    localStorage.removeItem("refreshToken");
+
+    navigate("/sig");
+  };
+
+  const createBoard = () => {
+    const { id } = params;
+
+    if (nameBoard.length < 1) return;
+
+    dispatch(addBoards({ id, nameBoard }));
+
+    setCreateVisibility(false);
+  };
+
   return (
     <div className="boardsMenu">
       <header className="header">
@@ -74,17 +84,22 @@ export const Boards = () => {
             <div> favorites </div>
             <div onClick={visibleCreateMenu}>Create</div>
             <div className="account">
-              <div className="account-avatar">
+              <div className="account-avatar" onClick={visibleProfileMenu}>
                 <img src={avatar} />
               </div>
-              <div className="account__menu">
-                <div className="account__menu-title">
-                  Account
-                </div>
+              <div
+                className={
+                  profileVisibility === false ? "hidden" : "account__menu"
+                }
+              >
+                <div className="account__menu-title">Account</div>
                 <ul>
-                  <li>Profile</li>
-                  <li>Log out</li>
+                  <li>
+                    <Link to={"/" + params.id + "/profile"}>Profile</Link>
+                  </li>
+                  <li onClick={logOut}>Log out</li>
                 </ul>
+                <button onClick={visibleProfileMenu}>X</button>
               </div>
             </div>
           </div>

@@ -35,10 +35,35 @@
   background-color: #ffffff;
 
   box-shadow: 0 8px 16px -4px rgb(9 30 66 / 25%), 0 0 0 1px rgb(9 30 66 / 8%);
+
+  transform: translateX(-236px) translateY(10px);
 }
 .account__menu-title {
-  margin: 15px 0 15px 0;
+  margin: 20px 0;
 }
+.account__menu ul {
+  margin: 15px 0;
+}
+.account__menu ul li {
+  margin-bottom: 20px;
+}
+.account__menu button {
+  position: absolute;
+
+  cursor: pointer;
+
+  border: none;
+  outline: none;
+
+  background-color: transparent;
+
+  font-weight: 600;
+  font-size: 16px;
+  color: #172b4d;
+
+  transform: translateX(127px) translateY(-126px);
+}
+
 .account__menu-title::after {
   content: "";
 

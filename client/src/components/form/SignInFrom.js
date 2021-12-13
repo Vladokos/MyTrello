@@ -66,7 +66,6 @@ export const SignInFrom = () => {
   const sendForm = (e) => {
     e.preventDefault();
     if (incorrect === false && password.length >= 6) {
-      console.log("test");
       axios({
         config: {
           headers: {

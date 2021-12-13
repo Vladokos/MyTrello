@@ -6,9 +6,10 @@ import { RegistrationForm } from "./components/form/RegistrationForm";
 import { ForgotForm } from "./components/form/ForgotForm";
 import { ResetForm } from "./components/form/ResetForm";
 
-import { NotFound } from "./components/NotFound";
-
 import { Boards } from "./components/Boards";
+import { Board } from "./components/Board";
+
+import { NotFound } from "./components/NotFound";
 
 import "./styles/reset.css";
 import "./styles/blanks.css";
@@ -24,7 +25,10 @@ function App() {
           <Route path="/reg" element={<RegistrationForm />} />
           <Route path="/forg" element={<ForgotForm />} />
           <Route path="/:token/reset/" element={<ResetForm />} />
+
           <Route path="/:id/boards" element={<Boards />} />
+          <Route path="/board/:id/:name" element={<Board />} />
+
           <Route path="/error/:code" element={<NotFound />} />
           <Route path="/" element={<Navigate replace to="/sig" />} />
         </Routes>
