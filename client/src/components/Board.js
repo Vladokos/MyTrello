@@ -2,13 +2,13 @@ import React, { useState, useEffect } from "react";
 import { useNavigate, useParams, Link } from "react-router-dom";
 
 import { useSelector, useDispatch } from "react-redux";
-import { getBoards, addBoards } from "../features/boards/boardsSlice";
+import { getBoard } from "../features/boards/boardsSlice";
 
 import axios from "axios";
 
 import avatar from "../img/avatar.svg";
 
-export const Boards = () => {
+export const Board = () => {
   const navigate = useNavigate();
   const params = useParams();
 
@@ -17,16 +17,15 @@ export const Boards = () => {
 
   const [profileVisibility, setProfileVisibility] = useState(false);
   const [createVisibility, setCreateVisibility] = useState(false);
-  const [nameBoard, setNameBoard] = useState("");
+
+  const [boardData, setBoardData] = useState();
 
   const visibleProfileMenu = () => setProfileVisibility(!profileVisibility);
   const visibleCreateMenu = () => setCreateVisibility(!createVisibility);
 
-  const onNameBoardChange = (e) => setNameBoard(e.target.value);
-
   useEffect(() => {
     const accessToken = sessionStorage.getItem("accessToken");
-    const { id } = params;
+    const { idBoard } = params;
 
     if (accessToken === "undefined" || accessToken === null) navigate("/sig");
 
@@ -45,7 +44,17 @@ export const Boards = () => {
     })
       .then((response) => {
         if (response.status === 200 && boards.length === 0) {
-          dispatch(getBoards(id));
+          dispatch(getBoard(idBoard));
+        } else if (response.status === 200 && boards.length >= 1) {
+          console.log(boards);
+          const board = boards.filter((board) => {
+            if (board._id === idBoard) {
+              return board;
+            }
+          });
+          console.log(board);
+          setBoardData(board);
+          console.log(boardData);
         }
       })
       .catch((error) => {
@@ -63,18 +72,8 @@ export const Boards = () => {
     navigate("/sig");
   };
 
-  const createBoard = () => {
-    const { id } = params;
-
-    if (nameBoard.length < 1) return;
-
-    dispatch(addBoards({ id, nameBoard }));
-
-    setCreateVisibility(false);
-  };
-
   return (
-    <div className="boardsMenu">
+    <div>
       <header className="header">
         <div className="container">
           <div className="header__inner">
@@ -104,53 +103,18 @@ export const Boards = () => {
           </div>
         </div>
       </header>
-      <div className="workspace">
+      <div className="list">
         <div className="container">
-          <div className="workspace__inner">
-            <div className="boards">
-              <ul>
-                {boards.map((board) => (
-                  <li className="board" key={board.nameBoard}>
-                    <Link
-                      to={"/board/" + board._id + "/" + board.nameBoard}
-                      key={board._id}
-                    >
-                      {board.nameBoard}
-                    </Link>
-                  </li>
-                ))}
-                <li className="createBoards">
-                  <button onClick={visibleCreateMenu}>
-                    Create a new board
-                  </button>
-                </li>
-              </ul>
+          <div className="list__inner">
+            <ul>
+              <li>
+                <button>Add list</button>
+              </li>
+            </ul>
+            <div className="add-list">
+              <input type="text" placeholder="Enter a task name" />
+              <button>Add list</button>
             </div>
-          </div>
-        </div>
-      </div>
-      <div
-        className={createVisibility === false ? "hidden" : "menuCreateBoard"}
-      >
-        <div className="blackBG" onClick={visibleCreateMenu}></div>
-        <div className="container">
-          <div className="menuCreateBoard__inner">
-            <div className="settingsBoard">
-              <input
-                type="text"
-                placeholder="Add a board name"
-                value={nameBoard}
-                onChange={onNameBoardChange}
-              />
-            </div>
-
-            <button
-              onClick={createBoard}
-              className={nameBoard.length > 0 ? "activeCreate" : ""}
-            >
-              Create
-            </button>
-            <button onClick={visibleCreateMenu}>X</button>
           </div>
         </div>
       </div>
