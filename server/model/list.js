@@ -2,9 +2,9 @@ const mongoose = require("mongoose");
 
 const Schema = mongoose.Schema;
 
-const dataColumnsSchema = new Schema(
+const dataListsSchema = new Schema(
   {
-    columnName: String,
+    nameList: String,
     idUser: String,
     idBoard: String
   },
@@ -12,4 +12,4 @@ const dataColumnsSchema = new Schema(
 );
 
 
-module.exports = mongoose.model("dataColumn", dataColumnsSchema);
+module.exports = mongoose.model("dataList", dataListsSchema);
