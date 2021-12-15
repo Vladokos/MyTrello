@@ -8,6 +8,7 @@ const verifyToken = require("./middleware/verifyToken");
 require("./config/database").connect();
 const dataUsers = require("./model/user");
 const dataBoards = require("./model/boards");
+const dataList = require("./model/list");
 
 const app = express();
 const jsonParser = express.json();
@@ -264,9 +265,9 @@ app.post("/form/password/reset", jsonParser, async (req, res) => {
 // change the link request
 app.post("/token/verify", jsonParser, async (req, res) => {
   try {
-    const { id, accessToken } = req.body;
+    const { accessToken } = req.body;
 
-    var data = await dataUsers.findOne({ _id: id, accessToken });
+    var data = await dataUsers.findOne({ accessToken });
 
     if (!data) return res.status(400).send("Error");
     // maybe need generate new access and refresh token
@@ -280,7 +281,7 @@ app.post("/token/verify", jsonParser, async (req, res) => {
       jwt.verify(refreshToken, process.env.REFRESHTOKEN_KEY, (error) => {
         if (error) return error;
       });
-      
+
       const newToken = generateAccessToken(data._id, data.email);
       const newRefreshToken = generateRefreshToken(data._id, data.email);
 
@@ -303,6 +304,7 @@ app.post("/token/verify", jsonParser, async (req, res) => {
 app.get("/boards/:id/all", async (req, res) => {
   try {
     const idUser = req.params.id;
+
     const boardsData = await dataBoards.find({
       idUser,
     });
@@ -313,6 +315,20 @@ app.get("/boards/:id/all", async (req, res) => {
   } catch (error) {
     console.log(error);
     res.status(400).send("Error");
+  }
+});
+app.get("/boards/:id/one", async (req, res) => {
+  try {
+    const idBoard = req.params.id;
+
+    const boardData = await dataBoards.find({ _id: idBoard });
+
+    if (!boardData) return res.status(400).send("Error");
+
+    return res.status(200).send(boardData);
+  } catch (error) {
+    console.log(error);
+    return res.status(400).send("Error");
   }
 });
 
@@ -335,7 +351,47 @@ app.post("/boards/create", jsonParser, async (req, res) => {
     res.status(200).send(newBoard);
   } catch (error) {
     console.log(error);
-    res.status(400).send("Error");
+    return res.status(400).send("Error");
+  }
+});
+
+app.post("/board/lists/get", jsonParser, async (req, res) => {
+  try {
+    const { idBoard } = req.body;
+
+    const listsData = await dataList.find({ idBoard });
+
+    if (!listsData) return res.status(400).send("Error");
+     
+
+    return res.status(200).send(listsData);
+  } catch (error) {
+    console.log(error);
+    return res.status(400).send("Error");
+  }
+});
+
+app.post("/board/list/create", jsonParser, async (req, res) => {
+  try {
+    const { nameList, idUser, idBoard } = req.body;
+
+    const newList = await new dataList({
+      nameList,
+      idUser,
+      idBoard,
+    });
+
+    newList.save((error) => {
+      if (error) {
+        console.log(error);
+        return res.sendStatus(500);
+      }
+    });
+
+    return res.status(200).send(newList);
+  } catch (error) {
+    console.log(error);
+    return res.status(400).send("Error");
   }
 });
 

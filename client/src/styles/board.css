@@ -1,0 +1,14 @@
+.boardMenu {
+  background-color: #0079bf;
+}
+.header {
+  background-color: #004269;
+}
+.list__inner ul {
+  display: flex;
+  gap: 40px;
+}
+.list__inner ul li {
+  width: 272px;
+  background-color: #ebecf0;
+}

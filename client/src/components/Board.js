@@ -1,8 +1,12 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate, useParams, Link } from "react-router-dom";
 
+import  useWindowHeight  from "../hooks/heightWindowHook";
+
 import { useSelector, useDispatch } from "react-redux";
 import { getBoard } from "../features/boards/boardsSlice";
+import { getLists, addList } from "../features/lists/listsSlice";
+
 
 import axios from "axios";
 
@@ -12,16 +16,25 @@ export const Board = () => {
   const navigate = useNavigate();
   const params = useParams();
 
+  const {height} = useWindowHeight();
+  console.log(height);
   const dispatch = useDispatch();
   const { boards, status } = useSelector((state) => state.boards);
+  const { lists } = useSelector((state) => state.lists);
 
   const [profileVisibility, setProfileVisibility] = useState(false);
   const [createVisibility, setCreateVisibility] = useState(false);
+  const [listCreateVisibility, setListCreateVisibility] = useState(false);
 
   const [boardData, setBoardData] = useState();
+  const [nameList, setNameList] = useState("");
 
   const visibleProfileMenu = () => setProfileVisibility(!profileVisibility);
   const visibleCreateMenu = () => setCreateVisibility(!createVisibility);
+  const visibleListCreate = () =>
+    setListCreateVisibility(!listCreateVisibility);
+
+  const onNameListChange = (e) => setNameList(e.target.value);
 
   useEffect(() => {
     const accessToken = sessionStorage.getItem("accessToken");
@@ -44,17 +57,17 @@ export const Board = () => {
     })
       .then((response) => {
         if (response.status === 200 && boards.length === 0) {
-          dispatch(getBoard(idBoard));
+          dispatch(getBoard(idBoard)).then((res) => setBoardData(res.payload));
+          dispatch(getLists(idBoard));
         } else if (response.status === 200 && boards.length >= 1) {
-          console.log(boards);
           const board = boards.filter((board) => {
             if (board._id === idBoard) {
               return board;
             }
           });
-          console.log(board);
           setBoardData(board);
-          console.log(boardData);
+
+          if (lists.length === 0) dispatch(getLists(idBoard));
         }
       })
       .catch((error) => {
@@ -72,8 +85,15 @@ export const Board = () => {
     navigate("/sig");
   };
 
+  const createList = () => {
+    const { idUser } = boardData[0];
+    const idBoard = boardData[0]._id;
+
+    dispatch(addList({ nameList, idUser, idBoard }));
+  };
+
   return (
-    <div>
+    <div className="boardMenu" style={{ height: height }}>
       <header className="header">
         <div className="container">
           <div className="header__inner">
@@ -107,14 +127,26 @@ export const Board = () => {
         <div className="container">
           <div className="list__inner">
             <ul>
+              {lists.map((list) => (
+                <li key={list.nameList}>{list.nameList}</li>
+              ))}
               <li>
-                <button>Add list</button>
+                <button onClick={visibleListCreate}>Add list</button>
+                <div
+                  className={
+                    listCreateVisibility === false ? "hidden" : "add-list"
+                  }
+                >
+                  <input
+                    type="text"
+                    placeholder="Enter a list name"
+                    value={nameList}
+                    onChange={onNameListChange}
+                  />
+                  <button onClick={createList}>Add list</button>
+                </div>
               </li>
             </ul>
-            <div className="add-list">
-              <input type="text" placeholder="Enter a task name" />
-              <button>Add list</button>
-            </div>
           </div>
         </div>
       </div>

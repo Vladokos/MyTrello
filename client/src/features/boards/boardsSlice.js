@@ -8,9 +8,11 @@ const initialState = {
 };
 
 export const getBoard = createAsyncThunk("boards/getBoard", async (id) => {
-  const response = await axios.get("/boards/" + id + "/one").then((response) => {
-    return response.data;
-  });
+  const response = await axios
+    .get("/boards/" + id + "/one")
+    .then((response) => {
+      return response.data;
+    });
   return response;
 });
 
@@ -68,7 +70,7 @@ const boardsSlice = createSlice({
       })
       .addCase(getBoards.fulfilled, (state, action) => {
         state.status = "succeeded";
-        state.boards = state.boards.concat(action.payload);
+        state.boards = action.payload;
       })
       .addCase(addBoards.pending, (state, action) => {
         state.status = "loading";
