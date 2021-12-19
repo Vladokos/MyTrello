@@ -1,12 +1,11 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate, useParams, Link } from "react-router-dom";
 
-import  useWindowHeight  from "../hooks/heightWindowHook";
+import useWindowHeight from "../hooks/heightWindowHook";
 
 import { useSelector, useDispatch } from "react-redux";
 import { getBoard } from "../features/boards/boardsSlice";
 import { getLists, addList } from "../features/lists/listsSlice";
-
 
 import axios from "axios";
 
@@ -16,7 +15,7 @@ export const Board = () => {
   const navigate = useNavigate();
   const params = useParams();
 
-  const {height} = useWindowHeight();
+  const { height } = useWindowHeight();
   console.log(height);
   const dispatch = useDispatch();
   const { boards, status } = useSelector((state) => state.boards);
@@ -94,7 +93,7 @@ export const Board = () => {
 
   return (
     <div className="boardMenu" style={{ height: height }}>
-      <header className="header">
+      <header className="header header-board">
         <div className="container">
           <div className="header__inner">
             <div className="logo">MyTrello</div>
@@ -123,15 +122,23 @@ export const Board = () => {
           </div>
         </div>
       </header>
-      <div className="list">
+      <div className="lists">
         <div className="container">
-          <div className="list__inner">
+          <div className="lists__inner">
             <ul>
               {lists.map((list) => (
-                <li key={list.nameList}>{list.nameList}</li>
+                <li key={list.nameList} className="list">
+                  {list.nameList}
+                  <button key={list.nameList + "-button"}>Add a card</button>
+                </li>
               ))}
-              <li>
-                <button onClick={visibleListCreate}>Add list</button>
+              <li className="createList">
+                <button
+                  onClick={visibleListCreate}
+                  className="createList-button"
+                >
+                  Add a list
+                </button>
                 <div
                   className={
                     listCreateVisibility === false ? "hidden" : "add-list"
@@ -139,11 +146,12 @@ export const Board = () => {
                 >
                   <input
                     type="text"
-                    placeholder="Enter a list name"
+                    placeholder="Enter list name"
                     value={nameList}
                     onChange={onNameListChange}
                   />
                   <button onClick={createList}>Add list</button>
+                  <button onClick={visibleListCreate}>X</button>
                 </div>
               </li>
             </ul>
