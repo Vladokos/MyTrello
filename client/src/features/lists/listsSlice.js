@@ -64,6 +64,7 @@ const listsSlice = createSlice({
   reducers: {
     clearListsState(state, action) {
       state.lists = [];
+      state.status = "idle";
     },
   },
   extraReducers(builder) {
