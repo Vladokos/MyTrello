@@ -16,7 +16,7 @@ export const Board = () => {
   const params = useParams();
 
   const { height } = useWindowHeight();
-  console.log(height);
+
   const dispatch = useDispatch();
   const { boards, status } = useSelector((state) => state.boards);
   const { lists } = useSelector((state) => state.lists);
@@ -27,11 +27,26 @@ export const Board = () => {
 
   const [boardData, setBoardData] = useState();
   const [nameList, setNameList] = useState("");
+  const [nameBoard, setNameBoard] = useState("");
 
   const visibleProfileMenu = () => setProfileVisibility(!profileVisibility);
   const visibleCreateMenu = () => setCreateVisibility(!createVisibility);
   const visibleListCreate = () =>
     setListCreateVisibility(!listCreateVisibility);
+  // change the name function
+  const visibleCardCreate = (e) => {
+    console.log(e);
+    if (!nameBoard) {
+      setNameBoard(e.nativeEvent.path[0]);
+    } else {
+      setNameBoard(e.nativeEvent.path[0]);
+      console.log(e.nativeEvent.path);
+    }
+  };
+
+  useEffect(() => {
+    if (nameBoard) nameBoard.innerHTML += "<div>test</div>";
+  }, [nameBoard]);
 
   const onNameListChange = (e) => setNameList(e.target.value);
 
@@ -89,6 +104,8 @@ export const Board = () => {
     const idBoard = boardData[0]._id;
 
     dispatch(addList({ nameList, idUser, idBoard }));
+
+    setNameList("");
   };
 
   return (
@@ -127,9 +144,21 @@ export const Board = () => {
           <div className="lists__inner">
             <ul>
               {lists.map((list) => (
-                <li key={list.nameList} className="list">
+                <li key={list.nameList} className={"list " + list.nameList}>
                   {list.nameList}
-                  <button key={list.nameList + "-button"}>Add a card</button>
+                  <div
+                    key={list.nameList + "-cards"}
+                    className={"cards " + list.nameList}
+                  >
+                    
+                  </div>
+                  <button
+                    key={list.nameList + "-button"}
+                    onClick={visibleCardCreate}
+                    className={"button-card " + list.nameList}
+                  >
+                    Add a card
+                  </button>
                 </li>
               ))}
               <li className="createList">
