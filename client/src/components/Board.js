@@ -11,6 +11,8 @@ import axios from "axios";
 
 import avatar from "../img/avatar.svg";
 
+import CreateCard from "./portal/CreateCard";
+
 export const Board = () => {
   const navigate = useNavigate();
   const params = useParams();
@@ -27,26 +29,24 @@ export const Board = () => {
 
   const [boardData, setBoardData] = useState();
   const [nameList, setNameList] = useState("");
-  const [nameBoard, setNameBoard] = useState("");
 
   const visibleProfileMenu = () => setProfileVisibility(!profileVisibility);
   const visibleCreateMenu = () => setCreateVisibility(!createVisibility);
   const visibleListCreate = () =>
     setListCreateVisibility(!listCreateVisibility);
+
+  // change
+  const [nameBoard, setNameBoard] = useState("");
+  const [open, setOpen] = useState(false);
+  const [xPos, setXPos] = useState();
+  const [yPos, setYPos] = useState();
   // change the name function
   const visibleCardCreate = (e) => {
-    console.log(e);
-    if (!nameBoard) {
-      setNameBoard(e.nativeEvent.path[0]);
-    } else {
-      setNameBoard(e.nativeEvent.path[0]);
-      console.log(e.nativeEvent.path);
-    }
-  };
+    setXPos(e.target.getBoundingClientRect().x);
+    setYPos(e.target.getBoundingClientRect().y);
 
-  useEffect(() => {
-    if (nameBoard) nameBoard.innerHTML += "<div>test</div>";
-  }, [nameBoard]);
+    setOpen(true);
+  };
 
   const onNameListChange = (e) => setNameList(e.target.value);
 
@@ -108,6 +108,9 @@ export const Board = () => {
     setNameList("");
   };
 
+  const createCard = () => {
+
+  }
   return (
     <div className="boardMenu" style={{ height: height }}>
       <header className="header header-board">
@@ -146,21 +149,28 @@ export const Board = () => {
               {lists.map((list) => (
                 <li key={list.nameList} className={"list " + list.nameList}>
                   {list.nameList}
-                  <div
-                    key={list.nameList + "-cards"}
-                    className={"cards " + list.nameList}
-                  >
-                    
+                  <div key={list.nameList + "test"}>
+                    <div key={list.nameList + "-cards"} className="cards"></div>
+                    <div
+                      key={list.nameList + "-creatCard"}
+                      id={list.nameList + "-creatCard"}
+                    ></div>
+                    <button
+                      key={list.nameList + "-button"}
+                      onClick={visibleCardCreate}
+                      className={"button-card " + list.nameList}
+                    >
+                      Add a card
+                    </button>
                   </div>
-                  <button
-                    key={list.nameList + "-button"}
-                    onClick={visibleCardCreate}
-                    className={"button-card " + list.nameList}
-                  >
-                    Add a card
-                  </button>
                 </li>
               ))}
+              <CreateCard
+                xPos={xPos}
+                yPos={yPos}
+                isOpen={open}
+                closeForm={() => setOpen(false)}
+              />
               <li className="createList">
                 <button
                   onClick={visibleListCreate}
