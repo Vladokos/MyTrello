@@ -4,10 +4,9 @@ const Schema = mongoose.Schema;
 
 const dataCardsSchema = new Schema(
   {
-    cardText: String,
-    idUser: String,
-    idBoard: String,
-    idColumn: String,
+    nameCard: String,
+    idBoard: { type: Schema.Types.ObjectId, ref: 'databoards' },
+    idList: { type: Schema.Types.ObjectId, ref: 'datalists' },
   },
   { versionKey: false }
 );
