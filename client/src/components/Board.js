@@ -6,6 +6,7 @@ import useWindowHeight from "../hooks/heightWindowHook";
 import { useSelector, useDispatch } from "react-redux";
 import { getBoard } from "../features/boards/boardsSlice";
 import { getLists, addList } from "../features/lists/listsSlice";
+import { getCards,addCard } from "../features/card/cardsSlice";
 
 import axios from "axios";
 
@@ -22,6 +23,7 @@ export const Board = () => {
   const dispatch = useDispatch();
   const { boards, status } = useSelector((state) => state.boards);
   const { lists } = useSelector((state) => state.lists);
+  const { cards } = useSelector((state) => state.cards);
 
   const [profileVisibility, setProfileVisibility] = useState(false);
   const [createVisibility, setCreateVisibility] = useState(false);
@@ -36,12 +38,15 @@ export const Board = () => {
     setListCreateVisibility(!listCreateVisibility);
 
   // change
-  const [nameBoard, setNameBoard] = useState("");
+  const [nameCard, setNameCard] = useState("");
+  const [idList, setListId] = useState("");
   const [open, setOpen] = useState(false);
   const [xPos, setXPos] = useState();
   const [yPos, setYPos] = useState();
   // change the name function
   const visibleCardCreate = (e) => {
+    setListId(e.target.className);
+
     setXPos(e.target.getBoundingClientRect().x);
     setYPos(e.target.getBoundingClientRect().y);
 
@@ -49,6 +54,7 @@ export const Board = () => {
   };
 
   const onNameListChange = (e) => setNameList(e.target.value);
+  const onNameCardChange = (e) => setNameCard(e.target.value);
 
   useEffect(() => {
     const accessToken = sessionStorage.getItem("accessToken");
@@ -73,6 +79,7 @@ export const Board = () => {
         if (response.status === 200 && boards.length === 0) {
           dispatch(getBoard(idBoard)).then((res) => setBoardData(res.payload));
           dispatch(getLists(idBoard));
+          dispatch(getCards(idBoard));
         } else if (response.status === 200 && boards.length >= 1) {
           const board = boards.filter((board) => {
             if (board._id === idBoard) {
@@ -100,17 +107,21 @@ export const Board = () => {
   };
 
   const createList = () => {
-    const { idUser } = boardData[0];
     const idBoard = boardData[0]._id;
 
-    dispatch(addList({ nameList, idUser, idBoard }));
+    dispatch(addList({ nameList, idBoard }));
 
     setNameList("");
   };
 
   const createCard = () => {
+    if (!idList) return null;
 
-  }
+    const idBoard = boardData[0]._id;
+
+    dispatch(addCard({ nameCard, idBoard, idList }));
+  };
+
   return (
     <div className="boardMenu" style={{ height: height }}>
       <header className="header header-board">
@@ -149,27 +160,33 @@ export const Board = () => {
               {lists.map((list) => (
                 <li key={list.nameList} className={"list " + list.nameList}>
                   {list.nameList}
-                  <div key={list.nameList + "test"}>
-                    <div key={list.nameList + "-cards"} className="cards"></div>
-                    <div
-                      key={list.nameList + "-creatCard"}
-                      id={list.nameList + "-creatCard"}
-                    ></div>
-                    <button
-                      key={list.nameList + "-button"}
-                      onClick={visibleCardCreate}
-                      className={"button-card " + list.nameList}
-                    >
-                      Add a card
-                    </button>
+                  {/* in this div will be put a cards */}
+                  <div key={list.nameList + "-cards"}>
+                    <ul>
+                      {cards.map((card) =>
+                        card.idList === list._id ? (
+                          <li key={card._id}>{card.nameCard}</li>
+                        ) : null
+                      )}
+                    </ul>
                   </div>
+                  <button
+                    key={list.nameList + "-button"}
+                    onClick={visibleCardCreate}
+                    className={list._id}
+                  >
+                    Add a card
+                  </button>
                 </li>
               ))}
               <CreateCard
                 xPos={xPos}
                 yPos={yPos}
                 isOpen={open}
+                nameCard={nameCard}
+                onNameCardChange={onNameCardChange}
                 closeForm={() => setOpen(false)}
+                sendForm={createCard}
               />
               <li className="createList">
                 <button
