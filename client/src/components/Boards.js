@@ -46,8 +46,8 @@ export const Boards = () => {
     })
       .then((response) => {
         if (response.status === 200 && boards.length <= 1) {
-          dispatch(getBoards(id));
           dispatch(clearListsState());
+          dispatch(getBoards(id));
           return;
         }
         dispatch(clearListsState());
