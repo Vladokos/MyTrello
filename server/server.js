@@ -9,6 +9,7 @@ require("./config/database").connect();
 const dataUsers = require("./model/user");
 const dataBoards = require("./model/boards");
 const dataList = require("./model/list");
+const dataCard = require("./model/card");
 
 const app = express();
 const jsonParser = express.json();
@@ -362,7 +363,6 @@ app.post("/board/lists/get", jsonParser, async (req, res) => {
     const listsData = await dataList.find({ idBoard });
 
     if (!listsData) return res.status(400).send("Error");
-     
 
     return res.status(200).send(listsData);
   } catch (error) {
@@ -377,7 +377,6 @@ app.post("/board/list/create", jsonParser, async (req, res) => {
 
     const newList = await new dataList({
       nameList,
-      idUser,
       idBoard,
     });
 
@@ -389,6 +388,45 @@ app.post("/board/list/create", jsonParser, async (req, res) => {
     });
 
     return res.status(200).send(newList);
+  } catch (error) {
+    console.log(error);
+    return res.status(400).send("Error");
+  }
+});
+
+app.post("/board/list/card/get", jsonParser, async (req, res) => {
+  try {
+    const { idBoard } = req.body;
+
+    const cardData = await dataCard.find({ idBoard });
+
+    if (!cardData) return res.status(400).send("Error");
+
+    return res.status(200).send(cardData);
+  } catch (error) {
+    console.log(error);
+    return res.status(400).send("Error");
+  }
+});
+
+app.post("/board/list/card/create", jsonParser, async (req, res) => {
+  try {
+    const { nameCard, idBoard, idList } = req.body;
+
+    const newCard = await new dataCard({
+      nameCard,
+      idBoard,
+      idList,
+    });
+
+    newCard.save((error) => {
+      if (error) {
+        console.log(error);
+        return res.sendStatus(500);
+      }
+    });
+
+    return res.status(200).send(newCard);
   } catch (error) {
     console.log(error);
     return res.status(400).send("Error");
