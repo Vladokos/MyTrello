@@ -32,7 +32,7 @@ export const getLists = createAsyncThunk("lists/getLists", async (idBoard) => {
 
 export const addList = createAsyncThunk(
   "lists/addList",
-  async ({ nameList, idUser, idBoard }) => {
+  async ({ nameList, idBoard }) => {
     const response = await axios({
       config: {
         headers: {
@@ -44,7 +44,6 @@ export const addList = createAsyncThunk(
       url: "/board/list/create",
       data: {
         nameList,
-        idUser,
         idBoard,
       },
     })
