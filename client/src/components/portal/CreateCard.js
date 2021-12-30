@@ -1,7 +1,15 @@
 import React, { useState } from "react";
 import ReactDOM from "react-dom";
 
-const CreateCard = ({ xPos, yPos, isOpen, closeForm }) => {
+const CreateCard = ({
+  xPos,
+  yPos,
+  isOpen,
+  nameCard,
+  onNameCardChange,
+  closeForm,
+  sendForm,
+}) => {
   if (!isOpen) return null;
 
   // because initial xPos is give some different position
@@ -13,8 +21,12 @@ const CreateCard = ({ xPos, yPos, isOpen, closeForm }) => {
 
   return ReactDOM.createPortal(
     <div style={styles} className="form-createCard">
-      <textarea placeholder="Enter a title for this card…" />
-      <button>Add card</button>
+      <textarea
+        placeholder="Enter a title for this card…"
+        value={nameCard}
+        onChange={onNameCardChange}
+      />
+      <button onClick={sendForm}>Add card</button>
       <button onClick={closeForm}>X</button>
     </div>,
     document.body
