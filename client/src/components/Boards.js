@@ -3,7 +3,6 @@ import { useNavigate, useParams, Link } from "react-router-dom";
 
 import { useSelector, useDispatch } from "react-redux";
 import { getBoards, addBoards } from "../features/boards/boardsSlice";
-import { clearListsState } from "../features/lists/listsSlice";
 
 import axios from "axios";
 
@@ -46,11 +45,9 @@ export const Boards = () => {
     })
       .then((response) => {
         if (response.status === 200 && boards.length <= 1) {
-          dispatch(clearListsState());
           dispatch(getBoards(id));
           return;
         }
-        dispatch(clearListsState());
       })
       .catch((error) => {
         if (error.response.data === "Error" || error.response.status === 400) {

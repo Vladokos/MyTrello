@@ -6,7 +6,7 @@ import useWindowHeight from "../hooks/heightWindowHook";
 import { useSelector, useDispatch } from "react-redux";
 import { getBoard } from "../features/boards/boardsSlice";
 import { getLists, addList } from "../features/lists/listsSlice";
-import { getCards,addCard } from "../features/card/cardsSlice";
+import { getCards, addCard } from "../features/card/cardsSlice";
 
 import axios from "axios";
 
@@ -29,7 +29,6 @@ export const Board = () => {
   const [createVisibility, setCreateVisibility] = useState(false);
   const [listCreateVisibility, setListCreateVisibility] = useState(false);
 
-  const [boardData, setBoardData] = useState();
   const [nameList, setNameList] = useState("");
 
   const visibleProfileMenu = () => setProfileVisibility(!profileVisibility);
@@ -76,20 +75,10 @@ export const Board = () => {
       },
     })
       .then((response) => {
-        if (response.status === 200 && boards.length === 0) {
-          dispatch(getBoard(idBoard)).then((res) => setBoardData(res.payload));
+        if (response.status === 200) {
           dispatch(getLists(idBoard));
           dispatch(getCards(idBoard));
-        } else if (response.status === 200 && boards.length >= 1) {
-          const board = boards.filter((board) => {
-            if (board._id === idBoard) {
-              return board;
-            }
-          });
-          setBoardData(board);
-
-          if (lists.length === 0) dispatch(getLists(idBoard));
-        }
+        } 
       })
       .catch((error) => {
         if (error.response.data === "Error" || error.response.status === 400) {
@@ -107,7 +96,7 @@ export const Board = () => {
   };
 
   const createList = () => {
-    const idBoard = boardData[0]._id;
+    const idBoard = params.idBoard;
 
     dispatch(addList({ nameList, idBoard }));
 
@@ -117,7 +106,7 @@ export const Board = () => {
   const createCard = () => {
     if (!idList) return null;
 
-    const idBoard = boardData[0]._id;
+    const idBoard = params.idBoard;
 
     dispatch(addCard({ nameCard, idBoard, idList }));
   };
@@ -157,28 +146,31 @@ export const Board = () => {
         <div className="container">
           <div className="lists__inner">
             <ul>
-              {lists.map((list) => (
-                <li key={list.nameList} className={"list " + list.nameList}>
-                  {list.nameList}
-                  {/* in this div will be put a cards */}
-                  <div key={list.nameList + "-cards"}>
-                    <ul>
-                      {cards.map((card) =>
-                        card.idList === list._id ? (
-                          <li key={card._id}>{card.nameCard}</li>
-                        ) : null
-                      )}
-                    </ul>
-                  </div>
-                  <button
-                    key={list.nameList + "-button"}
-                    onClick={visibleCardCreate}
-                    className={list._id}
-                  >
-                    Add a card
-                  </button>
-                </li>
-              ))}
+              {lists.map((list) => {
+                if (list.idBoard === params.idBoard) {
+                  return (
+                    <li key={list.nameList} className={"list " + list.nameList}>
+                      {list.nameList}
+                      <div key={list.nameList + "-cards"}>
+                        <ul>
+                          {cards.map((card) => {
+                            if (card.idList === list._id) {
+                              return <li key={card._id}>{card.nameCard}</li>;
+                            }
+                          })}
+                        </ul>
+                      </div>
+                      <button
+                        key={list.nameList + "-button"}
+                        onClick={visibleCardCreate}
+                        className={list._id}
+                      >
+                        Add a card
+                      </button>
+                    </li>
+                  );
+                }
+              })}
               <CreateCard
                 xPos={xPos}
                 yPos={yPos}

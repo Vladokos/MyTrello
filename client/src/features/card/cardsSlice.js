@@ -69,7 +69,7 @@ const cardsSlice = createSlice({
       })
       .addCase(getCards.fulfilled, (state, action) => {
         state.status = "succeeded";
-        state.cards = state.cards.concat(action.payload);
+        state.cards = action.payload;
       })
       .addCase(addCard.pending, (state, action) => {
         state.status = "loading";

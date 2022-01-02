@@ -7,15 +7,6 @@ const initialState = {
   status: "idle",
 };
 
-export const getBoard = createAsyncThunk("boards/getBoard", async (id) => {
-  const response = await axios
-    .get("/boards/" + id + "/one")
-    .then((response) => {
-      return response.data;
-    });
-  return response;
-});
-
 export const getBoards = createAsyncThunk("boards/getBoards", async (id) => {
   const response = await axios
     .get("/boards/" + id + "/all")
@@ -58,13 +49,6 @@ const boardsSlice = createSlice({
   reducers: {},
   extraReducers(builder) {
     builder
-      .addCase(getBoard.pending, (state, action) => {
-        state.status = "loading";
-      })
-      .addCase(getBoard.fulfilled, (state, action) => {
-        state.status = "succeeded";
-        state.boards = state.boards.concat(action.payload);
-      })
       .addCase(getBoards.pending, (state, action) => {
         state.status = "loading";
       })

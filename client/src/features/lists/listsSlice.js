@@ -60,12 +60,7 @@ export const addList = createAsyncThunk(
 const listsSlice = createSlice({
   name: "lists",
   initialState,
-  reducers: {
-    clearListsState(state, action) {
-      state.lists = [];
-      state.status = "idle";
-    },
-  },
+  reducers: {},
   extraReducers(builder) {
     builder
       .addCase(getLists.pending, (state, action) => {
@@ -73,7 +68,7 @@ const listsSlice = createSlice({
       })
       .addCase(getLists.fulfilled, (state, action) => {
         state.status = "succeeded";
-        state.lists = state.lists.concat(action.payload);
+        state.lists = action.payload;
       })
       .addCase(addList.pending, (state, action) => {
         state.status = "loading";
@@ -84,7 +79,5 @@ const listsSlice = createSlice({
       });
   },
 });
-
-export const { clearListsState } = listsSlice.actions;
 
 export default listsSlice.reducer;
