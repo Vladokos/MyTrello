@@ -10,9 +10,11 @@
 .lists__inner ul {
   display: flex;
   gap: 40px;
+
+  height: 100%;
 }
 .list {
-  display: grid;
+  height: 100%;
 
   padding: 10px;
 
@@ -182,4 +184,25 @@
   justify-self: start;
 
   background-color: transparent;
+}
+.lists__inner ul .cards {
+  display: grid;
+  grid-gap: 10px;
+
+  margin: 15px 0;
+}
+.cards li {
+  display: block;
+
+  padding: 10px;
+
+  min-height: 20px;
+
+  line-height: 20px;
+
+  border-radius: 3px;
+
+  background-color: #fff;
+
+  box-shadow: 0 1px 0 #091e4240;
 }
