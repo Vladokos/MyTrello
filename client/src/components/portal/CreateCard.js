@@ -9,6 +9,7 @@ const CreateCard = ({
   onNameCardChange,
   closeForm,
   sendForm,
+  refComponent,
 }) => {
   if (!isOpen) return null;
 
@@ -22,6 +23,7 @@ const CreateCard = ({
   return ReactDOM.createPortal(
     <div style={styles} className="form-createCard">
       <textarea
+        ref={refComponent}
         placeholder="Enter a title for this card…"
         value={nameCard}
         onChange={onNameCardChange}

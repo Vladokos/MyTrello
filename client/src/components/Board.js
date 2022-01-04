@@ -1,10 +1,9 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { useNavigate, useParams, Link } from "react-router-dom";
 
 import useWindowHeight from "../hooks/heightWindowHook";
 
 import { useSelector, useDispatch } from "react-redux";
-import { getBoard } from "../features/boards/boardsSlice";
 import { getLists, addList } from "../features/lists/listsSlice";
 import { getCards, addCard } from "../features/card/cardsSlice";
 
@@ -21,7 +20,6 @@ export const Board = () => {
   const { height } = useWindowHeight();
 
   const dispatch = useDispatch();
-  const { boards, status } = useSelector((state) => state.boards);
   const { lists } = useSelector((state) => state.lists);
   const { cards } = useSelector((state) => state.cards);
 
@@ -33,17 +31,24 @@ export const Board = () => {
 
   const visibleProfileMenu = () => setProfileVisibility(!profileVisibility);
   const visibleCreateMenu = () => setCreateVisibility(!createVisibility);
-  const visibleListCreate = () =>
-    setListCreateVisibility(!listCreateVisibility);
+  const visibleListCreate = () => {
+    if (open) setOpen(false);
 
+    setListCreateVisibility(!listCreateVisibility);
+  };
   // change
   const [nameCard, setNameCard] = useState("");
   const [idList, setListId] = useState("");
   const [open, setOpen] = useState(false);
   const [xPos, setXPos] = useState();
   const [yPos, setYPos] = useState();
+  const listInput = useRef(null);
+  const cardInput = useRef(null);
+
   // change the name function
   const visibleCardCreate = (e) => {
+    if (listCreateVisibility) setListCreateVisibility(false);
+
     setListId(e.target.className);
 
     setXPos(e.target.getBoundingClientRect().x);
@@ -57,6 +62,7 @@ export const Board = () => {
 
   useEffect(() => {
     const accessToken = sessionStorage.getItem("accessToken");
+
     const { idBoard } = params;
 
     if (accessToken === "undefined" || accessToken === null) navigate("/sig");
@@ -78,7 +84,7 @@ export const Board = () => {
         if (response.status === 200) {
           dispatch(getLists(idBoard));
           dispatch(getCards(idBoard));
-        } 
+        }
       })
       .catch((error) => {
         if (error.response.data === "Error" || error.response.status === 400) {
@@ -101,6 +107,8 @@ export const Board = () => {
     dispatch(addList({ nameList, idBoard }));
 
     setNameList("");
+
+    listInput.current.focus();
   };
 
   const createCard = () => {
@@ -108,7 +116,14 @@ export const Board = () => {
 
     const idBoard = params.idBoard;
 
-    dispatch(addCard({ nameCard, idBoard, idList }));
+    // when the card was render(added on the state in redux) then the popup moves down
+    dispatch(addCard({ nameCard, idBoard, idList })).then(() =>
+      setYPos(yPos + 50)
+    );
+
+    setNameCard("");
+
+    cardInput.current.focus();
   };
 
   return (
@@ -149,22 +164,16 @@ export const Board = () => {
               {lists.map((list) => {
                 if (list.idBoard === params.idBoard) {
                   return (
-                    <li key={list.nameList} className={"list " + list.nameList}>
+                    <li key={list._id} className={"list " + list.nameList}>
                       {list.nameList}
-                      <div key={list.nameList + "-cards"}>
-                        <ul>
-                          {cards.map((card) => {
-                            if (card.idList === list._id) {
-                              return <li key={card._id}>{card.nameCard}</li>;
-                            }
-                          })}
-                        </ul>
-                      </div>
-                      <button
-                        key={list.nameList + "-button"}
-                        onClick={visibleCardCreate}
-                        className={list._id}
-                      >
+                      <ul className="cards">
+                        {cards.map((card) => {
+                          if (card.idList === list._id) {
+                            return <li key={card._id}>{card.nameCard}</li>;
+                          }
+                        })}
+                      </ul>
+                      <button onClick={visibleCardCreate} className={list._id}>
                         Add a card
                       </button>
                     </li>
@@ -179,6 +188,7 @@ export const Board = () => {
                 onNameCardChange={onNameCardChange}
                 closeForm={() => setOpen(false)}
                 sendForm={createCard}
+                refComponent={cardInput}
               />
               <li className="createList">
                 <button
@@ -193,6 +203,7 @@ export const Board = () => {
                   }
                 >
                   <input
+                    ref={listInput}
                     type="text"
                     placeholder="Enter list name"
                     value={nameList}
