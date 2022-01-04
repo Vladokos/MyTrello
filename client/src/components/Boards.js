@@ -71,6 +71,8 @@ export const Boards = () => {
 
     dispatch(addBoards({ id, nameBoard }));
 
+    setNameBoard("");
+
     setCreateVisibility(false);
   };
 
