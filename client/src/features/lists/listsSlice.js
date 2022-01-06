@@ -68,7 +68,10 @@ const listsSlice = createSlice({
       })
       .addCase(getLists.fulfilled, (state, action) => {
         state.status = "succeeded";
+
         state.lists = action.payload;
+
+        // state.lists = state.lists.concat(action.payload);
       })
       .addCase(addList.pending, (state, action) => {
         state.status = "loading";

@@ -12,6 +12,7 @@ import axios from "axios";
 import avatar from "../img/avatar.svg";
 
 import CreateCard from "./portal/CreateCard";
+import OutsideClick from "../hooks/oustideClick";
 
 export const Board = () => {
   const navigate = useNavigate();
@@ -45,6 +46,15 @@ export const Board = () => {
   const listInput = useRef(null);
   const cardInput = useRef(null);
 
+  const testForm = useRef(null);
+
+  const setFalse = () => {
+    setListCreateVisibility(false);
+    setOpen(false);
+    setProfileVisibility(false);
+  };
+
+  OutsideClick(testForm, setFalse);
   // change the name function
   const visibleCardCreate = (e) => {
     if (listCreateVisibility) setListCreateVisibility(false);
@@ -83,6 +93,7 @@ export const Board = () => {
       .then((response) => {
         if (response.status === 200) {
           dispatch(getLists(idBoard));
+
           dispatch(getCards(idBoard));
         }
       })
@@ -201,6 +212,7 @@ export const Board = () => {
                   className={
                     listCreateVisibility === false ? "hidden" : "add-list"
                   }
+                  ref={testForm}
                 >
                   <input
                     ref={listInput}
