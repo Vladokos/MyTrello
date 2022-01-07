@@ -5,7 +5,11 @@ import useWindowHeight from "../hooks/heightWindowHook";
 
 import { useSelector, useDispatch } from "react-redux";
 import { getLists, addList } from "../features/lists/listsSlice";
-import { getCards, addCard } from "../features/card/cardsSlice";
+import {
+  getCards,
+  addCard,
+  changePlaceCard,
+} from "../features/card/cardsSlice";
 
 import axios from "axios";
 
@@ -41,12 +45,13 @@ export const Board = () => {
   const [nameCard, setNameCard] = useState("");
   const [idList, setListId] = useState("");
   const [open, setOpen] = useState(false);
-  const [xPos, setXPos] = useState();
-  const [yPos, setYPos] = useState();
+  const [xPos, setXPos] = useState(null);
+  const [yPos, setYPos] = useState(null);
   const listInput = useRef(null);
   const cardInput = useRef(null);
 
   const testForm = useRef(null);
+  const testCard = useRef(null);
 
   const setFalse = () => {
     setListCreateVisibility(false);
@@ -55,6 +60,7 @@ export const Board = () => {
   };
 
   OutsideClick(testForm, setFalse);
+  OutsideClick(testCard, setFalse);
   // change the name function
   const visibleCardCreate = (e) => {
     if (listCreateVisibility) setListCreateVisibility(false);
@@ -114,8 +120,9 @@ export const Board = () => {
 
   const createList = () => {
     const idBoard = params.idBoard;
+    const order = lists.length + 1;
 
-    dispatch(addList({ nameList, idBoard }));
+    dispatch(addList({ nameList, order, idBoard }));
 
     setNameList("");
 
@@ -127,14 +134,55 @@ export const Board = () => {
 
     const idBoard = params.idBoard;
 
+    // filter a cards and finding the cards who have idList equal list _id
+    // and after add +1 for a new card have a correct order
+    let order = cards.filter((card) => card.idList === idList);
+    order = order.length + 1;
+
     // when the card was render(added on the state in redux) then the popup moves down
-    dispatch(addCard({ nameCard, idBoard, idList })).then(() =>
+    dispatch(addCard({ nameCard, order, idBoard, idList })).then(() =>
       setYPos(yPos + 50)
     );
 
     setNameCard("");
 
     cardInput.current.focus();
+  };
+
+  const [currentList, setCurrentList] = useState(null);
+  const [currentCard, setCurrentCard] = useState(null);
+
+  const dragStart = (e, list, card) => {
+    setCurrentList(list);
+    setCurrentCard(card);
+  };
+
+  const dragEnd = (e, list, card) => {
+    e.preventDefault();
+
+    console.log("test");
+  };
+
+  const dragOver = (e) => {
+    e.preventDefault();
+  };
+
+  const drop = (e, list, card) => {
+    e.preventDefault();
+
+    const idCard = currentCard._id;
+    const idNewList = card.idList;
+
+    dispatch(changePlaceCard({ idCard, idNewList }));
+  };
+
+  const onDropCardHandler = (e, list) => {
+    e.preventDefault();
+
+    const idCard = currentCard._id;
+    const idNewList = list._id;
+
+    dispatch(changePlaceCard({ idCard, idNewList }));
   };
 
   return (
@@ -154,6 +202,7 @@ export const Board = () => {
                 className={
                   profileVisibility === false ? "hidden" : "account__menu"
                 }
+                ref={testCard}
               >
                 <div className="account__menu-title">Account</div>
                 <ul>
@@ -175,12 +224,30 @@ export const Board = () => {
               {lists.map((list) => {
                 if (list.idBoard === params.idBoard) {
                   return (
-                    <li key={list._id} className={"list " + list.nameList}>
+                    <li
+                      key={list._id}
+                      className={"list " + list.nameList}
+                      onDragOver={(e) => dragOver(e)}
+                      onDrop={(e) => onDropCardHandler(e, list)}
+                    >
                       {list.nameList}
                       <ul className="cards">
                         {cards.map((card) => {
                           if (card.idList === list._id) {
-                            return <li key={card._id}>{card.nameCard}</li>;
+                            return (
+                              <li
+                                onDragStart={(e) => dragStart(e, list, card)}
+                                onDragLeave={(e) => dragEnd(e)}
+                                onDragEnd={(e) => dragEnd(e, card)}
+                                onDragOver={(e) => dragOver(e)}
+                                onDrop={(e) => drop(e, list, card)}
+                                draggable={true}
+                                key={card._id}
+                                className="card"
+                              >
+                                {card.nameCard}
+                              </li>
+                            );
                           }
                         })}
                       </ul>
