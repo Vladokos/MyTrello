@@ -4,7 +4,7 @@ import { useNavigate, useParams, Link } from "react-router-dom";
 import useWindowHeight from "../hooks/heightWindowHook";
 
 import { useSelector, useDispatch } from "react-redux";
-import { getLists, addList } from "../features/lists/listsSlice";
+import { getLists, addList, changePlaceList } from "../features/lists/listsSlice";
 import {
   getCards,
   addCard,
@@ -16,6 +16,7 @@ import axios from "axios";
 import avatar from "../img/avatar.svg";
 
 import CreateCard from "./portal/CreateCard";
+// name file
 import OutsideClick from "../hooks/oustideClick";
 
 export const Board = () => {
@@ -154,13 +155,13 @@ export const Board = () => {
 
   const dragStart = (e, list, card) => {
     setCurrentList(list);
-    setCurrentCard(card);
+    if(card){
+      setCurrentCard(card);
+    }
   };
 
-  const dragEnd = (e, list, card) => {
+  const dragEnd = (e) => {
     e.preventDefault();
-
-    console.log("test");
   };
 
   const dragOver = (e) => {
@@ -170,19 +171,35 @@ export const Board = () => {
   const drop = (e, list, card) => {
     e.preventDefault();
 
-    const idCard = currentCard._id;
-    const idNewList = card.idList;
+    // const idCard = currentCard._id;
+    // const idNewList = card.idList;
 
-    dispatch(changePlaceCard({ idCard, idNewList }));
+    // dispatch(changePlaceCard({ idCard, idNewList }));
+
+    // setCurrentList(null);
+    // setCurrentCard(null);
   };
 
   const onDropCardHandler = (e, list) => {
     e.preventDefault();
 
-    const idCard = currentCard._id;
-    const idNewList = list._id;
+    if (currentCard === null) {
+      console.log(lists);
 
-    dispatch(changePlaceCard({ idCard, idNewList }));
+      const idList = currentList._id;
+      const order = list.order;
+
+      dispatch(changePlaceList({idList, order}));
+
+    }
+
+    // const idCard = currentCard._id;
+    // const idNewList = list._id;
+
+    // dispatch(changePlaceCard({ idCard, idNewList }));
+
+    // setCurrentList(null);
+    // setCurrentCard(null);
   };
 
   return (
@@ -227,8 +244,10 @@ export const Board = () => {
                     <li
                       key={list._id}
                       className={"list " + list.nameList}
+                      onDragStart={(e) => dragStart(e, list, null)}
                       onDragOver={(e) => dragOver(e)}
                       onDrop={(e) => onDropCardHandler(e, list)}
+                      draggable={true}
                     >
                       {list.nameList}
                       <ul className="cards">
@@ -238,7 +257,7 @@ export const Board = () => {
                               <li
                                 onDragStart={(e) => dragStart(e, list, card)}
                                 onDragLeave={(e) => dragEnd(e)}
-                                onDragEnd={(e) => dragEnd(e, card)}
+                                onDragEnd={(e) => dragEnd(e)}
                                 onDragOver={(e) => dragOver(e)}
                                 onDrop={(e) => drop(e, list, card)}
                                 draggable={true}
