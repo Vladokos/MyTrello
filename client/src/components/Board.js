@@ -4,7 +4,13 @@ import { useNavigate, useParams, Link } from "react-router-dom";
 import useWindowHeight from "../hooks/heightWindowHook";
 
 import { useSelector, useDispatch } from "react-redux";
-import { getLists, addList, changePlaceList } from "../features/lists/listsSlice";
+import { getBoard, changeLists } from "../features/boards/boardsSlice";
+import {
+  getLists,
+  addList,
+  changePlaceList,
+  sortingCards,
+} from "../features/lists/listsSlice";
 import {
   getCards,
   addCard,
@@ -26,6 +32,7 @@ export const Board = () => {
   const { height } = useWindowHeight();
 
   const dispatch = useDispatch();
+  const { boards } = useSelector((state) => state.boards);
   const { lists } = useSelector((state) => state.lists);
   const { cards } = useSelector((state) => state.cards);
 
@@ -100,7 +107,7 @@ export const Board = () => {
       .then((response) => {
         if (response.status === 200) {
           dispatch(getLists(idBoard));
-
+          dispatch(getBoard(idBoard));
           dispatch(getCards(idBoard));
         }
       })
@@ -121,9 +128,9 @@ export const Board = () => {
 
   const createList = () => {
     const idBoard = params.idBoard;
-    const order = lists.length + 1;
 
-    dispatch(addList({ nameList, order, idBoard }));
+    dispatch(addList({ nameList, idBoard }));
+    dispatch(getBoard(idBoard));
 
     setNameList("");
 
@@ -155,7 +162,7 @@ export const Board = () => {
 
   const dragStart = (e, list, card) => {
     setCurrentList(list);
-    if(card){
+    if (card) {
       setCurrentCard(card);
     }
   };
@@ -184,13 +191,19 @@ export const Board = () => {
     e.preventDefault();
 
     if (currentCard === null) {
-      console.log(lists);
+      console.log(list);
+      console.log(boards);
+      console.log(currentList);
 
-      const idList = currentList._id;
-      const order = list.order;
+      // toIdex
+      // This number is needed to know where will be moved a list
+      console.log(boards[0].lists.indexOf(list._id));
 
-      dispatch(changePlaceList({idList, order}));
+      const currentListId = currentList._id;
+      const position = boards[0].lists.indexOf(list._id);
+      const idBoard = boards[0]._id;
 
+      dispatch(changeLists({ position, idBoard, currentListId }));
     }
 
     // const idCard = currentCard._id;
@@ -201,6 +214,12 @@ export const Board = () => {
     // setCurrentList(null);
     // setCurrentCard(null);
   };
+  // useEffect(() => {
+  //   console.log(boards);
+  //   if (boards.length > 0) {
+  //     dispatch(sortingCards(boards));
+  //   }
+  // }, [boards]);
 
   return (
     <div className="boardMenu" style={{ height: height }}>
