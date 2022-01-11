@@ -9,7 +9,8 @@ import {
   getLists,
   addList,
   changePlaceList,
-  sortingCards,
+  sortingLists,
+  changeCards,
 } from "../features/lists/listsSlice";
 import {
   getCards,
@@ -142,13 +143,9 @@ export const Board = () => {
 
     const idBoard = params.idBoard;
 
-    // filter a cards and finding the cards who have idList equal list _id
-    // and after add +1 for a new card have a correct order
-    let order = cards.filter((card) => card.idList === idList);
-    order = order.length + 1;
-
-    // when the card was render(added on the state in redux) then the popup moves down
-    dispatch(addCard({ nameCard, order, idBoard, idList })).then(() =>
+    // when the card was render(added on the state in redux)
+    //  then the popup moves down
+    dispatch(addCard({ nameCard, idBoard, idList })).then(() =>
       setYPos(yPos + 50)
     );
 
@@ -178,6 +175,25 @@ export const Board = () => {
   const drop = (e, list, card) => {
     e.preventDefault();
 
+    // console.log(card);
+    // console.log(currentCard);
+    // console.log(list);
+    // console.log(currentList);
+
+    const position = list.cards.indexOf(card._id);
+
+    const firstListId = list._id;
+    const secondListId =
+      firstListId === currentList._id ? null : currentList._id;
+
+    const currentCardId =currentCard._id;
+  
+// change the variable name
+// and firstListId is second and secondListId is first
+    dispatch(
+      changeCards({ position, firstListId, secondListId, currentCardId })
+    );
+
     // const idCard = currentCard._id;
     // const idNewList = card.idList;
 
@@ -191,13 +207,13 @@ export const Board = () => {
     e.preventDefault();
 
     if (currentCard === null) {
-      console.log(list);
-      console.log(boards);
-      console.log(currentList);
+      // console.log(list);
+      // console.log(boards);
+      // console.log(currentList);
 
       // toIdex
       // This number is needed to know where will be moved a list
-      console.log(boards[0].lists.indexOf(list._id));
+      // console.log(boards[0].lists.indexOf(list._id));
 
       const currentListId = currentList._id;
       const position = boards[0].lists.indexOf(list._id);
@@ -214,12 +230,11 @@ export const Board = () => {
     // setCurrentList(null);
     // setCurrentCard(null);
   };
-  // useEffect(() => {
-  //   console.log(boards);
-  //   if (boards.length > 0) {
-  //     dispatch(sortingCards(boards));
-  //   }
-  // }, [boards]);
+  useEffect(() => {
+    if (boards.length > 0) {
+      dispatch(sortingLists(boards));
+    }
+  }, [boards]);
 
   return (
     <div className="boardMenu" style={{ height: height }}>
