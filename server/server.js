@@ -322,7 +322,7 @@ app.get("/boards/:id/one", async (req, res) => {
   try {
     const idBoard = req.params.id;
 
-    const boardData = await dataBoards.find({ _id: idBoard });
+    const boardData = await dataBoards.findById(idBoard);
 
     if (!boardData) return res.status(400).send("Error");
 
@@ -373,21 +373,39 @@ app.post("/board/lists/get", jsonParser, async (req, res) => {
 
 app.post("/board/list/create", jsonParser, async (req, res) => {
   try {
-    const { nameList, idUser, idBoard } = req.body;
+    const { nameList, idBoard } = req.body;
 
     const newList = await new dataList({
       nameList,
       idBoard,
     });
 
-    newList.save((error) => {
-      if (error) {
-        console.log(error);
-        return res.sendStatus(500);
-      }
-    });
+    const list = await newList.save();
 
-    return res.status(200).send(newList);
+    const board = await dataBoards.findById(idBoard);
+    board.lists.push(list);
+
+    await board.save();
+
+    return res.status(200).send(list);
+  } catch (error) {
+    console.log(error);
+    return res.status(400).send("Error");
+  }
+});
+
+app.post("/board/list/move", jsonParser, async (req, res) => {
+  try {
+    const { position, idBoard, currentListId } = req.body;
+
+    const board = await dataBoards.findById(idBoard);
+
+    board.lists.splice(board.lists.indexOf(currentListId), 1);
+    board.lists.splice(position, 0, currentListId);
+
+    await board.save();
+
+    return res.status(200).send(board);
   } catch (error) {
     console.log(error);
     return res.status(400).send("Error");
@@ -416,17 +434,65 @@ app.post("/board/list/card/create", jsonParser, async (req, res) => {
     const newCard = await new dataCard({
       nameCard,
       idBoard,
-      idList,
     });
 
-    newCard.save((error) => {
-      if (error) {
-        console.log(error);
-        return res.sendStatus(500);
-      }
-    });
+    const card = await newCard.save();
 
-    return res.status(200).send(newCard);
+    const list = await dataList.findById(idList);
+    list.cards.push(card);
+
+    await list.save();
+
+    return res.status(200).send(card);
+  } catch (error) {
+    console.log(error);
+    return res.status(400).send("Error");
+  }
+});
+// change
+app.post("/board/list/card/move", jsonParser, async (req, res) => {
+  try {
+    const { fromListId, toListId, position, cardId } = req.body;
+
+    if (fromListId === toListId) {
+      const oldList = await dataList.findById(fromListId);
+
+      oldList.cards.splice(oldList.cards.indexOf(cardId), 1);
+      oldList.cards.splice(position, 0, cardId);
+
+      await oldList.save();
+
+      return res.status(200).send({oldList});
+    } 
+    else {
+      const oldList = await dataList.findById(fromListId);
+      const newList = await dataList.findById(toListId);
+
+      oldList.cards.splice(oldList.cards.indexOf(cardId), 1);
+      newList.cards.splice(position, 0, cardId);
+
+      await oldList.save();
+      await newList.save();
+
+      return res.status(200).send({ oldList, newList });
+    }
+  } catch (error) {
+    console.log(error);
+    return res.status(400).send("Error");
+  }
+});
+
+app.post("/board/list/card/changeList", jsonParser, async (req, res) => {
+  try {
+    const { _id, idList } = req.body;
+
+    const card = await dataCard.findOneAndUpdate(
+      { _id },
+      { idList },
+      { new: true }
+    );
+
+    return res.status(200).send(card);
   } catch (error) {
     console.log(error);
     return res.status(400).send("Error");
