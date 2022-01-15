@@ -16,6 +16,7 @@ import {
   getCards,
   addCard,
   changePlaceCard,
+  sortingCards,
 } from "../features/card/cardsSlice";
 
 import axios from "axios";
@@ -145,9 +146,10 @@ export const Board = () => {
 
     // when the card was render(added on the state in redux)
     //  then the popup moves down
-    dispatch(addCard({ nameCard, idBoard, idList })).then(() =>
-      setYPos(yPos + 50)
-    );
+    dispatch(addCard({ nameCard, idBoard, idList })).then(() => {
+      dispatch(getLists(idBoard));
+      setYPos(yPos + 50);
+    });
 
     setNameCard("");
 
@@ -175,60 +177,36 @@ export const Board = () => {
   const drop = (e, list, card) => {
     e.preventDefault();
 
-    // console.log(card);
-    // console.log(currentCard);
-    // console.log(list);
-    // console.log(currentList);
+    const fromListId = currentList._id;
+    const toListId = list._id;
+    const position = lists[lists.indexOf(list)].cards.indexOf(card._id);
+    const cardId = currentCard._id;
 
-    const position = list.cards.indexOf(card._id);
-
-    const firstListId = list._id;
-    const secondListId =
-      firstListId === currentList._id ? null : currentList._id;
-
-    const currentCardId =currentCard._id;
-  
-// change the variable name
-// and firstListId is second and secondListId is first
-    dispatch(
-      changeCards({ position, firstListId, secondListId, currentCardId })
-    );
-
-    // const idCard = currentCard._id;
-    // const idNewList = card.idList;
-
-    // dispatch(changePlaceCard({ idCard, idNewList }));
-
-    // setCurrentList(null);
-    // setCurrentCard(null);
+    dispatch(changeCards({ fromListId, toListId, position, cardId }));
   };
 
   const onDropCardHandler = (e, list) => {
     e.preventDefault();
 
     if (currentCard === null) {
-      // console.log(list);
-      // console.log(boards);
-      // console.log(currentList);
-
-      // toIdex
-      // This number is needed to know where will be moved a list
-      // console.log(boards[0].lists.indexOf(list._id));
-
       const currentListId = currentList._id;
       const position = boards[0].lists.indexOf(list._id);
       const idBoard = boards[0]._id;
 
       dispatch(changeLists({ position, idBoard, currentListId }));
+      // make a check for drop a card on a board
+      // also make a check for drop a card under an another card 
+    } else if (list.cards.length === 0) {
+      const fromListId = currentList._id;
+      const toListId = list._id;
+      const position = 0;
+      const cardId = currentCard._id;
+
+      dispatch(changeCards({ fromListId, toListId, position, cardId }));
     }
 
-    // const idCard = currentCard._id;
-    // const idNewList = list._id;
-
-    // dispatch(changePlaceCard({ idCard, idNewList }));
-
-    // setCurrentList(null);
-    // setCurrentCard(null);
+    setCurrentList(null);
+    setCurrentCard(null);
   };
   useEffect(() => {
     if (boards.length > 0) {
@@ -284,24 +262,27 @@ export const Board = () => {
                       draggable={true}
                     >
                       {list.nameList}
+
                       <ul className="cards">
-                        {cards.map((card) => {
-                          if (card.idList === list._id) {
-                            return (
-                              <li
-                                onDragStart={(e) => dragStart(e, list, card)}
-                                onDragLeave={(e) => dragEnd(e)}
-                                onDragEnd={(e) => dragEnd(e)}
-                                onDragOver={(e) => dragOver(e)}
-                                onDrop={(e) => drop(e, list, card)}
-                                draggable={true}
-                                key={card._id}
-                                className="card"
-                              >
-                                {card.nameCard}
-                              </li>
-                            );
-                          }
+                        {list.cards.map((cardId) => {
+                          return cards.map((card) => {
+                            if (cardId === card._id) {
+                              return (
+                                <li
+                                  onDragStart={(e) => dragStart(e, list, card)}
+                                  onDragLeave={(e) => dragEnd(e)}
+                                  onDragEnd={(e) => dragEnd(e)}
+                                  onDragOver={(e) => dragOver(e)}
+                                  onDrop={(e) => drop(e, list, card)}
+                                  draggable={true}
+                                  key={card._id}
+                                  className="card"
+                                >
+                                  {card.nameCard}
+                                </li>
+                              );
+                            }
+                          });
                         })}
                       </ul>
                       <button onClick={visibleCardCreate} className={list._id}>
