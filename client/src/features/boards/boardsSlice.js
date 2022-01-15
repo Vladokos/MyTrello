@@ -7,6 +7,15 @@ const initialState = {
   status: "idle",
 };
 
+export const getBoard = createAsyncThunk("boards/getBoard", async (id) => {
+  const response = await axios
+    .get("/boards/" + id + "/one")
+    .then((response) => {
+      return response.data;
+    });
+  return response;
+});
+
 export const getBoards = createAsyncThunk("boards/getBoards", async (id) => {
   const response = await axios
     .get("/boards/" + id + "/all")
@@ -42,6 +51,34 @@ export const addBoards = createAsyncThunk(
     return response;
   }
 );
+//  change name
+export const changeLists = createAsyncThunk(
+  "boards/changeListsPosition",
+  async ({ position, idBoard, currentListId }) => {
+    const response = await axios({
+      config: {
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "application/json",
+        },
+      },
+      method: "POST",
+      url: "/board/list/move",
+      data: {
+        position,
+        idBoard,
+        currentListId,
+      },
+    })
+      .then((response) => {
+        return response.data;
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+    return response;
+  }
+);
 
 const boardsSlice = createSlice({
   name: "boards",
@@ -49,6 +86,16 @@ const boardsSlice = createSlice({
   reducers: {},
   extraReducers(builder) {
     builder
+      .addCase(getBoard.pending, (state, action) => {
+        state.status = "loading";
+      })
+      .addCase(getBoard.fulfilled, (state, action) => {
+        state.status = "succeeded";
+
+        // action has an initial state as an object
+        // but not as an object in array
+        state.boards = [action.payload];
+      })
       .addCase(getBoards.pending, (state, action) => {
         state.status = "loading";
       })
@@ -62,6 +109,13 @@ const boardsSlice = createSlice({
       .addCase(addBoards.fulfilled, (state, action) => {
         state.status = "succeeded";
         state.boards.push(action.payload);
+      })
+      .addCase(changeLists.pending, (state, action) => {
+        state.status = "loading";
+      })
+      .addCase(changeLists.fulfilled, (state, action) => {
+        state.status = "succeeded";
+        state.boards = [action.payload];
       });
   },
 });
