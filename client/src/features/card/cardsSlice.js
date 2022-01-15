@@ -45,7 +45,7 @@ export const addCard = createAsyncThunk(
       data: {
         nameCard,
         idBoard,
-        idList,
+        idList
       },
     })
       .then((response) => {
@@ -61,7 +61,8 @@ export const addCard = createAsyncThunk(
 const cardsSlice = createSlice({
   name: "cards",
   initialState,
-  reducers: {},
+  reducers: {
+  },
   extraReducers(builder) {
     builder
       .addCase(getCards.pending, (state, action) => {
@@ -77,8 +78,10 @@ const cardsSlice = createSlice({
       .addCase(addCard.fulfilled, (state, action) => {
         state.status = "succeeded";
         state.cards.push(action.payload);
-      });
+      })
   },
 });
+
+export const { sortingCards } = cardsSlice.actions;
 
 export default cardsSlice.reducer;
