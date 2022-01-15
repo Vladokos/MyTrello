@@ -57,10 +57,57 @@ export const addList = createAsyncThunk(
   }
 );
 
+// change the name
+export const changeCards = createAsyncThunk(
+  "lists/changeCardsPosition",
+  async ({ fromListId, toListId, position, cardId }) => {
+    const response = await axios({
+      config: {
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "application/json",
+        },
+      },
+      method: "POST",
+      url: "/board/list/card/move",
+      data: {
+        fromListId,
+        toListId,
+        position,
+        cardId,
+      },
+    })
+      .then((response) => {
+        return response.data;
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+    return response;
+  }
+);
+
 const listsSlice = createSlice({
   name: "lists",
   initialState,
-  reducers: {},
+  reducers: {
+    // change name
+    sortingLists(state, action) {
+      const orderLists = action.payload[0].lists;
+
+      let result = [];
+
+      for (let i = 0; i < orderLists.length; i++) {
+        for (let j = 0; j < state.lists.length; j++) {
+          if (orderLists[i] === state.lists[j]._id) {
+            result.push(state.lists[j]);
+          }
+        }
+      }
+
+      state.lists = result;
+    },
+  },
   extraReducers(builder) {
     builder
       .addCase(getLists.pending, (state, action) => {
@@ -70,8 +117,6 @@ const listsSlice = createSlice({
         state.status = "succeeded";
 
         state.lists = action.payload;
-
-        // state.lists = state.lists.concat(action.payload);
       })
       .addCase(addList.pending, (state, action) => {
         state.status = "loading";
@@ -79,8 +124,35 @@ const listsSlice = createSlice({
       .addCase(addList.fulfilled, (state, action) => {
         state.status = "succeeded";
         state.lists.push(action.payload);
+      })
+      .addCase(changeCards.pending, (state, action) => {
+        state.status = "loading";
+      })
+      .addCase(changeCards.fulfilled, (state, action) => {
+        state.status = "succeeded";
+
+        const { oldList, newList } = action.payload;
+
+        if (newList === undefined) {
+          for (let i = 0; i < state.lists.length; i++) {
+            if (state.lists[i]._id === oldList._id) {
+              state.lists[i] = oldList;
+            }
+          }
+        } else {
+          for (let i = 0; i < state.lists.length; i++) {
+            if (state.lists[i]._id === oldList._id) {
+              state.lists[i] = oldList;
+            }
+            if (state.lists[i]._id === newList._id) {
+              state.lists[i] = newList;
+            }
+          }
+        }
       });
   },
 });
+
+export const { sortingLists } = listsSlice.actions;
 
 export default listsSlice.reducer;
