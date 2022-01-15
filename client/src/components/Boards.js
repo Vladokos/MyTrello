@@ -46,7 +46,6 @@ export const Boards = () => {
       .then((response) => {
         if (response.status === 200 && boards.length <= 1) {
           dispatch(getBoards(id));
-          return;
         }
       })
       .catch((error) => {
@@ -112,16 +111,18 @@ export const Boards = () => {
           <div className="workspace__inner">
             <div className="boards">
               <ul>
-                {boards.map((board) => (
-                  <li className="board" key={board.nameBoard}>
-                    <Link
-                      to={"/board/" + board._id + "/" + board.nameBoard}
-                      key={board._id}
-                    >
-                      {board.nameBoard}
-                    </Link>
-                  </li>
-                ))}
+                {boards.map((board) => {
+                  return (
+                    <li className="board" key={board.nameBoard}>
+                      <Link
+                        to={"/board/" + board._id + "/" + board.nameBoard}
+                        key={board._id}
+                      >
+                        {board.nameBoard}
+                      </Link>
+                    </li>
+                  );
+                })}
                 <li className="createBoards">
                   <button onClick={visibleCreateMenu}>
                     Create a new board
