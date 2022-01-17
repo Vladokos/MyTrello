@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 
-export default function OutsideClick(ref, func) {
+export default function OutsideClick(ref, closeModal) {
   useEffect(() => {
     function handleClickOutside(event) {
       if (
@@ -8,7 +8,7 @@ export default function OutsideClick(ref, func) {
         !ref.current.contains(event.target) &&
         ref.current.className !== "hidden"
       ) {
-        func();
+        closeModal();
       }
     }
     document.addEventListener("mousedown", handleClickOutside);

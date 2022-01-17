@@ -5,7 +5,7 @@ const Schema = mongoose.Schema;
 const dataCardsSchema = new Schema(
   {
     nameCard: String,
-    idBoard: { type: Schema.Types.ObjectId, ref: "databoards" },
+    boardId: { type: Schema.Types.ObjectId, ref: "databoards" },
   },
   { versionKey: false }
 );

@@ -54,7 +54,7 @@ export const addBoards = createAsyncThunk(
 //  change name
 export const changeLists = createAsyncThunk(
   "boards/changeListsPosition",
-  async ({ position, idBoard, currentListId }) => {
+  async ({ position, boardId, currentListId }) => {
     const response = await axios({
       config: {
         headers: {
@@ -66,7 +66,7 @@ export const changeLists = createAsyncThunk(
       url: "/board/list/move",
       data: {
         position,
-        idBoard,
+        boardId,
         currentListId,
       },
     })

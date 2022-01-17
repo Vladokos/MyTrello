@@ -7,7 +7,7 @@ const initialState = {
   status: "idle",
 };
 
-export const getLists = createAsyncThunk("lists/getLists", async (idBoard) => {
+export const getLists = createAsyncThunk("lists/getLists", async (boardId) => {
   const response = await axios({
     config: {
       headers: {
@@ -18,7 +18,7 @@ export const getLists = createAsyncThunk("lists/getLists", async (idBoard) => {
     method: "POST",
     url: "/board/lists/get",
     data: {
-      idBoard,
+      boardId,
     },
   })
     .then((response) => {
@@ -32,7 +32,7 @@ export const getLists = createAsyncThunk("lists/getLists", async (idBoard) => {
 
 export const addList = createAsyncThunk(
   "lists/addList",
-  async ({ nameList, idBoard }) => {
+  async ({ nameList, boardId }) => {
     const response = await axios({
       config: {
         headers: {
@@ -44,7 +44,7 @@ export const addList = createAsyncThunk(
       url: "/board/list/create",
       data: {
         nameList,
-        idBoard,
+        boardId,
       },
     })
       .then((response) => {

@@ -28,7 +28,7 @@ function App() {
           <Route path="/:token/reset/" element={<ResetForm />} />
 
           <Route path="/:id/boards" element={<Boards />} />
-          <Route path="/board/:idBoard/:name" element={<Board />} />
+          <Route path="/board/:boardId/:name" element={<Board />} />
 
           <Route path="/error/:code" element={<NotFound />} />
           <Route path="/" element={<Navigate replace to="/sig" />} />

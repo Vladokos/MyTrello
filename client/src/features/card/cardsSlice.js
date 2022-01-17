@@ -7,7 +7,7 @@ const initialState = {
   status: "idle",
 };
 
-export const getCards = createAsyncThunk("cards/getCards", async (idBoard) => {
+export const getCards = createAsyncThunk("cards/getCards", async (boardId) => {
   const response = await axios({
     config: {
       headers: {
@@ -18,7 +18,7 @@ export const getCards = createAsyncThunk("cards/getCards", async (idBoard) => {
     method: "POST",
     url: "/board/list/card/get",
     data: {
-      idBoard,
+      boardId,
     },
   })
     .then((response) => {
@@ -32,7 +32,7 @@ export const getCards = createAsyncThunk("cards/getCards", async (idBoard) => {
 
 export const addCard = createAsyncThunk(
   "cards/addCard",
-  async ({ nameCard, idBoard, idList }) => {
+  async ({ nameCard, boardId, listId }) => {
     const response = await axios({
       config: {
         headers: {
@@ -44,8 +44,8 @@ export const addCard = createAsyncThunk(
       url: "/board/list/card/create",
       data: {
         nameCard,
-        idBoard,
-        idList
+        boardId,
+        listId
       },
     })
       .then((response) => {
@@ -81,7 +81,5 @@ const cardsSlice = createSlice({
       })
   },
 });
-
-export const { sortingCards } = cardsSlice.actions;
 
 export default cardsSlice.reducer;

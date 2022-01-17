@@ -11,7 +11,7 @@ const dataListsSchema = new Schema(
         ref: "datacards",
       },
     ],
-    idBoard:{ type: Schema.Types.ObjectId, ref: 'databoards' },
+    boardId:{ type: Schema.Types.ObjectId, ref: 'databoards' },
   },
   { versionKey: false }
 );

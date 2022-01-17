@@ -2,30 +2,23 @@ import React, { useState, useEffect, useRef } from "react";
 import { useNavigate, useParams, Link } from "react-router-dom";
 
 import useWindowHeight from "../hooks/heightWindowHook";
+import OutsideClick from "../hooks/outsideClick";
+
+import CreateCard from "./portal/CreateCard";
 
 import { useSelector, useDispatch } from "react-redux";
 import { getBoard, changeLists } from "../features/boards/boardsSlice";
 import {
   getLists,
   addList,
-  changePlaceList,
   sortingLists,
   changeCards,
 } from "../features/lists/listsSlice";
-import {
-  getCards,
-  addCard,
-  changePlaceCard,
-  sortingCards,
-} from "../features/card/cardsSlice";
+import { getCards, addCard } from "../features/card/cardsSlice";
 
 import axios from "axios";
 
 import avatar from "../img/avatar.svg";
-
-import CreateCard from "./portal/CreateCard";
-// name file
-import OutsideClick from "../hooks/oustideClick";
 
 export const Board = () => {
   const navigate = useNavigate();
@@ -38,49 +31,45 @@ export const Board = () => {
   const { lists } = useSelector((state) => state.lists);
   const { cards } = useSelector((state) => state.cards);
 
-  const [profileVisibility, setProfileVisibility] = useState(false);
-  const [createVisibility, setCreateVisibility] = useState(false);
-  const [listCreateVisibility, setListCreateVisibility] = useState(false);
+  const [profileShow, setProfileShow] = useState(false);
+  const [boardFormShow, setBoardFromShow] = useState(false);
+  const [listFormShow, setListFormShow] = useState(false);
 
   const [nameList, setNameList] = useState("");
-
-  const visibleProfileMenu = () => setProfileVisibility(!profileVisibility);
-  const visibleCreateMenu = () => setCreateVisibility(!createVisibility);
-  const visibleListCreate = () => {
-    if (open) setOpen(false);
-
-    setListCreateVisibility(!listCreateVisibility);
-  };
-  // change
   const [nameCard, setNameCard] = useState("");
-  const [idList, setListId] = useState("");
-  const [open, setOpen] = useState(false);
-  const [xPos, setXPos] = useState(null);
-  const [yPos, setYPos] = useState(null);
+
+  const [listId, setListId] = useState("");
+
+  const [cardFormShow, setCardFormShow] = useState(false);
+  const [xPosCardForm, setXPos] = useState(null);
+  const [yPosCardForm, setYPos] = useState(null);
+
+  const profileRef = useRef(null);
   const listInput = useRef(null);
+  const listFormRef = useRef(null);
+  const cardFormRef = useRef(null);
   const cardInput = useRef(null);
 
-  const testForm = useRef(null);
-  const testCard = useRef(null);
+  const [currentList, setCurrentList] = useState(null);
+  const [currentCard, setCurrentCard] = useState(null);
 
-  const setFalse = () => {
-    setListCreateVisibility(false);
-    setOpen(false);
-    setProfileVisibility(false);
+  const visibleProfileMenu = () => setProfileShow(!profileShow);
+  const visibleCreateMenu = () => setBoardFromShow(!boardFormShow);
+  const visibleListCreate = () => setListFormShow(!listFormShow);
+
+  const closeModal = () => {
+    setListFormShow(false);
+    setCardFormShow(false);
+    setProfileShow(false);
   };
 
-  OutsideClick(testForm, setFalse);
-  OutsideClick(testCard, setFalse);
-  // change the name function
   const visibleCardCreate = (e) => {
-    if (listCreateVisibility) setListCreateVisibility(false);
-
     setListId(e.target.className);
 
     setXPos(e.target.getBoundingClientRect().x);
     setYPos(e.target.getBoundingClientRect().y);
 
-    setOpen(true);
+    setCardFormShow(true);
   };
 
   const onNameListChange = (e) => setNameList(e.target.value);
@@ -89,7 +78,7 @@ export const Board = () => {
   useEffect(() => {
     const accessToken = sessionStorage.getItem("accessToken");
 
-    const { idBoard } = params;
+    const { boardId } = params;
 
     if (accessToken === "undefined" || accessToken === null) navigate("/sig");
 
@@ -108,9 +97,9 @@ export const Board = () => {
     })
       .then((response) => {
         if (response.status === 200) {
-          dispatch(getLists(idBoard));
-          dispatch(getBoard(idBoard));
-          dispatch(getCards(idBoard));
+          dispatch(getLists(boardId));
+          dispatch(getBoard(boardId));
+          dispatch(getCards(boardId));
         }
       })
       .catch((error) => {
@@ -129,10 +118,15 @@ export const Board = () => {
   };
 
   const createList = () => {
-    const idBoard = params.idBoard;
+    if (nameList.replace(/ /g, "").length <= 0) {
+      listInput.current.focus();
+      return null;
+    }
 
-    dispatch(addList({ nameList, idBoard }));
-    dispatch(getBoard(idBoard));
+    const { boardId } = params;
+
+    dispatch(addList({ nameList, boardId }));
+    dispatch(getBoard(boardId));
 
     setNameList("");
 
@@ -140,15 +134,18 @@ export const Board = () => {
   };
 
   const createCard = () => {
-    if (!idList) return null;
+    if (nameList.replace(/ /g, "").length <= 0 || !listId) {
+      cardInput.current.focus();
+      return null;
+    }
 
-    const idBoard = params.idBoard;
+    const { boardId } = params;
 
     // when the card was render(added on the state in redux)
     //  then the popup moves down
-    dispatch(addCard({ nameCard, idBoard, idList })).then(() => {
-      dispatch(getLists(idBoard));
-      setYPos(yPos + 50);
+    dispatch(addCard({ nameCard, boardId, listId })).then(() => {
+      dispatch(getLists(boardId));
+      setYPos(yPosCardForm + 50);
     });
 
     setNameCard("");
@@ -156,27 +153,14 @@ export const Board = () => {
     cardInput.current.focus();
   };
 
-  const [currentList, setCurrentList] = useState(null);
-  const [currentCard, setCurrentCard] = useState(null);
-
-  const dragStart = (e, list, card) => {
+  const dragStart = (list, card) => {
     setCurrentList(list);
     if (card) {
       setCurrentCard(card);
     }
   };
 
-  const dragEnd = (e) => {
-    e.preventDefault();
-  };
-
-  const dragOver = (e) => {
-    e.preventDefault();
-  };
-
-  const drop = (e, list, card) => {
-    e.preventDefault();
-
+  const drop = (list, card) => {
     const fromListId = currentList._id;
     const toListId = list._id;
     const position = lists[lists.indexOf(list)].cards.indexOf(card._id);
@@ -185,17 +169,15 @@ export const Board = () => {
     dispatch(changeCards({ fromListId, toListId, position, cardId }));
   };
 
-  const onDropCardHandler = (e, list) => {
-    e.preventDefault();
-
+  const onDropCardHandler = (list) => {
     if (currentCard === null) {
       const currentListId = currentList._id;
       const position = boards[0].lists.indexOf(list._id);
-      const idBoard = boards[0]._id;
+      const boardId = boards[0]._id;
 
-      dispatch(changeLists({ position, idBoard, currentListId }));
+      dispatch(changeLists({ position, boardId, currentListId }));
       // make a check for drop a card on a board
-      // also make a check for drop a card under an another card 
+      // also make a check for drop a card under an another card
     } else if (list.cards.length === 0) {
       const fromListId = currentList._id;
       const toListId = list._id;
@@ -208,12 +190,16 @@ export const Board = () => {
     setCurrentList(null);
     setCurrentCard(null);
   };
+
   useEffect(() => {
     if (boards.length > 0) {
       dispatch(sortingLists(boards));
     }
   }, [boards]);
 
+  OutsideClick(listFormRef, closeModal);
+  OutsideClick(profileRef, closeModal);
+  OutsideClick(cardFormRef, closeModal);
   return (
     <div className="boardMenu" style={{ height: height }}>
       <header className="header header-board">
@@ -228,10 +214,8 @@ export const Board = () => {
                 <img src={avatar} />
               </div>
               <div
-                className={
-                  profileVisibility === false ? "hidden" : "account__menu"
-                }
-                ref={testCard}
+                className={profileShow === false ? "hidden" : "account__menu"}
+                ref={profileRef}
               >
                 <div className="account__menu-title">Account</div>
                 <ul>
@@ -251,14 +235,16 @@ export const Board = () => {
           <div className="lists__inner">
             <ul>
               {lists.map((list) => {
-                if (list.idBoard === params.idBoard) {
+                if (list.boardId === params.boardId) {
                   return (
                     <li
                       key={list._id}
                       className={"list " + list.nameList}
-                      onDragStart={(e) => dragStart(e, list, null)}
-                      onDragOver={(e) => dragOver(e)}
-                      onDrop={(e) => onDropCardHandler(e, list)}
+                      onDragStart={() => dragStart(list, null)}
+                      onDragOver={(e) => {
+                        e.preventDefault();
+                      }}
+                      onDrop={() => onDropCardHandler(list)}
                       draggable={true}
                     >
                       {list.nameList}
@@ -269,11 +255,17 @@ export const Board = () => {
                             if (cardId === card._id) {
                               return (
                                 <li
-                                  onDragStart={(e) => dragStart(e, list, card)}
-                                  onDragLeave={(e) => dragEnd(e)}
-                                  onDragEnd={(e) => dragEnd(e)}
-                                  onDragOver={(e) => dragOver(e)}
-                                  onDrop={(e) => drop(e, list, card)}
+                                  onDragStart={() => dragStart(list, card)}
+                                  onDragLeave={(e) => {
+                                    e.preventDefault();
+                                  }}
+                                  onDragEnd={(e) => {
+                                    e.preventDefault();
+                                  }}
+                                  onDragOver={(e) => {
+                                    e.preventDefault();
+                                  }}
+                                  onDrop={() => drop(list, card)}
                                   draggable={true}
                                   key={card._id}
                                   className="card"
@@ -293,14 +285,15 @@ export const Board = () => {
                 }
               })}
               <CreateCard
-                xPos={xPos}
-                yPos={yPos}
-                isOpen={open}
+                xPos={xPosCardForm}
+                yPos={yPosCardForm}
+                isOpen={cardFormShow}
                 nameCard={nameCard}
                 onNameCardChange={onNameCardChange}
-                closeForm={() => setOpen(false)}
+                closeForm={() => setCardFormShow(false)}
                 sendForm={createCard}
-                refComponent={cardInput}
+                refInput={cardInput}
+                refForm={cardFormRef}
               />
               <li className="createList">
                 <button
@@ -310,10 +303,8 @@ export const Board = () => {
                   Add a list
                 </button>
                 <div
-                  className={
-                    listCreateVisibility === false ? "hidden" : "add-list"
-                  }
-                  ref={testForm}
+                  className={listFormShow === false ? "hidden" : "add-list"}
+                  ref={listFormRef}
                 >
                   <input
                     ref={listInput}

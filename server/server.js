@@ -320,9 +320,9 @@ app.get("/boards/:id/all", async (req, res) => {
 });
 app.get("/boards/:id/one", async (req, res) => {
   try {
-    const idBoard = req.params.id;
+    const boardId = req.params.id;
 
-    const boardData = await dataBoards.findById(idBoard);
+    const boardData = await dataBoards.findById(boardId);
 
     if (!boardData) return res.status(400).send("Error");
 
@@ -358,9 +358,9 @@ app.post("/boards/create", jsonParser, async (req, res) => {
 
 app.post("/board/lists/get", jsonParser, async (req, res) => {
   try {
-    const { idBoard } = req.body;
+    const { boardId } = req.body;
 
-    const listsData = await dataList.find({ idBoard });
+    const listsData = await dataList.find({ boardId });
 
     if (!listsData) return res.status(400).send("Error");
 
@@ -373,16 +373,16 @@ app.post("/board/lists/get", jsonParser, async (req, res) => {
 
 app.post("/board/list/create", jsonParser, async (req, res) => {
   try {
-    const { nameList, idBoard } = req.body;
+    const { nameList, boardId } = req.body;
 
     const newList = await new dataList({
       nameList,
-      idBoard,
+      boardId,
     });
 
     const list = await newList.save();
 
-    const board = await dataBoards.findById(idBoard);
+    const board = await dataBoards.findById(boardId);
     board.lists.push(list);
 
     await board.save();
@@ -396,9 +396,9 @@ app.post("/board/list/create", jsonParser, async (req, res) => {
 
 app.post("/board/list/move", jsonParser, async (req, res) => {
   try {
-    const { position, idBoard, currentListId } = req.body;
+    const { position, boardId, currentListId } = req.body;
 
-    const board = await dataBoards.findById(idBoard);
+    const board = await dataBoards.findById(boardId);
 
     board.lists.splice(board.lists.indexOf(currentListId), 1);
     board.lists.splice(position, 0, currentListId);
@@ -414,9 +414,9 @@ app.post("/board/list/move", jsonParser, async (req, res) => {
 
 app.post("/board/list/card/get", jsonParser, async (req, res) => {
   try {
-    const { idBoard } = req.body;
+    const { boardId } = req.body;
 
-    const cardData = await dataCard.find({ idBoard });
+    const cardData = await dataCard.find({ boardId });
 
     if (!cardData) return res.status(400).send("Error");
 
@@ -429,16 +429,16 @@ app.post("/board/list/card/get", jsonParser, async (req, res) => {
 
 app.post("/board/list/card/create", jsonParser, async (req, res) => {
   try {
-    const { nameCard, idBoard, idList } = req.body;
+    const { nameCard, boardId, listId } = req.body;
 
     const newCard = await new dataCard({
       nameCard,
-      idBoard,
+      boardId,
     });
 
     const card = await newCard.save();
 
-    const list = await dataList.findById(idList);
+    const list = await dataList.findById(listId);
     list.cards.push(card);
 
     await list.save();
@@ -484,11 +484,11 @@ app.post("/board/list/card/move", jsonParser, async (req, res) => {
 
 app.post("/board/list/card/changeList", jsonParser, async (req, res) => {
   try {
-    const { _id, idList } = req.body;
+    const { _id, listId } = req.body;
 
     const card = await dataCard.findOneAndUpdate(
       { _id },
-      { idList },
+      { listId },
       { new: true }
     );
 
