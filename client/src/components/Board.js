@@ -1,6 +1,8 @@
 import React, { useState, useEffect, useRef } from "react";
 import { useNavigate, useParams, Link } from "react-router-dom";
 
+import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
+
 import useWindowHeight from "../hooks/heightWindowHook";
 import OutsideClick from "../hooks/outsideClick";
 
@@ -34,24 +36,22 @@ export const Board = () => {
   const [profileShow, setProfileShow] = useState(false);
   const [boardFormShow, setBoardFromShow] = useState(false);
   const [listFormShow, setListFormShow] = useState(false);
+  const [cardFormShow, setCardFormShow] = useState(false);
 
   const [nameList, setNameList] = useState("");
   const [nameCard, setNameCard] = useState("");
-
   const [listId, setListId] = useState("");
 
-  const [cardFormShow, setCardFormShow] = useState(false);
   const [xPosCardForm, setXPos] = useState(null);
   const [yPosCardForm, setYPos] = useState(null);
+  const [currentList, setCurrentList] = useState(null);
+  const [currentCard, setCurrentCard] = useState(null);
 
   const profileRef = useRef(null);
   const listInput = useRef(null);
   const listFormRef = useRef(null);
   const cardFormRef = useRef(null);
   const cardInput = useRef(null);
-
-  const [currentList, setCurrentList] = useState(null);
-  const [currentCard, setCurrentCard] = useState(null);
 
   const visibleProfileMenu = () => setProfileShow(!profileShow);
   const visibleCreateMenu = () => setBoardFromShow(!boardFormShow);
@@ -170,25 +170,30 @@ export const Board = () => {
   };
 
   const onDropCardHandler = (list) => {
-    if (currentCard === null) {
-      const currentListId = currentList._id;
-      const position = boards[0].lists.indexOf(list._id);
-      const boardId = boards[0]._id;
+    const currentListId = boards[0].lists[list.source.index];
+    const position = boards[0].lists.indexOf(
+      boards[0].lists[list.destination.index]
+    );
+    const boardId = boards[0]._id;
+    // if (currentCard === null) {
+    //   const currentListId = currentList._id;
+    //   const position = boards[0].lists.indexOf(list._id);
+    //   const boardId = boards[0]._id;
 
-      dispatch(changeLists({ position, boardId, currentListId }));
-      // make a check for drop a card on a board
-      // also make a check for drop a card under an another card
-    } else if (list.cards.length === 0) {
-      const fromListId = currentList._id;
-      const toListId = list._id;
-      const position = 0;
-      const cardId = currentCard._id;
+    dispatch(changeLists({ position, boardId, currentListId }));
+    //   // make a check for drop a card on a board
+    //   // also make a check for drop a card under an another card
+    // } else if (list.cards.length === 0) {
+    //   const fromListId = currentList._id;
+    //   const toListId = list._id;
+    //   const position = 0;
+    //   const cardId = currentCard._id;
 
-      dispatch(changeCards({ fromListId, toListId, position, cardId }));
-    }
+    // dispatch(changeCards({ fromListId, toListId, position, cardId }));
+    // }
 
-    setCurrentList(null);
-    setCurrentCard(null);
+    // setCurrentList(null);
+    // setCurrentCard(null);
   };
 
   useEffect(() => {
@@ -233,7 +238,51 @@ export const Board = () => {
       <div className="lists">
         <div className="container">
           <div className="lists__inner">
-            <ul>
+            <DragDropContext onDragEnd={onDropCardHandler} onDragUpdate={
+              (e) => {console.log(e)}
+            }>
+              <Droppable droppableId="droppable-1" direction="horizontal">
+                {(provided) => (
+                  <ul
+                    className="characters"
+                    {...provided.droppableProps}
+                    ref={provided.innerRef}
+                  >
+                    {lists.map((list, index) => {
+                      return (
+                        <Draggable
+                          key={list._id}
+                          draggableId={list._id}
+                          index={index}
+                          id={list._id}
+                        >
+                          {(provided) => (
+                            <li
+                              ref={provided.innerRef}
+                              {...provided.draggableProps}
+                              {...provided.dragHandleProps}
+                            >
+                              <div className="list">
+                                {list.nameList}
+                                <button
+                                  onClick={visibleCardCreate}
+                                  className={list._id}
+                                >
+                                  Add a card
+                                </button>
+                              </div>
+                            </li>
+                          )}
+                        </Draggable>
+                      );
+                    })}
+                    {provided.placeholder}
+                  </ul>
+                )}
+              </Droppable>
+            </DragDropContext>
+
+            {/* <ul>
               {lists.map((list) => {
                 if (list.boardId === params.boardId) {
                   return (
@@ -247,7 +296,11 @@ export const Board = () => {
                       onDrop={() => onDropCardHandler(list)}
                       draggable={true}
                     >
-                      {list.nameList}
+                      <div
+                        className="list-title"
+                      >
+                        {list.nameList}
+                      </div>
 
                       <ul className="cards">
                         {list.cards.map((cardId) => {
@@ -317,7 +370,7 @@ export const Board = () => {
                   <button onClick={visibleListCreate}>X</button>
                 </div>
               </li>
-            </ul>
+            </ul> */}
           </div>
         </div>
       </div>
