@@ -238,13 +238,15 @@ export const Board = () => {
       <div className="lists">
         <div className="container">
           <div className="lists__inner">
-            <DragDropContext onDragEnd={onDropCardHandler} onDragUpdate={
-              (e) => {console.log(e)}
-            }>
+            <DragDropContext
+              onDragEnd={onDropCardHandler}
+              onDragUpdate={(e) => {
+                console.log(e);
+              }}
+            >
               <Droppable droppableId="droppable-1" direction="horizontal">
                 {(provided) => (
                   <ul
-                    className="characters"
                     {...provided.droppableProps}
                     ref={provided.innerRef}
                   >
@@ -264,6 +266,41 @@ export const Board = () => {
                             >
                               <div className="list">
                                 {list.nameList}
+                                <DragDropContext
+                                  onDragEnd={(e) => {
+                                    console.log(e);
+                                  }}
+                                  onDragUpdate={(e) => {
+                                    console.log(e);
+                                  }}
+                                >
+                                  <Droppable droppableId="droppable-2">
+                                    {(provided) => (
+                                      <div
+                                        {...provided.droppableProps}
+                                        ref={provided.innerRef}
+                                      >
+                                        <ul className="cards">
+                                          {list.cards.map((cardId) => {
+                                            return cards.map((card) => {
+                                              if (cardId === card._id) {
+                                                return (
+                                                  <li
+
+                                                    key={card._id}
+                                                    className="card"
+                                                  >
+                                                    {card.nameCard}
+                                                  </li>
+                                                );
+                                              }
+                                            });
+                                          })}
+                                        </ul>
+                                      </div>
+                                    )}
+                                  </Droppable>
+                                </DragDropContext>
                                 <button
                                   onClick={visibleCardCreate}
                                   className={list._id}
@@ -277,10 +314,45 @@ export const Board = () => {
                       );
                     })}
                     {provided.placeholder}
+                    <li className="createList">
+                      <button
+                        onClick={visibleListCreate}
+                        className="createList-button"
+                      >
+                        Add a list
+                      </button>
+                      <div
+                        className={
+                          listFormShow === false ? "hidden" : "add-list"
+                        }
+                        ref={listFormRef}
+                      >
+                        <input
+                          ref={listInput}
+                          type="text"
+                          placeholder="Enter list name"
+                          value={nameList}
+                          onChange={onNameListChange}
+                        />
+                        <button onClick={createList}>Add list</button>
+                        <button onClick={visibleListCreate}>X</button>
+                      </div>
+                    </li>
                   </ul>
                 )}
               </Droppable>
             </DragDropContext>
+            <CreateCard
+              xPos={xPosCardForm}
+              yPos={yPosCardForm}
+              isOpen={cardFormShow}
+              nameCard={nameCard}
+              onNameCardChange={onNameCardChange}
+              closeForm={() => setCardFormShow(false)}
+              sendForm={createCard}
+              refInput={cardInput}
+              refForm={cardFormRef}
+            />
 
             {/* <ul>
               {lists.map((list) => {
