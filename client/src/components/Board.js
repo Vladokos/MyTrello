@@ -246,10 +246,7 @@ export const Board = () => {
             >
               <Droppable droppableId="droppable-1" direction="horizontal">
                 {(provided) => (
-                  <ul
-                    {...provided.droppableProps}
-                    ref={provided.innerRef}
-                  >
+                  <ul {...provided.droppableProps} ref={provided.innerRef}>
                     {lists.map((list, index) => {
                       return (
                         <Draggable
@@ -266,41 +263,48 @@ export const Board = () => {
                             >
                               <div className="list">
                                 {list.nameList}
-                                <DragDropContext
-                                  onDragEnd={(e) => {
-                                    console.log(e);
-                                  }}
-                                  onDragUpdate={(e) => {
-                                    console.log(e);
-                                  }}
-                                >
-                                  <Droppable droppableId="droppable-2">
-                                    {(provided) => (
-                                      <div
-                                        {...provided.droppableProps}
-                                        ref={provided.innerRef}
-                                      >
-                                        <ul className="cards">
-                                          {list.cards.map((cardId) => {
-                                            return cards.map((card) => {
-                                              if (cardId === card._id) {
-                                                return (
-                                                  <li
-
-                                                    key={card._id}
-                                                    className="card"
+                                <ul className="cards">
+                                  {list.cards.map((cardId) => {
+                                    return cards.map((card, index) => {
+                                      if (cardId === card._id) {
+                                        <Droppable droppableId="droppable-2">
+                                          {(provided) => {
+                                            <div
+                                              ref={provided.innerRef}
+                                              {...provided.droppableProps}
+                                            >
+                                              <Draggable
+                                                key={card._id}
+                                                draggableId={card._id}
+                                                index={index}
+                                                id={card._id}
+                                              >
+                                                {(provided) => {
+                                                 return( <div
+                                                    ref={provided.innerRef}
+                                                    {...provided.draggableProps}
+                                                    {...provided.dragHandleProps}
                                                   >
-                                                    {card.nameCard}
-                                                  </li>
-                                                );
-                                              }
-                                            });
-                                          })}
-                                        </ul>
-                                      </div>
-                                    )}
-                                  </Droppable>
-                                </DragDropContext>
+                                                   
+                                                    <li
+                                                      key={card._id}
+                                                      className="card"
+                                                    >
+                                                      {card.nameCard}
+                                                    </li>
+                                                  
+                                                  </div>)
+                                                }}
+                                              </Draggable>
+                                              {provided.placeholder}
+                                            </div>;
+                                          }}
+                                        </Droppable>;
+                                      }
+                                    });
+                                  })}
+                                </ul>
+
                                 <button
                                   onClick={visibleCardCreate}
                                   className={list._id}
