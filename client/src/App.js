@@ -7,7 +7,7 @@ import { ForgotForm } from "./components/form/ForgotForm";
 import { ResetForm } from "./components/form/ResetForm";
 
 import { Boards } from "./components/Boards";
-import { Board } from "./components/Board";
+import { Board } from "./components/board/Board";
 
 import { NotFound } from "./components/NotFound";
 
