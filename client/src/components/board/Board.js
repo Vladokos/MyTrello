@@ -241,12 +241,19 @@ export const Board = () => {
         <div className="container">
           <div className="lists__inner">
             <ul>
-              <List
-                lists={lists}
-                cards={cards}
-                boardId={params.boardId}
-                visibleCardCreate={visibleCardCreate}
-              />
+              <DragDropContext onDragEnd={(e) => console.log(e)}>
+                {lists.map((list, index) => (
+                  <List
+                    key={listId + index}
+                    listId={list._id}
+                    listName={list.nameList}
+                    listCards={list.cards}
+                    cards={cards}
+                    boardId={params.boardId}
+                    visibleCardCreate={visibleCardCreate}
+                  />
+                ))}
+              </DragDropContext>
 
               <li className="createList">
                 <button
