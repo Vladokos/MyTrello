@@ -136,10 +136,10 @@ export const Board = () => {
   };
 
   const createCard = () => {
-    if (nameList.replace(/ /g, "").length <= 0 || !listId) {
-      cardInput.current.focus();
-      return null;
-    }
+    // if (nameList.replace(/ /g, "").length <= 0 || !listId) {
+    //   cardInput.current.focus();
+    //   return null;
+    // }
 
     const { boardId } = params;
 
@@ -155,47 +155,25 @@ export const Board = () => {
     cardInput.current.focus();
   };
 
-  const dragStart = (list, card) => {
-    setCurrentList(list);
-    if (card) {
-      setCurrentCard(card);
+  const onDrop = (e) => {
+    if (e.type === "list") {
+      console.log("list", e);
+
+      const position = e.destination.index;
+      const { boardId } = params;
+      const currentListId = e.draggableId;
+
+      dispatch(changeLists({ position, boardId, currentListId }));
+    } else if (e.type === "card") {
+      console.log("card", e);
+
+      const fromListId = e.source.droppableId;
+      const toListId = e.destination.droppableId;
+      const position = e.destination.index;
+      const cardId = e.draggableId;
+
+      dispatch(changeCards({ fromListId, toListId, position, cardId }));
     }
-  };
-
-  const drop = (list, card) => {
-    const fromListId = currentList._id;
-    const toListId = list._id;
-    const position = lists[lists.indexOf(list)].cards.indexOf(card._id);
-    const cardId = currentCard._id;
-
-    dispatch(changeCards({ fromListId, toListId, position, cardId }));
-  };
-
-  const onDropCardHandler = (list) => {
-    const currentListId = boards[0].lists[list.source.index];
-    const position = boards[0].lists.indexOf(
-      boards[0].lists[list.destination.index]
-    );
-    const boardId = boards[0]._id;
-    // if (currentCard === null) {
-    //   const currentListId = currentList._id;
-    //   const position = boards[0].lists.indexOf(list._id);
-    //   const boardId = boards[0]._id;
-
-    dispatch(changeLists({ position, boardId, currentListId }));
-    //   // make a check for drop a card on a board
-    //   // also make a check for drop a card under an another card
-    // } else if (list.cards.length === 0) {
-    //   const fromListId = currentList._id;
-    //   const toListId = list._id;
-    //   const position = 0;
-    //   const cardId = currentCard._id;
-
-    // dispatch(changeCards({ fromListId, toListId, position, cardId }));
-    // }
-
-    // setCurrentList(null);
-    // setCurrentCard(null);
   };
 
   useEffect(() => {
@@ -241,18 +219,35 @@ export const Board = () => {
         <div className="container">
           <div className="lists__inner">
             <ul>
-              <DragDropContext onDragEnd={(e) => console.log(e)}>
-                {lists.map((list, index) => (
-                  <List
-                    key={listId + index}
-                    listId={list._id}
-                    listName={list.nameList}
-                    listCards={list.cards}
-                    cards={cards}
-                    boardId={params.boardId}
-                    visibleCardCreate={visibleCardCreate}
-                  />
-                ))}
+              <DragDropContext onDragEnd={onDrop}>
+                <Droppable
+                  droppableId="lists"
+                  direction="horizontal"
+                  type="list"
+                >
+                  {(provided) => (
+                    <div
+                      ref={provided.innerRef}
+                      {...provided.draggableProps}
+                      {...provided.dragHandleProps}
+                      className="sheetList"
+                    >
+                      {lists.map((list, index) => (
+                        <List
+                          key={listId + index}
+                          listId={list._id}
+                          listName={list.nameList}
+                          listCards={list.cards}
+                          index={index}
+                          cards={cards}
+                          boardId={params.boardId}
+                          visibleCardCreate={visibleCardCreate}
+                        />
+                      ))}
+                      {provided.placeholder}
+                    </div>
+                  )}
+                </Droppable>
               </DragDropContext>
 
               <li className="createList">
@@ -290,81 +285,6 @@ export const Board = () => {
                 refForm={cardFormRef}
               />
             </ul>
-            {/* <ul>
-              {lists.map((list) => {
-                if (list.boardId === params.boardId) {
-                  return (
-                    <li
-                      key={list._id}
-                      className={"list " + list.nameList}
-                      // onDragStart={() => dragStart(list, null)}
-                      // onDragOver={(e) => {
-                      //   e.preventDefault();
-                      // }}
-                      // onDrop={() => onDropCardHandler(list)}
-                      // draggable={true}
-                    >
-                      <div className="list-title">{list.nameList}</div>
-
-                      <div className="cards">
-                        {list.cards.map((cardId) => {
-                          return cards.map((card) => {
-                            if (cardId === card._id) {
-                              return (
-                                <li
-                                  // onDragStart={() => dragStart(list, card)}
-                                  // onDragLeave={(e) => {
-                                  //   e.preventDefault();
-                                  // }}
-                                  // onDragEnd={(e) => {
-                                  //   e.preventDefault();
-                                  // }}
-                                  // onDragOver={(e) => {
-                                  //   e.preventDefault();
-                                  // }}
-                                  // onDrop={() => drop(list, card)}
-                                  // draggable={true}
-                                  key={card._id}
-                                  className="card"
-                                >
-                                  {card.nameCard}
-                                </li>
-                              );
-                            }
-                          });
-                        })}
-                      </div>
-                      <button onClick={visibleCardCreate} className={list._id}>
-                        Add a card
-                      </button>
-                    </li>
-                  );
-                }
-              })}
-             
-              <li className="createList">
-                <button
-                  onClick={visibleListCreate}
-                  className="createList-button"
-                >
-                  Add a list
-                </button>
-                <div
-                  className={listFormShow === false ? "hidden" : "add-list"}
-                  ref={listFormRef}
-                >
-                  <input
-                    ref={listInput}
-                    type="text"
-                    placeholder="Enter list name"
-                    value={nameList}
-                    onChange={onNameListChange}
-                  />
-                  <button onClick={createList}>Add list</button>
-                  <button onClick={visibleListCreate}>X</button>
-                </div>
-              </li>
-            </ul> */}
           </div>
         </div>
       </div>

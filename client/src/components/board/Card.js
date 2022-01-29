@@ -17,7 +17,7 @@ export const Card = ({ card, index }) => {
           {...provided.dragHandleProps}
         >
           <div className="cards">
-            <li className="card">{card.nameCard}</li>
+            <div className="card" key={card._id}>{card.nameCard}</div>
             {/* {list.cards.map((cardId) => {
               return cards.map((card) => {
                 if (cardId === card._id) {
