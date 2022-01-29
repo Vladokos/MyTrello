@@ -91,7 +91,6 @@ const listsSlice = createSlice({
   name: "lists",
   initialState,
   reducers: {
-    // change name
     sortingLists(state, action) {
       const orderLists = action.payload[0].lists;
 
