@@ -65,17 +65,12 @@ app.post("/form/oldUser", jsonParser, async (req, res) => {
     data.token = generateAccessToken(data._id, data.email);
     data.refreshToken = generateRefreshToken(data._id, data.email);
 
-    data.save((error) => {
-      if (error) {
-        console.log(error);
-        return res.sendStatus(500);
-      }
+    await data.save();
 
-      return res.status(200).json({
-        id: data.id,
-        refreshToken: data.refreshToken,
-        accessToken: data.token,
-      });
+    return res.status(200).json({
+      id: data.id,
+      refreshToken: data.refreshToken,
+      accessToken: data.token,
     });
   } catch (error) {
     console.log(error);
@@ -120,16 +115,11 @@ app.post("/form/registration/newUser", jsonParser, async (req, res) => {
       }
     );
 
-    information.save((error) => {
-      if (error) {
-        console.log(error);
-        return res.sendStatus(500);
-      }
+    await information.save();
 
-      return res
-        .status(201)
-        .json({ id: information.id, refreshToken, accessToken: token });
-    });
+    return res
+      .status(201)
+      .json({ id: information.id, refreshToken, accessToken: token });
   } catch (error) {
     console.log(error);
     res.status(400).send("Error");
@@ -151,12 +141,8 @@ app.post("/form/signIn", jsonParser, async (req, res) => {
       user.token = token;
       user.refreshToken = refreshToken;
 
-      user.save((error) => {
-        if (error) {
-          console.log(error);
-          return res.sendStatus(500);
-        }
-      });
+      await user.save();
+
       return res
         .status(200)
         .json({ id: user.id, refreshToken, accessToken: token });
@@ -181,12 +167,7 @@ app.post("/form/password/forgot", jsonParser, async (req, res) => {
 
     user.resetToken = resetToken;
 
-    user.save((error) => {
-      if (error) {
-        console.log(error);
-        return res.sendStatus(500);
-      }
-    });
+    await user.save();
 
     transporter.sendMail({
       from: "MyTrello <t7estes@yandex.ru>",
@@ -250,12 +231,7 @@ app.post("/form/password/reset", jsonParser, async (req, res) => {
     data.token = newToken;
     data.refreshToken = refreshToken;
 
-    data.save((error) => {
-      if (error) {
-        console.log(error);
-        return res.sendStatus(500);
-      }
-    });
+    await data.save();
 
     res.status(200).send({ message: "successfully" });
   } catch (error) {
@@ -289,12 +265,8 @@ app.post("/token/verify", jsonParser, async (req, res) => {
       data.token = newToken;
       data.refreshToken = newRefreshToken;
 
-      data.save((error) => {
-        if (error) {
-          console.log(error);
-          return res.sendStatus(500);
-        }
-      });
+      await data.save();
+
       return res.status(200).send({ message: "successfully" });
     }
 
@@ -394,6 +366,7 @@ app.post("/board/list/create", jsonParser, async (req, res) => {
   }
 });
 
+
 app.post("/board/list/move", jsonParser, async (req, res) => {
   try {
     const { position, boardId, currentListId } = req.body;
@@ -462,9 +435,8 @@ app.post("/board/list/card/move", jsonParser, async (req, res) => {
 
       await oldList.save();
 
-      return res.status(200).send({oldList});
-    } 
-    else {
+      return res.status(200).send({ oldList });
+    } else {
       const oldList = await dataList.findById(fromListId);
       const newList = await dataList.findById(toListId);
 
@@ -476,23 +448,6 @@ app.post("/board/list/card/move", jsonParser, async (req, res) => {
 
       return res.status(200).send({ oldList, newList });
     }
-  } catch (error) {
-    console.log(error);
-    return res.status(400).send("Error");
-  }
-});
-
-app.post("/board/list/card/changeList", jsonParser, async (req, res) => {
-  try {
-    const { _id, listId } = req.body;
-
-    const card = await dataCard.findOneAndUpdate(
-      { _id },
-      { listId },
-      { new: true }
-    );
-
-    return res.status(200).send(card);
   } catch (error) {
     console.log(error);
     return res.status(400).send("Error");
