@@ -46,8 +46,6 @@ export const Board = () => {
 
   const [xPosCardForm, setXPos] = useState(null);
   const [yPosCardForm, setYPos] = useState(null);
-  const [currentList, setCurrentList] = useState(null);
-  const [currentCard, setCurrentCard] = useState(null);
 
   const profileRef = useRef(null);
   const listInput = useRef(null);
@@ -136,18 +134,20 @@ export const Board = () => {
   };
 
   const createCard = () => {
-    // if (nameList.replace(/ /g, "").length <= 0 || !listId) {
-    //   cardInput.current.focus();
-    //   return null;
-    // }
+    if (nameCard.replace(/ /g, "").length <= 0 || !listId) {
+      cardInput.current.focus();
+      return null;
+    }
 
     const { boardId } = params;
 
     // when the card was render(added on the state in redux)
     //  then the popup moves down
     dispatch(addCard({ nameCard, boardId, listId })).then(() => {
-      dispatch(getLists(boardId));
-      setYPos(yPosCardForm + 50);
+      dispatch(getLists(boardId)).then(() => {
+        dispatch(sortingLists(boards));
+        setYPos(yPosCardForm + 50);
+      });
     });
 
     setNameCard("");
@@ -157,16 +157,12 @@ export const Board = () => {
 
   const onDrop = (e) => {
     if (e.type === "list") {
-      console.log("list", e);
-
       const position = e.destination.index;
       const { boardId } = params;
       const currentListId = e.draggableId;
 
       dispatch(changeLists({ position, boardId, currentListId }));
     } else if (e.type === "card") {
-      console.log("card", e);
-
       const fromListId = e.source.droppableId;
       const toListId = e.destination.droppableId;
       const position = e.destination.index;
@@ -215,9 +211,9 @@ export const Board = () => {
           </div>
         </div>
       </header>
-      <div className="lists">
+      <div className="lists" style={{ height: height - 127 }}>
         <div className="container">
-          <div className="lists__inner">
+          <div className="lists__inner" style={{ height: height - 127 }}>
             <ul>
               <DragDropContext onDragEnd={onDrop}>
                 <Droppable

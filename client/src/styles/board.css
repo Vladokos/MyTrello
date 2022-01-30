@@ -12,9 +12,11 @@
   gap: 40px;
 
   height: 100%;
+
+  overflow:auto;
+
 }
 .list {
-  /* height: 100%; */
 
   padding: 10px;
 
@@ -71,7 +73,7 @@
 .createList-button {
   cursor: pointer;
 
-  width: 100%;
+  width: 272px;
 
   display: flex;
   align-items: center;
@@ -92,7 +94,6 @@
   margin-right: 7px;
 }
 .add-list {
-  position: absolute;
   transform: translateY(-41px);
 
   display: grid;
@@ -105,7 +106,7 @@
   background-color: #ebecf0;
 }
 .add-list input {
-  width: 202px;
+  width: 178px;
   height: 40px;
 
   grid-column: 1/3;

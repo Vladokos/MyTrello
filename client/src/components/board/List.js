@@ -30,7 +30,7 @@ export const List = ({
               >
                 {/* { if(list.boardId === boardId) { */}
 
-                <div className="list-title">{listName}</div>
+                <div className="list-title" onClick={() => {console.log(listId)}}>{listName}</div>
                 {listCards.map((cardId, index) => {
                   return cards.map((card) => {
                     if (card._id === cardId)
