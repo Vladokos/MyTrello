@@ -6,6 +6,8 @@ import { getBoards, addBoards } from "../features/boards/boardsSlice";
 
 import axios from "axios";
 
+import { Header } from "./blanks/Header.js";
+
 import avatar from "../img/avatar.svg";
 
 export const Boards = () => {
@@ -77,35 +79,7 @@ export const Boards = () => {
 
   return (
     <div className="boardsMenu">
-      <header className="header">
-        <div className="container">
-          <div className="header__inner">
-            <div className="logo">MyTrello</div>
-            <div> recent </div>
-            <div> favorites </div>
-            <div onClick={visibleCreateMenu}>Create</div>
-            <div className="account">
-              <div className="account-avatar" onClick={visibleProfileMenu}>
-                <img src={avatar} />
-              </div>
-              <div
-                className={
-                  profileVisibility === false ? "hidden" : "account__menu"
-                }
-              >
-                <div className="account__menu-title">Account</div>
-                <ul>
-                  <li>
-                    <Link to={"/" + params.id + "/profile"}>Profile</Link>
-                  </li>
-                  <li onClick={logOut}>Log out</li>
-                </ul>
-                <button onClick={visibleProfileMenu}>X</button>
-              </div>
-            </div>
-          </div>
-        </div>
-      </header>
+      <Header />
       <div className="workspace">
         <div className="container">
           <div className="workspace__inner">
