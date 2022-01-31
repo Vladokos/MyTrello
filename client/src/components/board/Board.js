@@ -1,20 +1,12 @@
 import React, { useState, useEffect, useRef } from "react";
-import { useNavigate, useParams, Link } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 
-import { List } from "./List";
-
-import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
-
-import useWindowHeight from "../../hooks/heightWindowHook";
-import OutsideClick from "../../hooks/outsideClick";
-
-import CreateCard from "../portal/CreateCard";
+import { DragDropContext, Droppable } from "react-beautiful-dnd";
 
 import { useSelector, useDispatch } from "react-redux";
 import { getBoard, changeLists } from "../../features/boards/boardsSlice";
 import {
   getLists,
-  addList,
   sortingLists,
   changeCards,
 } from "../../features/lists/listsSlice";
@@ -22,7 +14,15 @@ import { getCards, addCard } from "../../features/card/cardsSlice";
 
 import axios from "axios";
 
-import avatar from "../../img/avatar.svg";
+import useWindowHeight from "../../hooks/heightWindowHook";
+import OutsideClick from "../../hooks/outsideClick";
+
+import { CreateCard } from "../portal/CreateCard";
+import { ChangeNameList } from "../portal/ChangeNameList";
+
+import { Header } from "../blanks/Header";
+import { List } from "./List";
+import { CreateList } from "./CreateList";
 
 export const Board = () => {
   const navigate = useNavigate();
@@ -35,33 +35,16 @@ export const Board = () => {
   const { lists } = useSelector((state) => state.lists);
   const { cards } = useSelector((state) => state.cards);
 
-  const [profileShow, setProfileShow] = useState(false);
-  const [boardFormShow, setBoardFromShow] = useState(false);
-  const [listFormShow, setListFormShow] = useState(false);
   const [cardFormShow, setCardFormShow] = useState(false);
 
-  const [nameList, setNameList] = useState("");
   const [nameCard, setNameCard] = useState("");
   const [listId, setListId] = useState("");
 
-  const [xPosCardForm, setXPos] = useState(null);
-  const [yPosCardForm, setYPos] = useState(null);
+  const [xPos, setXPos] = useState(null);
+  const [yPos, setYPos] = useState(null);
 
-  const profileRef = useRef(null);
-  const listInput = useRef(null);
-  const listFormRef = useRef(null);
   const cardFormRef = useRef(null);
   const cardInput = useRef(null);
-
-  const visibleProfileMenu = () => setProfileShow(!profileShow);
-  const visibleCreateMenu = () => setBoardFromShow(!boardFormShow);
-  const visibleListCreate = () => setListFormShow(!listFormShow);
-
-  const closeModal = () => {
-    setListFormShow(false);
-    setCardFormShow(false);
-    setProfileShow(false);
-  };
 
   const visibleCardCreate = (e) => {
     setListId(e.target.className);
@@ -72,7 +55,6 @@ export const Board = () => {
     setCardFormShow(true);
   };
 
-  const onNameListChange = (e) => setNameList(e.target.value);
   const onNameCardChange = (e) => setNameCard(e.target.value);
 
   useEffect(() => {
@@ -109,30 +91,6 @@ export const Board = () => {
       });
   }, []);
 
-  const logOut = () => {
-    sessionStorage.removeItem("accessToken");
-
-    localStorage.removeItem("refreshToken");
-
-    navigate("/sig");
-  };
-
-  const createList = () => {
-    if (nameList.replace(/ /g, "").length <= 0) {
-      listInput.current.focus();
-      return null;
-    }
-
-    const { boardId } = params;
-
-    dispatch(addList({ nameList, boardId }));
-    dispatch(getBoard(boardId));
-
-    setNameList("");
-
-    listInput.current.focus();
-  };
-
   const createCard = () => {
     if (nameCard.replace(/ /g, "").length <= 0 || !listId) {
       cardInput.current.focus();
@@ -146,7 +104,7 @@ export const Board = () => {
     dispatch(addCard({ nameCard, boardId, listId })).then(() => {
       dispatch(getLists(boardId)).then(() => {
         dispatch(sortingLists(boards));
-        setYPos(yPosCardForm + 50);
+        setYPos(yPos + 50);
       });
     });
 
@@ -178,39 +136,10 @@ export const Board = () => {
     }
   }, [boards]);
 
-  OutsideClick(listFormRef, closeModal);
-  OutsideClick(profileRef, closeModal);
-  OutsideClick(cardFormRef, closeModal);
+  OutsideClick(cardFormRef, () => setCardFormShow(false));
   return (
     <div className="boardMenu" style={{ height: height }}>
-      <header className="header header-board">
-        <div className="container">
-          <div className="header__inner">
-            <div className="logo">MyTrello</div>
-            <div> recent </div>
-            <div> favorites </div>
-            <div onClick={visibleCreateMenu}>Create</div>
-            <div className="account">
-              <div className="account-avatar" onClick={visibleProfileMenu}>
-                <img src={avatar} />
-              </div>
-              <div
-                className={profileShow === false ? "hidden" : "account__menu"}
-                ref={profileRef}
-              >
-                <div className="account__menu-title">Account</div>
-                <ul>
-                  <li>
-                    <Link to={"/" + params.id + "/profile"}>Profile</Link>
-                  </li>
-                  <li onClick={logOut}>Log out</li>
-                </ul>
-                <button onClick={visibleProfileMenu}>X</button>
-              </div>
-            </div>
-          </div>
-        </div>
-      </header>
+      <Header />
       <div className="lists" style={{ height: height - 127 }}>
         <div className="container">
           <div className="lists__inner" style={{ height: height - 127 }}>
@@ -236,7 +165,6 @@ export const Board = () => {
                           listCards={list.cards}
                           index={index}
                           cards={cards}
-                          boardId={params.boardId}
                           visibleCardCreate={visibleCardCreate}
                         />
                       ))}
@@ -245,33 +173,11 @@ export const Board = () => {
                   )}
                 </Droppable>
               </DragDropContext>
-
-              <li className="createList">
-                <button
-                  onClick={visibleListCreate}
-                  className="createList-button"
-                >
-                  Add a list
-                </button>
-                <div
-                  className={listFormShow === false ? "hidden" : "add-list"}
-                  ref={listFormRef}
-                >
-                  <input
-                    ref={listInput}
-                    type="text"
-                    placeholder="Enter list name"
-                    value={nameList}
-                    onChange={onNameListChange}
-                  />
-                  <button onClick={createList}>Add list</button>
-                  <button onClick={visibleListCreate}>X</button>
-                </div>
-              </li>
+              <CreateList />
 
               <CreateCard
-                xPos={xPosCardForm}
-                yPos={yPosCardForm}
+                xPos={xPos}
+                yPos={yPos}
                 isOpen={cardFormShow}
                 nameCard={nameCard}
                 onNameCardChange={onNameCardChange}
