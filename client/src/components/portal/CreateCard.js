@@ -1,7 +1,7 @@
 import React from "react";
 import ReactDOM from "react-dom";
 
-const CreateCard = ({
+export const CreateCard = ({
   xPos,
   yPos,
   isOpen,
@@ -35,4 +35,4 @@ const CreateCard = ({
   );
 };
 
-export default CreateCard;
+

@@ -10,7 +10,6 @@ export const List = ({
   listCards,
   index,
   cards,
-  boardId,
   visibleCardCreate,
 }) => {
   return (
@@ -28,17 +27,15 @@ export const List = ({
                 ref={provided.innerRef}
                 className={"list " + listName}
               >
-                {/* { if(list.boardId === boardId) { */}
-
-                <div className="list-title" onClick={() => {console.log(listId)}}>{listName}</div>
+                <div className="list-title" >
+                  {listName}
+                </div>
                 {listCards.map((cardId, index) => {
                   return cards.map((card) => {
                     if (card._id === cardId)
                       return <Card key={card._id} card={card} index={index} />;
                   });
                 })}
-
-                {/* }} */}
 
                 {provided.placeholder}
                 <div>
