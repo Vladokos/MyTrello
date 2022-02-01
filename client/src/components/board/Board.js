@@ -10,19 +10,19 @@ import {
   sortingLists,
   changeCards,
 } from "../../features/lists/listsSlice";
-import { getCards, addCard } from "../../features/card/cardsSlice";
+import { getCards } from "../../features/card/cardsSlice";
 
 import axios from "axios";
 
 import useWindowHeight from "../../hooks/heightWindowHook";
 import OutsideClick from "../../hooks/outsideClick";
 
-import { CreateCard } from "../portal/CreateCard";
 import { ChangeNameList } from "../portal/ChangeNameList";
 
 import { Header } from "../blanks/Header";
 import { List } from "./List";
 import { CreateList } from "./CreateList";
+import { CreateCard } from "./CreateCard";
 
 export const Board = () => {
   const navigate = useNavigate();
@@ -37,14 +37,12 @@ export const Board = () => {
 
   const [cardFormShow, setCardFormShow] = useState(false);
 
-  const [nameCard, setNameCard] = useState("");
   const [listId, setListId] = useState("");
 
   const [xPos, setXPos] = useState(null);
   const [yPos, setYPos] = useState(null);
 
   const cardFormRef = useRef(null);
-  const cardInput = useRef(null);
 
   const visibleCardCreate = (e) => {
     setListId(e.target.className);
@@ -54,8 +52,6 @@ export const Board = () => {
 
     setCardFormShow(true);
   };
-
-  const onNameCardChange = (e) => setNameCard(e.target.value);
 
   useEffect(() => {
     const accessToken = sessionStorage.getItem("accessToken");
@@ -90,28 +86,6 @@ export const Board = () => {
         }
       });
   }, []);
-
-  const createCard = () => {
-    if (nameCard.replace(/ /g, "").length <= 0 || !listId) {
-      cardInput.current.focus();
-      return null;
-    }
-
-    const { boardId } = params;
-
-    // when the card was render(added on the state in redux)
-    //  then the popup moves down
-    dispatch(addCard({ nameCard, boardId, listId })).then(() => {
-      dispatch(getLists(boardId)).then(() => {
-        dispatch(sortingLists(boards));
-        setYPos(yPos + 50);
-      });
-    });
-
-    setNameCard("");
-
-    cardInput.current.focus();
-  };
 
   const onDrop = (e) => {
     if (e.type === "list") {
@@ -173,18 +147,17 @@ export const Board = () => {
                   )}
                 </Droppable>
               </DragDropContext>
+
               <CreateList />
 
               <CreateCard
                 xPos={xPos}
                 yPos={yPos}
-                isOpen={cardFormShow}
-                nameCard={nameCard}
-                onNameCardChange={onNameCardChange}
+                listId={listId}
+                boards={boards}
+                moveForm={() => setYPos(yPos + 50)}
+                formShow={cardFormShow}
                 closeForm={() => setCardFormShow(false)}
-                sendForm={createCard}
-                refInput={cardInput}
-                refForm={cardFormRef}
               />
             </ul>
           </div>
