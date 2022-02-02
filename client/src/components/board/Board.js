@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 
 import { DragDropContext, Droppable } from "react-beautiful-dnd";
@@ -15,14 +15,12 @@ import { getCards } from "../../features/card/cardsSlice";
 import axios from "axios";
 
 import useWindowHeight from "../../hooks/heightWindowHook";
-import OutsideClick from "../../hooks/outsideClick";
-
-import { ChangeNameList } from "../portal/ChangeNameList";
 
 import { Header } from "../blanks/Header";
 import { List } from "./List";
 import { CreateList } from "./CreateList";
 import { CreateCard } from "./CreateCard";
+import { ChangeNameList } from "./ChangeNameList";
 
 export const Board = () => {
   const navigate = useNavigate();
@@ -37,12 +35,13 @@ export const Board = () => {
 
   const [cardFormShow, setCardFormShow] = useState(false);
 
+  const [listFormShow, setListFormShow] = useState(false);
+  const [nameList, setNameList] = useState("");
+
   const [listId, setListId] = useState("");
 
   const [xPos, setXPos] = useState(null);
   const [yPos, setYPos] = useState(null);
-
-  const cardFormRef = useRef(null);
 
   const visibleCardCreate = (e) => {
     setListId(e.target.className);
@@ -51,6 +50,21 @@ export const Board = () => {
     setYPos(e.target.getBoundingClientRect().y);
 
     setCardFormShow(true);
+  };
+
+  const onNameListChange = (e) => {
+    setNameList(e);
+  };
+
+  const visibleChangeNameList = (e, id) => {
+    setListId(id);
+    console.log(listId);
+    onNameListChange(e.target.innerText);
+
+    setXPos(e.target.getBoundingClientRect().x);
+    setYPos(e.target.getBoundingClientRect().y);
+
+    setListFormShow(true);
   };
 
   useEffect(() => {
@@ -110,7 +124,6 @@ export const Board = () => {
     }
   }, [boards]);
 
-  OutsideClick(cardFormRef, () => setCardFormShow(false));
   return (
     <div className="boardMenu" style={{ height: height }}>
       <Header />
@@ -140,6 +153,7 @@ export const Board = () => {
                           index={index}
                           cards={cards}
                           visibleCardCreate={visibleCardCreate}
+                          visibleChangeNameList={visibleChangeNameList}
                         />
                       ))}
                       {provided.placeholder}
@@ -158,6 +172,16 @@ export const Board = () => {
                 moveForm={() => setYPos(yPos + 50)}
                 formShow={cardFormShow}
                 closeForm={() => setCardFormShow(false)}
+              />
+
+              <ChangeNameList
+                xPos={xPos}
+                yPos={yPos}
+                nameList={nameList}
+                listId={listId}
+                changeNameList={onNameListChange}
+                listFormShow={listFormShow}
+                closeForm={() => setListFormShow(false)}
               />
             </ul>
           </div>
