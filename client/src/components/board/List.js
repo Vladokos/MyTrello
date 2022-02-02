@@ -11,6 +11,7 @@ export const List = ({
   index,
   cards,
   visibleCardCreate,
+  visibleChangeNameList,
 }) => {
   return (
     <Draggable key={listId} draggableId={listId} index={index} id={listId}>
@@ -27,7 +28,7 @@ export const List = ({
                 ref={provided.innerRef}
                 className={"list " + listName}
               >
-                <div className="list-title" >
+                <div className="list-title" onClick={(e) => visibleChangeNameList(e, listId)}>
                   {listName}
                 </div>
                 {listCards.map((cardId, index) => {
