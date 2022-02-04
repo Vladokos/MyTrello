@@ -28,7 +28,10 @@ export const List = ({
                 ref={provided.innerRef}
                 className={"list " + listName}
               >
-                <div className="list-title" onClick={(e) => visibleChangeNameList(e, listId)}>
+                <div
+                  className="list-title"
+                  onClick={(e) => visibleChangeNameList(e, listId)}
+                >
                   {listName}
                 </div>
                 {listCards.map((cardId, index) => {
