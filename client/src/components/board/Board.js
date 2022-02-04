@@ -38,7 +38,7 @@ export const Board = () => {
   const [listFormShow, setListFormShow] = useState(false);
   const [nameList, setNameList] = useState("");
 
-  const [listId, setListId] = useState("");
+  const [listId, setListId] = useState(null);
 
   const [xPos, setXPos] = useState(null);
   const [yPos, setYPos] = useState(null);
@@ -58,7 +58,7 @@ export const Board = () => {
 
   const visibleChangeNameList = (e, id) => {
     setListId(id);
-    console.log(listId);
+
     onNameListChange(e.target.innerText);
 
     setXPos(e.target.getBoundingClientRect().x);
@@ -130,6 +130,14 @@ export const Board = () => {
       <div className="lists" style={{ height: height - 127 }}>
         <div className="container">
           <div className="lists__inner" style={{ height: height - 127 }}>
+            <div className="boardName">
+              {boards.map((board) => (
+                <div key={board._id}>
+                  {board.nameBoard}
+                  <input value={board.nameBoard} />
+                </div>
+              ))}
+            </div>
             <ul>
               <DragDropContext onDragEnd={onDrop}>
                 <Droppable
@@ -174,15 +182,17 @@ export const Board = () => {
                 closeForm={() => setCardFormShow(false)}
               />
 
-              <ChangeNameList
-                xPos={xPos}
-                yPos={yPos}
-                nameList={nameList}
-                listId={listId}
-                changeNameList={onNameListChange}
-                listFormShow={listFormShow}
-                closeForm={() => setListFormShow(false)}
-              />
+              {listId !== null ? (
+                <ChangeNameList
+                  xPos={xPos}
+                  yPos={yPos}
+                  nameList={nameList}
+                  listId={listId}
+                  changeNameList={onNameListChange}
+                  listFormShow={listFormShow}
+                  closeForm={() => setListFormShow(false)}
+                />
+              ) : null}
             </ul>
           </div>
         </div>
