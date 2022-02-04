@@ -87,6 +87,33 @@ export const changeCards = createAsyncThunk(
   }
 );
 
+export const changeName = createAsyncThunk(
+  "lists/changeName",
+  async ({ listId, nameList }) => {
+    const response = await axios({
+      config: {
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "application/json",
+        },
+      },
+      method: "POST",
+      url: "/board/list/changeName",
+      data: {
+        listId,
+        nameList,
+      },
+    })
+      .then((response) => {
+        return response.data;
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+    return response;
+  }
+);
+
 const listsSlice = createSlice({
   name: "lists",
   initialState,
@@ -146,6 +173,20 @@ const listsSlice = createSlice({
             if (state.lists[i]._id === newList._id) {
               state.lists[i] = newList;
             }
+          }
+        }
+      })
+      .addCase(changeName.pending, (state, action) => {
+        state.status = "loading";
+      })
+      .addCase(changeName.fulfilled, (state, action) => {
+        state.status = "succeeded";
+
+        const { listId, nameList } = action.payload;
+
+        for (let i = 0; i < state.lists.length; i++) {
+          if (state.lists[i]._id === listId) {
+            state.lists[i].nameList = nameList;
           }
         }
       });
