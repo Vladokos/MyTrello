@@ -366,7 +366,6 @@ app.post("/board/list/create", jsonParser, async (req, res) => {
   }
 });
 
-
 app.post("/board/list/move", jsonParser, async (req, res) => {
   try {
     const { position, boardId, currentListId } = req.body;
@@ -448,6 +447,25 @@ app.post("/board/list/card/move", jsonParser, async (req, res) => {
 
       return res.status(200).send({ oldList, newList });
     }
+  } catch (error) {
+    console.log(error);
+    return res.status(400).send("Error");
+  }
+});
+
+app.post("/board/list/changeName", jsonParser, async (req, res) => {
+  try {
+    const { listId, nameList } = req.body;
+
+    const list = await dataList.findById(listId);
+
+    if (!list) return res.status(400).send("Error");
+
+    list.nameList = nameList;
+
+    await list.save();
+
+    return res.status(200).send({ listId, nameList });
   } catch (error) {
     console.log(error);
     return res.status(400).send("Error");
