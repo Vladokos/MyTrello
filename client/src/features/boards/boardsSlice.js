@@ -80,6 +80,33 @@ export const changeLists = createAsyncThunk(
   }
 );
 
+export const changeName = createAsyncThunk(
+  "boards/changeName",
+  async ({ nameBoard, boardId }) => {
+    const response = await axios({
+      config: {
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "application/json",
+        },
+      },
+      method: "POST",
+      url: "/board/nameChange",
+      data: {
+        nameBoard,
+        boardId,
+      },
+    })
+      .then((response) => {
+        return response.data;
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+    return response;
+  }
+);
+
 const boardsSlice = createSlice({
   name: "boards",
   initialState,
@@ -116,6 +143,20 @@ const boardsSlice = createSlice({
       .addCase(changeLists.fulfilled, (state, action) => {
         state.status = "succeeded";
         state.boards = [action.payload];
+      })
+      .addCase(changeName.pending, (state, action) => {
+        state.status = "loading";
+      })
+      .addCase(changeName.fulfilled, (state, action) => {
+        state.status = "succeeded";
+
+        const { nameBoard, boardId } = action.payload;
+
+        for (let i = 0; i < state.boards.length; i++) {
+          if (state.boards[i]._id === boardId) {
+            state.boards[i].nameBoard = nameBoard;
+          }
+        }
       });
   },
 });
