@@ -17,6 +17,7 @@ import axios from "axios";
 import useWindowHeight from "../../hooks/heightWindowHook";
 
 import { Header } from "../blanks/Header";
+import { BoardName } from "./BoardName";
 import { List } from "./List";
 import { CreateList } from "./CreateList";
 import { CreateCard } from "./CreateCard";
@@ -130,14 +131,9 @@ export const Board = () => {
       <div className="lists" style={{ height: height - 127 }}>
         <div className="container">
           <div className="lists__inner" style={{ height: height - 127 }}>
-            <div className="boardName">
-              {boards.map((board) => (
-                <div key={board._id}>
-                  {board.nameBoard}
-                  <input value={board.nameBoard} />
-                </div>
-              ))}
-            </div>
+            {boards.map((board) => (
+              <BoardName key={board._id} name={board.nameBoard} />
+            ))}
             <ul>
               <DragDropContext onDragEnd={onDrop}>
                 <Droppable
