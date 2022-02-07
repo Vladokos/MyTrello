@@ -21,8 +21,13 @@
 
   overflow: auto;
 }
+.changeBoardName{
+  display: inline-block;
+}
 .boardName {
   cursor: pointer;
+
+  display: inline-block;
 
   font-size: 18px;
   font-weight: 700;
@@ -30,8 +35,8 @@
   text-align: center;
   color: #fbfdfe;
 
-  width: 70px;
   height: 40px;
+  min-width: 70px;
 
   border-radius: 3px;
 
@@ -39,19 +44,31 @@
 
   margin-bottom: 20px;
 }
-.boardName input {
-  padding: 0;
+.boardName .visible {
+  position: absolute;
+  transform: translate(0px, -41px);
+}
+.hiddenBoardName {
+  visibility: hidden;
+  display: block;
+  position: absolute;
+}
+.changeBoardName input {
+  padding: 0 16px;
 
-  width: 70px;
+  font-size: 18px;
+  font-weight: 700;
+  text-align: center;
+
   height: 40px;
 
-  position: absolute;
-  transform: translate(-49px, 0px);
-
   border-radius: 3px;
+  transition: none;
 }
-.boardName input:focus {
- padding: 0;
+.changeBoardName input:focus {
+  padding: 0 16px;
+
+  transition: none;
 }
 .list {
   padding: 15px 10px 10px 10px;
@@ -184,7 +201,6 @@
 
 .form-createCard {
   position: absolute;
-  top: 0;
 
   width: 272px;
 
@@ -196,7 +212,7 @@
 
   padding: 10px;
 
-  border-radius: 0 3px 3px;
+  border-radius: 0 0 3px 3px;
 }
 .form-createCard textarea {
   grid-column: 1/3;
