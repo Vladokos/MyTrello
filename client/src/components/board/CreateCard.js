@@ -45,7 +45,8 @@ export const CreateCard = ({
   };
 
   // because initial xPos is give some different position
-  xPos -= 145;
+  xPos -= 136.5;
+  yPos -= 190;
   const styles = {
     transform: `translate(${xPos}px, ${yPos}px)`,
   };
