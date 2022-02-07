@@ -472,6 +472,25 @@ app.post("/board/list/changeName", jsonParser, async (req, res) => {
   }
 });
 
+app.post("/board/nameChange", jsonParser, async (req, res) => {
+  try {
+    const { nameBoard, boardId } = req.body;
+
+    const board = await dataBoards.findById(boardId);
+
+    if (!board) return res.status(400).send("Error");
+
+    board.nameBoard = nameBoard;
+
+    await board.save();
+
+    return res.status(200).send({ nameBoard, boardId });
+  } catch (error) {
+    console.log(error);
+    return res.status(400).send("Error");
+  }
+});
+
 app.listen(5000, () => {
   console.log("Server is running");
 });
