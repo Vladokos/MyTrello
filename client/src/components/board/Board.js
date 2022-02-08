@@ -130,11 +130,11 @@ export const Board = () => {
       <Header />
       <div className="lists" style={{ height: height - 127 }}>
         <div className="container">
-          <div className="lists__inner" style={{ height: height - 127 }}>
+          <div className="lists__inner" style={{ height: height - 200 }}>
             {boards.map((board) => (
               <BoardName key={board._id} name={board.nameBoard} />
             ))}
-            <ul>
+            <ul className="scrollBoard">
               <DragDropContext onDragEnd={onDrop}>
                 <Droppable
                   droppableId="lists"
@@ -158,6 +158,8 @@ export const Board = () => {
                           cards={cards}
                           visibleCardCreate={visibleCardCreate}
                           visibleChangeNameList={visibleChangeNameList}
+                          height={height - 307}
+                       
                         />
                       ))}
                       {provided.placeholder}
