@@ -12,6 +12,7 @@ export const List = ({
   cards,
   visibleCardCreate,
   visibleChangeNameList,
+  height,
 }) => {
   return (
     <Draggable key={listId} draggableId={listId} index={index} id={listId}>
@@ -34,12 +35,16 @@ export const List = ({
                 >
                   {listName}
                 </div>
-                {listCards.map((cardId, index) => {
-                  return cards.map((card) => {
-                    if (card._id === cardId)
-                      return <Card key={card._id} card={card} index={index} />;
-                  });
-                })}
+                <div className="draggable-list" style={{ "max-height": height }}>
+                  {listCards.map((cardId, index) => {
+                    return cards.map((card) => {
+                      if (card._id === cardId)
+                        return (
+                          <Card key={card._id} card={card} index={index} />
+                        );
+                    });
+                  })}
+                </div>
 
                 {provided.placeholder}
                 <div>
