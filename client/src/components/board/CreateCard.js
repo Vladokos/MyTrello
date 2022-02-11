@@ -5,7 +5,10 @@ import { useDispatch } from "react-redux";
 import { getLists, sortingLists } from "../../features/lists/listsSlice";
 import { addCard } from "../../features/card/cardsSlice";
 
+import TextareaAutosize from "react-textarea-autosize";
+
 import OutsideClick from "../../hooks/outsideClick";
+
 export const CreateCard = ({
   xPos,
   yPos,
@@ -45,8 +48,8 @@ export const CreateCard = ({
   };
 
   // because initial xPos is give some different position
-  xPos -= 136.5;
-  yPos -= 190;
+  xPos -= 145;
+  yPos -= 186;
   const styles = {
     transform: `translate(${xPos}px, ${yPos}px)`,
   };
@@ -58,12 +61,14 @@ export const CreateCard = ({
   if (!formShow) return null;
   return (
     <div style={styles} className="form-createCard" ref={cardFormRef}>
-      <textarea
-        placeholder="Enter a title for this card…"
-        value={nameCard}
-        onChange={onNameCardChange}
-        ref={cardInput}
-      />
+      <div>
+        <TextareaAutosize
+          placeholder="Enter a title for this card…"
+          value={nameCard}
+          onChange={onNameCardChange}
+          ref={cardInput}
+        />
+      </div>
       <button onClick={createCard}>Add card</button>
       <button onClick={closeForm}>X</button>
     </div>
