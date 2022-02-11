@@ -25,7 +25,7 @@ export const ChangeNameList = ({
   const input = useRef(null);
   OutsideClick(input, () => closeForm());
 
-  xPos -= 138.5;
+  xPos -= 147;
   yPos -= 196;
   const styles = {
     position: "absolute",
