@@ -453,6 +453,25 @@ app.post("/board/list/card/move", jsonParser, async (req, res) => {
   }
 });
 
+app.post("/board/nameChange", jsonParser, async (req, res) => {
+  try {
+    const { nameBoard, boardId } = req.body;
+
+    const board = await dataBoards.findById(boardId);
+
+    if (!board) return res.status(400).send("Error");
+
+    board.nameBoard = nameBoard;
+
+    await board.save();
+
+    return res.status(200).send({ nameBoard, boardId });
+  } catch (error) {
+    console.log(error);
+    return res.status(400).send("Error");
+  }
+});
+
 app.post("/board/list/changeName", jsonParser, async (req, res) => {
   try {
     const { listId, nameList } = req.body;
@@ -472,19 +491,19 @@ app.post("/board/list/changeName", jsonParser, async (req, res) => {
   }
 });
 
-app.post("/board/nameChange", jsonParser, async (req, res) => {
+app.post("/board/list/card/changeName", jsonParser, async (req, res) => {
   try {
-    const { nameBoard, boardId } = req.body;
+    const { cardId, nameCard } = req.body;
 
-    const board = await dataBoards.findById(boardId);
+    const card = await dataCard.findById(cardId);
 
-    if (!board) return res.status(400).send("Error");
+    if (!card) return res.status(400).send("Error");
 
-    board.nameBoard = nameBoard;
+    card.nameCard = nameCard;
 
-    await board.save();
+    await card.save();
 
-    return res.status(200).send({ nameBoard, boardId });
+    return res.status(200).send({ cardId, nameCard });
   } catch (error) {
     console.log(error);
     return res.status(400).send("Error");
