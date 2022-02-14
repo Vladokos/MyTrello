@@ -2,7 +2,7 @@ import React from "react";
 
 import { Draggable } from "react-beautiful-dnd";
 
-export const Card = ({ card, index }) => {
+export const Card = ({ card, index, visibleChangeNameCard }) => {
   return (
     <Draggable
       key={card._id}
@@ -17,18 +17,9 @@ export const Card = ({ card, index }) => {
           {...provided.dragHandleProps}
         >
           <div className="cards">
-            <div className="card" key={card._id}>{card.nameCard}</div>
-            {/* {list.cards.map((cardId) => {
-              return cards.map((card) => {
-                if (cardId === card._id) {
-                  return (
-                    <li key={card._id} className="card">
-                      {card.nameCard}
-                    </li>
-                  );
-                }
-              });
-            })} */}
+            <div className="card" key={card._id} onClick={(e) => visibleChangeNameCard(e, card._id)}>
+              {card.nameCard}
+            </div>
           </div>
         </div>
       )}
