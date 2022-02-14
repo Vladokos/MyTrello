@@ -1,15 +1,33 @@
 import React from "react";
 
-import { TextField } from "@mui/material";
+import { useDispatch } from "react-redux";
 
-export const ChangeNameCard = ({ nameCard, cardId }) => {
+import { changeName } from "../../features/card/cardsSlice";
+
+import TextareaAutosize from "react-textarea-autosize";
+
+export const ChangeNameCard = ({
+  nameCard,
+  cardId,
+  changeNameCard,
+  closeForm,
+}) => {
+  const dispatch = useDispatch();
+
+  const sendForm = (e) => {
+    if (e.key === "Enter" || e.keyCode === 13) {
+      dispatch(changeName({ cardId, nameCard })).then(() => closeForm());
+    }
+  };
+
   return (
     <div className="changeCardName">
-      <TextField
+      <TextareaAutosize
         value={nameCard}
-        label="card title"
-        variant="filled"
+        onChange={changeNameCard}
+        onKeyDown={sendForm}
       />
+      <button onClick={closeForm}>X</button>
     </div>
   );
 };
