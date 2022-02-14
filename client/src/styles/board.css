@@ -230,7 +230,7 @@
 
   border-radius: 0 0 3px 3px;
 }
-.form-createCard div{
+.form-createCard div {
   width: inherit;
 
   background-color: #fff;
@@ -356,4 +356,60 @@
 }
 .changeNameList input:focus {
   padding: 0 0 0 10px;
+}
+
+.changeCardName {
+  position: absolute;
+
+  background-color: #f4f5f7;
+
+  width: 769px;
+  height: 394px;
+
+  border-radius: 3px;
+
+  padding: 12px;
+
+  display: grid;
+  grid-template-columns: 1fr 40px;
+  grid-gap: 10px;
+}
+.changeCardName textarea {
+  background: #0000;
+
+  box-shadow: none;
+
+  border: none;
+  border-radius: 3px;
+
+  outline: none;
+
+  resize: none;
+
+  width: auto;
+
+  padding: 10px 5px;
+}
+.changeCardName textarea:focus {
+  overflow: hidden;
+
+  background: #fff;
+
+  box-shadow: inset 0 0 0 2px  #0079bf;
+}
+.changeCardName button {
+  cursor: pointer;
+
+  align-self: start;
+
+  border: none;
+  outline: none;
+
+  background-color: transparent;
+
+  font-weight: 600;
+  font-size: 16px;
+  color: #172b4d;
+
+  margin-top: 6px;
 }
