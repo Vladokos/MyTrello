@@ -22,6 +22,7 @@ import { List } from "./List";
 import { CreateList } from "./CreateList";
 import { CreateCard } from "./CreateCard";
 import { ChangeNameList } from "./ChangeNameList";
+import { ChangeNameCard } from "./ChangeNameCard";
 
 export const Board = () => {
   const navigate = useNavigate();
@@ -35,11 +36,13 @@ export const Board = () => {
   const { cards } = useSelector((state) => state.cards);
 
   const [cardFormShow, setCardFormShow] = useState(false);
-
   const [listFormShow, setListFormShow] = useState(false);
+
   const [nameList, setNameList] = useState("");
+  const [nameCard, setNameCard] = useState("");
 
   const [listId, setListId] = useState(null);
+  const [cardId, setCardId] = useState(null);
 
   const [xPos, setXPos] = useState(null);
   const [yPos, setYPos] = useState(null);
@@ -53,19 +56,29 @@ export const Board = () => {
     setCardFormShow(true);
   };
 
-  const onNameListChange = (e) => {
-    setNameList(e);
-  };
+  // const onNameListChange = (e) => (e);
 
   const visibleChangeNameList = (e, id) => {
     setListId(id);
 
-    onNameListChange(e.target.innerText);
+    setNameList(e.target.innerText);
 
     setXPos(e.target.getBoundingClientRect().x);
     setYPos(e.target.getBoundingClientRect().y);
 
     setListFormShow(true);
+  };
+
+  // const onNameCardChange = (e) => setNameCard(e);
+
+  const visibleChangeNameCard = (e, id) => {
+    setCardId(id);
+
+    setNameCard(e.target.innerText);
+
+    // onNameCardChange(e.target.innerText);
+
+    setCardFormShow(true);
   };
 
   useEffect(() => {
@@ -158,8 +171,8 @@ export const Board = () => {
                           cards={cards}
                           visibleCardCreate={visibleCardCreate}
                           visibleChangeNameList={visibleChangeNameList}
+                          visibleChangeNameCard={visibleChangeNameCard}
                           height={height - 307}
-                       
                         />
                       ))}
                       {provided.placeholder}
@@ -186,12 +199,20 @@ export const Board = () => {
                   yPos={yPos}
                   nameList={nameList}
                   listId={listId}
-                  changeNameList={onNameListChange}
+                  changeNameList={(e) => setNameList(e)}
                   listFormShow={listFormShow}
                   closeForm={() => setListFormShow(false)}
                 />
               ) : null}
             </ul>
+            {/* {cardId !== null ? ( */}
+            <ChangeNameCard
+              nameCard={nameCard}
+              cardId={cardId}
+              changeNameCard={(e) => setNameCard(e.target.value)}
+              closeForm={() => setCardFormShow(false)}
+            />
+            {/* ) : null} */}
           </div>
         </div>
       </div>
