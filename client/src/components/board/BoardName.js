@@ -1,4 +1,4 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { useParams } from "react-router-dom";
 
 import { useDispatch } from "react-redux";
@@ -27,24 +27,32 @@ export const BoardName = ({ name }) => {
       );
     }
   };
-
-  const nameInput = useRef(0);
-  OutsideClick(nameInput, () => {
+  const nameInput = useRef(false);
+  const nameForm = useRef(0);
+  OutsideClick(nameForm, () => {
     setVisibleInput(false);
   });
+
+  useEffect(() => {
+    nameInput?.current?.focus?.();
+  }, [nameInput]);
   return (
     <div className="changeBoardName">
       <div
         onClick={() => {
-            setVisibleInput(true);
+          setVisibleInput(true);
         }}
         className={visibleInput ? "hidden" : "boardName"}
-        style={{ width: nameInput.current.offsetWidth }}
+        style={{ width: nameForm.current.offsetWidth }}
       >
         {name}
       </div>
-      <div className={visibleInput ? "visible" : "hiddenBoardName"} ref={nameInput}>
+      <div
+        className={visibleInput ? "visible" : "hiddenBoardName"}
+        ref={nameForm}
+      >
         <AutosizeInput
+          ref={(e) => e?.focus?.()}
           value={nameBoard}
           onChange={onNameBoardChange}
           onKeyDown={sendForm}
