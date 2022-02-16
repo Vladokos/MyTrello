@@ -405,6 +405,7 @@ app.post("/board/list/card/create", jsonParser, async (req, res) => {
 
     const newCard = await new dataCard({
       nameCard,
+      descriptionCard: "",
       boardId,
     });
 
@@ -504,6 +505,25 @@ app.post("/board/list/card/changeName", jsonParser, async (req, res) => {
     await card.save();
 
     return res.status(200).send({ cardId, nameCard });
+  } catch (error) {
+    console.log(error);
+    return res.status(400).send("Error");
+  }
+});
+
+app.post("/board/list/card/changeDescription", jsonParser, async (req, res) => {
+  try {
+    const { cardId, description } = req.body;
+
+    const card = await dataCard.findById(cardId);
+
+    if (!card) return res.status(400).send("Error");
+
+    card.descriptionCard = description.trim();
+
+    await card.save();
+
+    return res.status(200).send({ cardId, description });
   } catch (error) {
     console.log(error);
     return res.status(400).send("Error");
