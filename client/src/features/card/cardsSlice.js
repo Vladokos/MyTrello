@@ -85,6 +85,33 @@ export const changeName = createAsyncThunk(
   }
 );
 
+export const changeDescription = createAsyncThunk(
+  "cards/changeDescription",
+  async ({ cardId, description }) => {
+    const response = await axios({
+      config: {
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "application/json",
+        },
+      },
+      method: "POST",
+      url: "/board/list/card/changeDescription",
+      data: {
+        cardId,
+        description,
+      },
+    })
+      .then((response) => {
+        return response.data;
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+    return response;
+  }
+);
+
 const cardsSlice = createSlice({
   name: "cards",
   initialState,
@@ -116,6 +143,20 @@ const cardsSlice = createSlice({
         for (let i = 0; i < state.cards.length; i++) {
           if (state.cards[i]._id === cardId) {
             state.cards[i].nameCard = nameCard;
+          }
+        }
+      })
+      .addCase(changeDescription.pending, (state, action) => {
+        state.status = "loading";
+      })
+      .addCase(changeDescription.fulfilled, (state, action) => {
+        state.status = "succeeded";
+
+        const { cardId, description } = action.payload;
+
+        for (let i = 0; i < state.cards.length; i++) {
+          if (state.cards[i]._id === cardId) {
+            state.cards[i].descriptionCard = description.trim();
           }
         }
       });
