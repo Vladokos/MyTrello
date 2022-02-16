@@ -1,4 +1,4 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { useParams } from "react-router-dom";
 
 import { useDispatch } from "react-redux";
@@ -36,6 +36,10 @@ export const CreateList = () => {
   const listInput = useRef(null);
   const listFormRef = useRef(null);
   OutsideClick(listFormRef, () => setListFormShow(false));
+
+  useEffect(() => {
+    listInput?.current?.focus?.();
+  }, [listInput]);
   return (
     <li className="createList">
       <button onClick={visibleListCreate} className="createList-button">
@@ -46,7 +50,7 @@ export const CreateList = () => {
         ref={listFormRef}
       >
         <input
-          ref={listInput}
+          ref={(e) => e?.focus?.()}
           type="text"
           placeholder="Enter list name"
           value={nameList}
