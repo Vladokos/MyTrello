@@ -1,4 +1,4 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { useParams } from "react-router-dom";
 
 import { useDispatch } from "react-redux";
@@ -58,6 +58,9 @@ export const CreateCard = ({
   const cardFormRef = useRef(null);
   OutsideClick(cardFormRef, closeForm);
 
+  useEffect(() => {
+    cardInput?.current?.focus?.();
+  }, [cardInput]);
   if (!formShow) return null;
   return (
     <div style={styles} className="form-createCard" ref={cardFormRef}>
@@ -66,7 +69,7 @@ export const CreateCard = ({
           placeholder="Enter a title for this card…"
           value={nameCard}
           onChange={onNameCardChange}
-          ref={cardInput}
+          ref={(e) => e?.focus?.()}
         />
       </div>
       <button onClick={createCard}>Add card</button>
