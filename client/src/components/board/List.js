@@ -1,8 +1,13 @@
-import React from "react";
+import React, { useState } from "react";
+
+import { useDispatch } from "react-redux";
+import { changeName } from "../../features/lists/listsSlice";
 
 import { Draggable, Droppable } from "react-beautiful-dnd";
 
 import { Card } from "./Card";
+
+import TextareaAutosize from "react-textarea-autosize";
 
 export const List = ({
   listId,
@@ -11,10 +16,21 @@ export const List = ({
   index,
   cards,
   visibleCardCreate,
-  visibleChangeNameList,
   visibleChangeNameCard,
   height,
 }) => {
+  const dispatch = useDispatch();
+
+  const [nameList, setNameList] = useState(listName);
+
+  
+  const sendForm = (e) => {
+    if (e.key === "Enter" || e.keyCode === 13) {
+      dispatch(changeName({ listId, nameList }));
+      e.target.blur();
+    }
+  };
+
   return (
     <Draggable key={listId} draggableId={listId} index={index} id={listId}>
       {(provided) => (
@@ -30,16 +46,15 @@ export const List = ({
                 ref={provided.innerRef}
                 className={"list " + listName}
               >
-                <div
-                  className="list-title"
-                  onClick={(e) => visibleChangeNameList(e, listId)}
-                >
-                  {listName}
+                <div className="list-title">
+                  <TextareaAutosize
+                    value={nameList}
+                    onChange={(e) => setNameList(e.target.value)}
+                    onKeyDown={sendForm}
+                    spellcheck="false"
+                  />
                 </div>
-                <div
-                  className="draggable-list"
-                  style={{ "maxHeight": height }}
-                >
+                <div className="draggable-list" style={{ maxHeight: height }}>
                   {listCards.map((cardId, index) => {
                     return cards.map((card) => {
                       if (card._id === cardId)
