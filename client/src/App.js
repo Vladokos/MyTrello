@@ -15,7 +15,7 @@ import "./styles/reset.css";
 import "./styles/blanks.css";
 import "./styles/formStyles.css";
 import "./styles/menu.css";
-import "./styles/board.css"
+import "./styles/board.css";
 
 function App() {
   return (
