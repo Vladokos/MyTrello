@@ -4,7 +4,12 @@ import { Draggable } from "react-beautiful-dnd";
 
 import descriptionImg from "../../img/description.svg";
 
-export const Card = ({ card, index, visibleChangeNameCard }) => {
+export const Card = ({
+  card,
+  index,
+  visibleChangeCard,
+  visibleChangeNameCard,
+}) => {
   return (
     <Draggable
       key={card._id}
@@ -23,7 +28,7 @@ export const Card = ({ card, index, visibleChangeNameCard }) => {
               className="card"
               key={card._id}
               onClick={(e) =>
-                visibleChangeNameCard(e, card._id, card.descriptionCard)
+                visibleChangeCard(e, card._id, card.descriptionCard)
               }
             >
               {card.nameCard}
@@ -32,6 +37,11 @@ export const Card = ({ card, index, visibleChangeNameCard }) => {
                   <img src={descriptionImg} />
                 </div>
               ) : null}
+              <span
+                onClick={(e) =>
+                  visibleChangeNameCard(e, card.nameCard, card._id)
+                }
+              ></span>
             </div>
           </div>
         </div>
