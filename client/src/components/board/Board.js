@@ -22,6 +22,7 @@ import { List } from "./List";
 import { CreateList } from "./CreateList";
 import { CreateCard } from "./CreateCard";
 import { ChangeCard } from "./ChangeCard";
+import { ChangeNameCard } from "./ChangeNameCard";
 
 export const Board = () => {
   const navigate = useNavigate();
@@ -35,8 +36,9 @@ export const Board = () => {
   const { cards } = useSelector((state) => state.cards);
 
   const [cardFormShow, setCardFormShow] = useState(false);
+  const [changeCard, setChangeCard] = useState(false);
   const [changeNameCard, setChangeNameCard] = useState(false);
-  
+
   const [nameCard, setNameCard] = useState("");
   const [descriptionCard, setDescriptionCard] = useState("");
 
@@ -55,11 +57,23 @@ export const Board = () => {
     setCardFormShow(true);
   };
 
-  const visibleChangeNameCard = (e, id, description) => {
+  const visibleChangeCard = (e, id, description) => {
+    if (e.target.innerText === "") return null;
     setCardId(id);
 
     setNameCard(e.target.innerText);
     setDescriptionCard(description);
+
+    setChangeCard(true);
+  };
+
+  const visibleChangeNameCard = (e, nameCard, id) => {
+    setNameCard(nameCard);
+
+    setCardId(id);
+
+    setXPos(e.target.getBoundingClientRect().x);
+    setYPos(e.target.getBoundingClientRect().y);
 
     setChangeNameCard(true);
   };
@@ -153,7 +167,7 @@ export const Board = () => {
                           index={index}
                           cards={cards}
                           visibleCardCreate={visibleCardCreate}
-
+                          visibleChangeCard={visibleChangeCard}
                           visibleChangeNameCard={visibleChangeNameCard}
                           height={height - 307}
                         />
@@ -175,20 +189,27 @@ export const Board = () => {
                 formShow={cardFormShow}
                 closeForm={() => setCardFormShow(false)}
               />
-
-             
             </ul>
-           
             <ChangeCard
               nameCard={nameCard}
               descriptionCard={descriptionCard}
               changeDescription={(e) => setDescriptionCard(e.target.value)}
               cardId={cardId}
-              changeNameCard={(e) => setNameCard(e.target.value)}
-              isOpen={changeNameCard}
-              closeForm={() => setChangeNameCard(false)}
+              changeCard={(e) => setNameCard(e.target.value)}
+              isOpen={changeCard}
+              closeForm={() => setChangeCard(false)}
             />
-         
+
+            {changeNameCard === false ? null : (
+            <ChangeNameCard
+              nameCard={nameCard}
+              changeNameCard={(e) => setNameCard(e.target.value)}
+              cardId={cardId}
+              closeForm={() => setChangeNameCard(false)}
+              xPos={xPos}
+              yPos={yPos}
+            />
+            )}
           </div>
         </div>
       </div>
