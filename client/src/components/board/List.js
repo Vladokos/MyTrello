@@ -16,6 +16,7 @@ export const List = ({
   index,
   cards,
   visibleCardCreate,
+  visibleChangeCard,
   visibleChangeNameCard,
   height,
 }) => {
@@ -51,7 +52,7 @@ export const List = ({
                     value={nameList}
                     onChange={(e) => setNameList(e.target.value)}
                     onKeyDown={sendForm}
-                    spellcheck="false"
+                    spellCheck="false"
                   />
                 </div>
                 <div className="draggable-list" style={{ maxHeight: height }}>
@@ -63,6 +64,7 @@ export const List = ({
                             key={card._id}
                             card={card}
                             index={index}
+                            visibleChangeCard={visibleChangeCard}
                             visibleChangeNameCard={visibleChangeNameCard}
                           />
                         );
