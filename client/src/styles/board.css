@@ -379,17 +379,16 @@
 }
 .card:hover::after {
   content: "";
-  
-  
+
   background: url("../img/pencil.svg") no-repeat;
-  
+
   width: 25px;
   height: 25px;
-  
+
   position: absolute;
   transform: translate(231px, -50px);
 }
-.card:hover span{
+.card:hover span {
   cursor: pointer;
   pointer-events: all;
 }
@@ -494,13 +493,42 @@
 .description {
   grid-row: 3/3;
 }
-.changeNameCard{
+.changeNameCard {
   width: 200px;
 }
-.changeNameCard textarea{
-  min-height: 200px;
-  min-width: 266px;
+.changeNameCard textarea {
+  min-height: 190px;
+  min-width: 252px;
+
+  box-shadow: none;
+
+  border: none;
+  border-radius: 3px;
+
+  outline: none;
+
+  resize: none;
+
+  padding: 10px;
+
+  font-size: 14px;
+  font-weight: 400;
+
+  margin-bottom: 20px;
 }
-.changeNameCard button{
+.changeNameCard button {
   cursor: pointer;
+
+  padding: 5px 24px;
+
+  background-color: #0079bf;
+
+  font-size: 14px;
+  font-weight: 400;
+  color: #fff;
+
+  border-radius: 3px;
+}
+.changeNameCard button:hover {
+  background-color: #026aa7;
 }
