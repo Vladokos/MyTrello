@@ -27,22 +27,22 @@ export const ChangeNameCard = ({
 
   OutsideClick(form, () => closeForm());
 
-  xPos -= 376;
-  yPos -= 589;
+  xPos -= 241;
+  yPos -= 9;
   const styles = {
     transform: `translate(${xPos}px, ${yPos}px)`,
   };
 
   return (
-    <div className="changeNameCard" ref={form} style={styles}>
-      <TextareaAutosize
-        id="name"
-        value={nameCard}
-        onChange={changeNameCard}
-        // onKeyDown={sendForm}
-        // ref={nameInput}
-      />
-      <button onClick={sendForm}>Save</button>
+    <div className="blackBG" style={{ left: 0, backgroundColor: "#0009" }}>
+      <div className="changeNameCard" ref={form} style={styles}>
+        <TextareaAutosize
+          id="name"
+          value={nameCard}
+          onChange={changeNameCard}
+        />
+        <button onClick={sendForm}>Save</button>
+      </div>
     </div>
   );
 };
