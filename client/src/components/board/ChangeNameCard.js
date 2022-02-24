@@ -2,7 +2,7 @@ import React, { useRef } from "react";
 
 import { useDispatch } from "react-redux";
 
-import { changeName, changeDescription } from "../../features/card/cardsSlice";
+import { changeName } from "../../features/card/cardsSlice";
 
 import TextareaAutosize from "react-textarea-autosize";
 
@@ -27,8 +27,8 @@ export const ChangeNameCard = ({
 
   OutsideClick(form, () => closeForm());
 
-  xPos -= 241;
-  yPos -= 9;
+  xPos -= 245;
+  yPos -= 4;
   const styles = {
     transform: `translate(${xPos}px, ${yPos}px)`,
   };
