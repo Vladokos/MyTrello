@@ -44,7 +44,6 @@ export const CreateCard = ({
 
     setNameCard("");
 
-    cardInput.current.focus();
   };
 
   // because initial xPos is give some different position
