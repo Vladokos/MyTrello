@@ -37,12 +37,10 @@ export const Card = ({
                   <img src={descriptionImg} />
                 </div>
               ) : null}
-              <span
-                onClick={(e) =>
-                  visibleChangeNameCard(e, card.nameCard, card._id)
-                }
-              ></span>
             </div>
+            <span
+              onClick={(e) => visibleChangeNameCard(e, card.nameCard, card._id)}
+            />
           </div>
         </div>
       )}
