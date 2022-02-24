@@ -530,6 +530,23 @@ app.post("/board/list/card/changeDescription", jsonParser, async (req, res) => {
   }
 });
 
+app.post("/board/list/card/deleteCard", jsonParser, async (req, res) => {
+  try {
+    const { cardId } = req.body;
+
+    const card = await dataCard.findById(cardId);
+
+    if (!card) return res.status(400).send("Error");
+
+    await card.remove();
+
+    return res.status(200).send({ cardId });
+  } catch (error) {
+    console.log(error);
+    return res.status(400).send("Error");
+  }
+});
+
 app.listen(5000, () => {
   console.log("Server is running");
 });
