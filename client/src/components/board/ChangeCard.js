@@ -2,11 +2,18 @@ import React, { useRef, useState, useEffect } from "react";
 
 import { useDispatch } from "react-redux";
 
-import { changeName, changeDescription } from "../../features/card/cardsSlice";
+import {
+  changeName,
+  changeDescription,
+  deleteCard,
+} from "../../features/card/cardsSlice";
 
 import TextareaAutosize from "react-textarea-autosize";
 
 import OutsideClick from "../../hooks/outsideClick";
+
+import recycling from "../../img/recycling.svg";
+import archive from "../../img/archive.svg";
 
 export const ChangeCard = ({
   nameCard,
@@ -19,9 +26,10 @@ export const ChangeCard = ({
   const dispatch = useDispatch();
 
   const [description, setDescription] = useState("");
+  const [visible, setVisible] = useState("none");
 
   const sendForm = (e) => {
-    if (e.type == "blur" || e.key === "Enter" || e.keyCode === 13) {
+    if (e.key === "Enter" || e.keyCode === 13 || e.type === "click") {
       switch (e.target.id) {
         case "name":
           dispatch(changeName({ cardId, nameCard }));
@@ -29,6 +37,10 @@ export const ChangeCard = ({
           break;
         case "description":
           dispatch(changeDescription({ cardId, description }));
+          break;
+        case "delete":
+          dispatch(deleteCard({ cardId }));
+          closeForm();
           break;
         default:
           break;
@@ -41,9 +53,11 @@ export const ChangeCard = ({
   }, [descriptionCard]);
 
   const nameInput = useRef(false);
-  
   const form = useRef(null);
+  const descript = useRef(null);
+
   OutsideClick(form, () => closeForm());
+  OutsideClick(descript, () => setVisible("none"));
 
   if (!isOpen) return null;
   return (
@@ -62,19 +76,36 @@ export const ChangeCard = ({
             spellCheck="false"
             ref={nameInput}
           />
-          <div className="description">Description</div>
-
-          <TextareaAutosize
-            id="description"
-            placeholder="Add a more detail description..."
-            value={description}
-            onChange={(e) => setDescription(e.target.value)}
-            onBlur={(e) => {
-              sendForm(e);
-            }}
-            spellCheck="false"
-          />
+          <div className="description" ref={descript}>
+            Description
+            <TextareaAutosize
+              placeholder="Add a more detail description..."
+              value={description}
+              onChange={(e) => setDescription(e.target.value)}
+              spellCheck="false"
+              onFocus={() => setVisible("block")}
+            />
+            <button
+              id="description"
+              onClick={(e) => {
+                setVisible("none");
+                sendForm(e);
+              }}
+              style={{ display: visible }}
+            >
+              Save
+            </button>
+            <button
+              id="description"
+              onClick={() => setVisible("none")}
+              style={{ display: visible }}
+            >
+              X
+            </button>
+          </div>
           <button onClick={closeForm}>X</button>
+          <img id="delete" src={recycling} onClick={sendForm} />
+          <img src={archive} />
         </div>
       </div>
     </div>
