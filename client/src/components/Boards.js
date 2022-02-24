@@ -8,8 +8,6 @@ import axios from "axios";
 
 import { Header } from "./blanks/Header.js";
 
-import avatar from "../img/avatar.svg";
-
 export const Boards = () => {
   const navigate = useNavigate();
   const params = useParams();
