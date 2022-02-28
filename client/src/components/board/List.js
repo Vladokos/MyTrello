@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 
 import { useDispatch } from "react-redux";
 import { changeName } from "../../features/lists/listsSlice";
@@ -8,6 +8,10 @@ import { Draggable, Droppable } from "react-beautiful-dnd";
 import { Card } from "./Card";
 
 import TextareaAutosize from "react-textarea-autosize";
+
+import dots from "../../img/dots.svg";
+
+import OutsideClick from "../../hooks/outsideClick";
 
 export const List = ({
   listId,
@@ -23,8 +27,8 @@ export const List = ({
   const dispatch = useDispatch();
 
   const [nameList, setNameList] = useState(listName);
+  const [actionShow, setActionShow] = useState(false);
 
-  
   const sendForm = (e) => {
     if (e.key === "Enter" || e.keyCode === 13) {
       dispatch(changeName({ listId, nameList }));
@@ -32,6 +36,8 @@ export const List = ({
     }
   };
 
+  const actionsFrom = useRef(null);
+  OutsideClick(actionsFrom, () => setActionShow(false));
   return (
     <Draggable key={listId} draggableId={listId} index={index} id={listId}>
       {(provided) => (
@@ -54,6 +60,18 @@ export const List = ({
                     onKeyDown={sendForm}
                     spellCheck="false"
                   />
+                  <img src={dots} onClick={() => setActionShow(!actionShow)} />
+                  <div
+                    className={actionShow === false ? "hidden" : "active"}
+                    ref={actionsFrom}
+                  >
+                    <img
+                      src={dots}
+                      onClick={() => setActionShow(!actionShow)}
+                    />
+                    <div>Archive list</div>
+                    <div>Delete list</div>
+                  </div>
                 </div>
                 <div className="draggable-list" style={{ maxHeight: height }}>
                   {listCards.map((cardId, index) => {
