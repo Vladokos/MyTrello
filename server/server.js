@@ -536,9 +536,13 @@ app.post("/board/list/card/deleteCard", jsonParser, async (req, res) => {
 
     const card = await dataCard.findById(cardId);
 
-    if (!card) return res.status(400).send("Error");
+    const [list] = await dataList.find({ cards: cardId });
+
+    if (!card || !list) return res.status(400).send("Error");
 
     await card.remove();
+    await list.cards.remove({ _id: cardId });
+    await list.save();
 
     return res.status(200).send({ cardId });
   } catch (error) {
