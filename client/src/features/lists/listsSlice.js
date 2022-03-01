@@ -114,6 +114,32 @@ export const changeName = createAsyncThunk(
   }
 );
 
+export const deleteList = createAsyncThunk(
+  "lists/delete",
+  async ({ listId }) => {
+    const response = await axios({
+      config: {
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "application/json",
+        },
+      },
+      method: "POST",
+      url: "/board/list/delete",
+      data: {
+        listId,
+      },
+    })
+      .then((response) => {
+        return response.data;
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+    return response;
+  }
+);
+
 const listsSlice = createSlice({
   name: "lists",
   initialState,
@@ -189,6 +215,14 @@ const listsSlice = createSlice({
             state.lists[i].nameList = nameList;
           }
         }
+      })
+      .addCase(deleteList.pending, (state, action) => {
+        state.status = "loading";
+      })
+      .addCase(deleteList.fulfilled, (state, action) => {
+        state.status = "succeeded";
+
+        console.log(action.payload);
       });
   },
 });
