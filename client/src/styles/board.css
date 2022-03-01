@@ -136,6 +136,7 @@
 }
 .list-title > div {
   position: absolute;
+  z-index: 2;
   transform: translate(242px, -10px);
 
   background-color: #ebecf0;
