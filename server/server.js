@@ -551,6 +551,27 @@ app.post("/board/list/card/deleteCard", jsonParser, async (req, res) => {
   }
 });
 
+app.post("/board/list/delete", jsonParser, async (req, res) => {
+  try {
+    const { listId } = req.body;
+
+    const [list] = await dataList.findById(listId);
+
+    // const card = await dataCard.findById(cardId);
+
+    if (!card || !list) return res.status(400).send("Error");
+
+    // await card.remove();
+    // await list.cards.remove({ _id: cardId });
+    // await list.save();
+
+    // return res.status(200).send({ listId });
+  } catch (error) {
+    console.log(error);
+    return res.status(400).send("Error");
+  }
+});
+
 app.listen(5000, () => {
   console.log("Server is running");
 });
