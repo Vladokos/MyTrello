@@ -29,6 +29,9 @@ export const List = ({
   const [nameList, setNameList] = useState(listName);
   const [actionShow, setActionShow] = useState(false);
 
+  const actionsFrom = useRef(null);
+  const nameInput = useRef(null);
+
   const sendForm = (e) => {
     if (e.key === "Enter" || e.keyCode === 13) {
       dispatch(changeName({ listId, nameList }));
@@ -36,8 +39,8 @@ export const List = ({
     }
   };
 
-  const actionsFrom = useRef(null);
   OutsideClick(actionsFrom, () => setActionShow(false));
+  OutsideClick(nameInput, () => nameInput.current.blur());
   return (
     <Draggable key={listId} draggableId={listId} index={index} id={listId}>
       {(provided) => (
@@ -59,6 +62,7 @@ export const List = ({
                     onChange={(e) => setNameList(e.target.value)}
                     onKeyDown={sendForm}
                     spellCheck="false"
+                    ref={nameInput}
                   />
                   <img src={dots} onClick={() => setActionShow(!actionShow)} />
                   <div
@@ -69,8 +73,8 @@ export const List = ({
                       src={dots}
                       onClick={() => setActionShow(!actionShow)}
                     />
-                    <div>Archive list</div>
-                    <div>Delete list</div>
+                    <div onClick={() => console.log("test")}>Archive list</div>
+                    <div onClick={() => console.log("test")}>Delete list</div>
                   </div>
                 </div>
                 <div className="draggable-list" style={{ maxHeight: height }}>
