@@ -29,8 +29,6 @@ export const CreateList = () => {
     dispatch(getBoard(boardId));
 
     setNameList("");
-
-    listInput.current.focus();
   };
 
   const listInput = useRef(null);
