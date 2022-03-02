@@ -1,7 +1,7 @@
 import React, { useState, useRef } from "react";
 
 import { useDispatch } from "react-redux";
-import { changeName } from "../../features/lists/listsSlice";
+import { changeName, deleteList } from "../../features/lists/listsSlice";
 
 import { Draggable, Droppable } from "react-beautiful-dnd";
 
@@ -39,6 +39,8 @@ export const List = ({
     }
   };
 
+  const deletingList = () => {dispatch(deleteList({listId}))}
+
   OutsideClick(actionsFrom, () => setActionShow(false));
   OutsideClick(nameInput, () => nameInput.current.blur());
   return (
@@ -74,7 +76,7 @@ export const List = ({
                       onClick={() => setActionShow(!actionShow)}
                     />
                     <div onClick={() => console.log("test")}>Archive list</div>
-                    <div onClick={() => console.log("test")}>Delete list</div>
+                    <div onClick={deletingList}>Delete list</div>
                   </div>
                 </div>
                 <div className="draggable-list" style={{ maxHeight: height }}>
