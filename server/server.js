@@ -555,17 +555,23 @@ app.post("/board/list/delete", jsonParser, async (req, res) => {
   try {
     const { listId } = req.body;
 
-    const [list] = await dataList.findById(listId);
+    const list = await dataList.findById(listId);
 
-    // const card = await dataCard.findById(cardId);
+    if (!list) return res.status(400).send("Error");
 
-    if (!card || !list) return res.status(400).send("Error");
+    list.cards.map((card) => {
+      dataCard.find({ _id: card }, (err, doc) => {
+        if (err) console.log(err);
 
-    // await card.remove();
-    // await list.cards.remove({ _id: cardId });
-    // await list.save();
+        if (doc) {
+          doc[0].remove();
+        }
+      });
+    });
 
-    // return res.status(200).send({ listId });
+    await list.remove();
+
+    return res.status(200).send({ listId });
   } catch (error) {
     console.log(error);
     return res.status(400).send("Error");
