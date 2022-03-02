@@ -222,7 +222,15 @@ const listsSlice = createSlice({
       .addCase(deleteList.fulfilled, (state, action) => {
         state.status = "succeeded";
 
-        console.log(action.payload);
+        const { listId } = action.payload;
+
+        for (let i = 0; i < state.lists.length; i++) {
+          if (state.lists[i]._id === listId) {
+            state.lists.splice(i,1)
+          }
+        }
+
+   
       });
   },
 });
