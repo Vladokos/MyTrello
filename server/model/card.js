@@ -7,6 +7,7 @@ const dataCardsSchema = new Schema(
     nameCard: String,
     descriptionCard: String,
     boardId: { type: Schema.Types.ObjectId, ref: "databoards" },
+    archived: Boolean,
   },
   { versionKey: false }
 );
