@@ -158,20 +158,22 @@ export const Board = () => {
                       {...provided.dragHandleProps}
                       className="sheetList"
                     >
-                      {lists.map((list, index) => (
-                        <List
-                          key={listId + index}
-                          listId={list._id}
-                          listName={list.nameList}
-                          listCards={list.cards}
-                          index={index}
-                          cards={cards}
-                          visibleCardCreate={visibleCardCreate}
-                          visibleChangeCard={visibleChangeCard}
-                          visibleChangeNameCard={visibleChangeNameCard}
-                          height={height - 307}
-                        />
-                      ))}
+                      {lists.map((list, index) =>
+                        !list.archived ? (
+                          <List
+                            key={listId + index}
+                            listId={list._id}
+                            listName={list.nameList}
+                            listCards={list.cards}
+                            index={index}
+                            cards={cards}
+                            visibleCardCreate={visibleCardCreate}
+                            visibleChangeCard={visibleChangeCard}
+                            visibleChangeNameCard={visibleChangeNameCard}
+                            height={height - 307}
+                          />
+                        ) : null
+                      )}
                       {provided.placeholder}
                     </div>
                   )}
@@ -201,14 +203,14 @@ export const Board = () => {
             />
 
             {changeNameCard === false ? null : (
-            <ChangeNameCard
-              nameCard={nameCard}
-              changeNameCard={(e) => setNameCard(e.target.value)}
-              cardId={cardId}
-              closeForm={() => setChangeNameCard(false)}
-              xPos={xPos}
-              yPos={yPos}
-            />
+              <ChangeNameCard
+                nameCard={nameCard}
+                changeNameCard={(e) => setNameCard(e.target.value)}
+                cardId={cardId}
+                closeForm={() => setChangeNameCard(false)}
+                xPos={xPos}
+                yPos={yPos}
+              />
             )}
           </div>
         </div>
