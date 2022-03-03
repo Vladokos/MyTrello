@@ -140,6 +140,32 @@ export const deleteList = createAsyncThunk(
   }
 );
 
+export const archiveList = createAsyncThunk(
+  "lists/archive",
+  async ({ listId }) => {
+    const response = await axios({
+      config: {
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "application/json",
+        },
+      },
+      method: "POST",
+      url: "/board/list/archive",
+      data: {
+        listId,
+      },
+    })
+      .then((response) => {
+        return response.data;
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+    return response;
+  }
+);
+
 const listsSlice = createSlice({
   name: "lists",
   initialState,
@@ -226,11 +252,23 @@ const listsSlice = createSlice({
 
         for (let i = 0; i < state.lists.length; i++) {
           if (state.lists[i]._id === listId) {
-            state.lists.splice(i,1)
+            state.lists.splice(i, 1);
           }
         }
+      })
+      .addCase(archiveList.pending, (state, action) => {
+        state.status = "loading";
+      })
+      .addCase(archiveList.fulfilled, (state, action) => {
+        state.status = "succeeded";
 
-   
+        const { listId } = action.payload;
+
+        for (let i = 0; i < state.lists.length; i++) {
+          if (state.lists[i]._id === listId) {
+            state.lists[i].archived = true;
+          }
+        }
       });
   },
 });
