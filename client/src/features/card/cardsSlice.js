@@ -113,7 +113,7 @@ export const changeDescription = createAsyncThunk(
 );
 
 export const deleteCard = createAsyncThunk(
-  "cards/deleteCard",
+  "cards/delete",
   async ({ cardId }) => {
     const response = await axios({
       config: {
@@ -124,6 +124,32 @@ export const deleteCard = createAsyncThunk(
       },
       method: "POST",
       url: "/board/list/card/deleteCard",
+      data: {
+        cardId,
+      },
+    })
+      .then((response) => {
+        return response.data;
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+    return response;
+  }
+);
+
+export const archiveCard = createAsyncThunk(
+  "cards/archive",
+  async ({ cardId }) => {
+    const response = await axios({
+      config: {
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "application/json",
+        },
+      },
+      method: "POST",
+      url: "/board/list/card/archiveCard",
       data: {
         cardId,
       },
@@ -197,6 +223,20 @@ const cardsSlice = createSlice({
         for (let i = 0; i < state.cards.length; i++) {
           if (state.cards[i]._id === cardId) {
             state.cards.splice(i, 1);
+          }
+        }
+      })
+      .addCase(archiveCard.pending, (state, action) => {
+        state.status = "loading";
+      })
+      .addCase(archiveCard.fulfilled, (state, action) => {
+        state.status = "succeeded";
+
+        const { cardId } = action.payload;
+
+        for (let i = 0; i < state.cards.length; i++) {
+          if (state.cards[i]._id === cardId) {
+            state.cards[i].archived = true;
           }
         }
       });
