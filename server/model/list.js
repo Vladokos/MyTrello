@@ -11,10 +11,10 @@ const dataListsSchema = new Schema(
         ref: "datacards",
       },
     ],
-    boardId:{ type: Schema.Types.ObjectId, ref: 'databoards' },
+    boardId: { type: Schema.Types.ObjectId, ref: "databoards" },
+    archived: Boolean,
   },
   { versionKey: false }
 );
-
 
 module.exports = mongoose.model("dataList", dataListsSchema);
