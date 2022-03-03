@@ -1,7 +1,11 @@
 import React, { useState, useRef } from "react";
 
 import { useDispatch } from "react-redux";
-import { changeName, deleteList } from "../../features/lists/listsSlice";
+import {
+  changeName,
+  deleteList,
+  archiveList,
+} from "../../features/lists/listsSlice";
 
 import { Draggable, Droppable } from "react-beautiful-dnd";
 
@@ -26,7 +30,7 @@ export const List = ({
 }) => {
   const dispatch = useDispatch();
 
-  const [nameList, setNameList] = useState(listName);
+  const [nameList, setNameList] = useState(null);
   const [actionShow, setActionShow] = useState(false);
 
   const actionsFrom = useRef(null);
@@ -39,7 +43,13 @@ export const List = ({
     }
   };
 
-  const deletingList = () => {dispatch(deleteList({listId}))}
+  const deletingList = () => {
+    dispatch(deleteList({ listId }));
+  };
+
+  const archivingList = () => {
+    dispatch(archiveList({ listId }));
+  };
 
   OutsideClick(actionsFrom, () => setActionShow(false));
   OutsideClick(nameInput, () => nameInput.current.blur());
@@ -60,7 +70,7 @@ export const List = ({
               >
                 <div className="list-title">
                   <TextareaAutosize
-                    value={nameList}
+                    value={nameList === null ? listName : nameList}
                     onChange={(e) => setNameList(e.target.value)}
                     onKeyDown={sendForm}
                     spellCheck="false"
@@ -75,14 +85,14 @@ export const List = ({
                       src={dots}
                       onClick={() => setActionShow(!actionShow)}
                     />
-                    <div onClick={() => console.log("test")}>Archive list</div>
+                    <div onClick={archivingList}>Archive list</div>
                     <div onClick={deletingList}>Delete list</div>
                   </div>
                 </div>
                 <div className="draggable-list" style={{ maxHeight: height }}>
                   {listCards.map((cardId, index) => {
                     return cards.map((card) => {
-                      if (card._id === cardId)
+                      if (card._id === cardId && !card.archived)
                         return (
                           <Card
                             key={card._id}
