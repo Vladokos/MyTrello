@@ -6,6 +6,7 @@ import {
   changeName,
   changeDescription,
   deleteCard,
+  archiveCard,
 } from "../../features/card/cardsSlice";
 
 import TextareaAutosize from "react-textarea-autosize";
@@ -40,6 +41,10 @@ export const ChangeCard = ({
           break;
         case "delete":
           dispatch(deleteCard({ cardId }));
+          closeForm();
+          break;
+        case "archive":
+          dispatch(archiveCard({ cardId }));
           closeForm();
           break;
         default:
@@ -105,7 +110,7 @@ export const ChangeCard = ({
           </div>
           <button onClick={closeForm}>X</button>
           <img id="delete" src={recycling} onClick={sendForm} />
-          <img src={archive} />
+          <img id="archive" src={archive} onClick={sendForm} />
         </div>
       </div>
     </div>
