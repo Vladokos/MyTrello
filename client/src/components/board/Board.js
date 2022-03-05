@@ -23,6 +23,7 @@ import { CreateList } from "./CreateList";
 import { CreateCard } from "./CreateCard";
 import { ChangeCard } from "./ChangeCard";
 import { ChangeNameCard } from "./ChangeNameCard";
+import { Menu } from "./Menu";
 
 export const Board = () => {
   const navigate = useNavigate();
@@ -141,9 +142,13 @@ export const Board = () => {
       <div className="lists" style={{ height: height - 127 }}>
         <div className="container">
           <div className="lists__inner" style={{ height: height - 200 }}>
-            {boards.map((board) => (
-              <BoardName key={board._id} name={board.nameBoard} />
-            ))}
+            <div className="action-board">
+              {boards.map((board) => (
+                <BoardName key={board._id} name={board.nameBoard} />
+              ))}
+              <Menu />
+            </div>
+
             <ul className="scrollBoard">
               <DragDropContext onDragEnd={onDrop}>
                 <Droppable
@@ -187,9 +192,10 @@ export const Board = () => {
                 yPos={yPos}
                 listId={listId}
                 boards={boards}
-                moveForm={() => setYPos(yPos + 50)}
+                moveForm={() => setYPos(yPos + 55)}
                 formShow={cardFormShow}
                 closeForm={() => setCardFormShow(false)}
+                height={height - 340}
               />
             </ul>
             <ChangeCard
@@ -210,6 +216,7 @@ export const Board = () => {
                 closeForm={() => setChangeNameCard(false)}
                 xPos={xPos}
                 yPos={yPos}
+                height={height - 270}
               />
             )}
           </div>
