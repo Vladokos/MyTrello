@@ -40,7 +40,7 @@ export const Card = ({
             </div>
             <span
               onClick={(e) => visibleChangeNameCard(e, card.nameCard, card._id)}
-            />
+            ></span>
           </div>
         </div>
       )}
