@@ -15,6 +15,7 @@ export const ChangeNameCard = ({
   closeForm,
   xPos,
   yPos,
+  height,
 }) => {
   const dispatch = useDispatch();
 
@@ -27,15 +28,26 @@ export const ChangeNameCard = ({
 
   OutsideClick(form, () => closeForm());
 
-  xPos -= 245;
-  yPos -= 4;
-  const styles = {
-    transform: `translate(${xPos}px, ${yPos}px)`,
-  };
+  // xPos -= 228;
+  // yPos -= 7;
+  // transform: translate(792px, 298px);
+  // transform: translate(810px, 297px);
+
+  yPos > height ? (yPos = height) : (yPos -= 7);
 
   return (
-    <div className="blackBG" style={{ left: 0, backgroundColor: "#0009" }}>
-      <div className="changeNameCard" ref={form} style={styles}>
+    <div
+      className="blackBG"
+      style={{
+        left: 0,
+        backgroundColor: "#0009",
+      }}
+    >
+      <div
+        className="changeNameCard"
+        ref={form}
+        style={{ transform: `translate(${xPos - 228}px, ${yPos}px)` }}
+      >
         <TextareaAutosize
           id="name"
           value={nameCard}
