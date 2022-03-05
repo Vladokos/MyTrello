@@ -17,6 +17,7 @@ export const CreateCard = ({
   boards,
   formShow,
   closeForm,
+  height,
 }) => {
   const params = useParams();
   const dispatch = useDispatch();
@@ -38,20 +39,18 @@ export const CreateCard = ({
     dispatch(addCard({ nameCard, boardId, listId })).then(() => {
       dispatch(getLists(boardId)).then(() => {
         dispatch(sortingLists(boards));
-        moveForm();
+        if (yPos < height) {
+          moveForm();
+        }
       });
     });
 
     setNameCard("");
-
   };
 
   // because initial xPos is give some different position
-  xPos -= 145;
-  yPos -= 186;
-  const styles = {
-    transform: `translate(${xPos}px, ${yPos}px)`,
-  };
+  // xPos -= 145;
+  // yPos -= 186;
 
   const cardInput = useRef(null);
   const cardFormRef = useRef(null);
@@ -62,7 +61,11 @@ export const CreateCard = ({
   }, [cardInput]);
   if (!formShow) return null;
   return (
-    <div style={styles} className="form-createCard" ref={cardFormRef}>
+    <div
+      style={{ transform: `translate(${xPos - 145}px, ${yPos - 186}px)` }}
+      className="form-createCard"
+      ref={cardFormRef}
+    >
       <div>
         <TextareaAutosize
           placeholder="Enter a title for this card…"
