@@ -89,7 +89,7 @@ export const List = ({
                     <div onClick={deletingList}>Delete list</div>
                   </div>
                 </div>
-                <div className="draggable-list" style={{ maxHeight: height }}>
+                <div className="draggable-list" style={{ maxHeight: height - 60 }}>
                   {listCards.map((cardId, index) => {
                     return cards.map((card) => {
                       if (card._id === cardId && !card.archived)
