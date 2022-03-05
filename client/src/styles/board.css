@@ -21,6 +21,25 @@
 
   overflow: auto;
 }
+.action-board {
+  display: flex;
+  justify-content: space-between;
+}
+.action-board button {
+  cursor: pointer;
+
+  font-size: 14px;
+  color: #fff;
+
+  border-radius: 3px;
+
+  background-color: #ffffff3d;
+
+  padding: 10px 20px;
+}
+.action-board button:hover {
+  /* background-color: #ffffff45; */
+}
 .scrollBoard::-webkit-scrollbar {
   height: 12px;
   width: 12px;
@@ -309,9 +328,7 @@
 }
 .lists__inner ul .cards {
   display: grid;
-  grid-gap: 10px;
-
-  margin: 15px 0;
+  grid-template-rows: 30px;
 }
 .sheetList {
   display: flex;
@@ -399,9 +416,9 @@
   width: 25px;
   height: 25px;
 
-  position: absolute;
+  position: relative;
   z-index: 1;
-  transform: translate(245px, 4px);
+  transform: translate(228px, -23px);
 }
 .cards:hover span {
   cursor: pointer;
