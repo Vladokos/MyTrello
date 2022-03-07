@@ -25,6 +25,8 @@ import { ChangeCard } from "./ChangeCard";
 import { ChangeNameCard } from "./ChangeNameCard";
 import { Menu } from "./Menu";
 
+import "../../styles/Board/Board.css";
+
 export const Board = () => {
   const navigate = useNavigate();
   const params = useParams();
@@ -146,7 +148,7 @@ export const Board = () => {
               {boards.map((board) => (
                 <BoardName key={board._id} name={board.nameBoard} />
               ))}
-              <Menu />
+              <Menu height={height - 108} lists={lists} cards={cards} />
             </div>
 
             <ul className="scrollBoard">
