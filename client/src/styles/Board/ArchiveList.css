@@ -1,0 +1,24 @@
+.archive {
+  transform: translateY(-191px);
+
+  background-color: #f4f5f7;
+}
+.archiveTitle {
+  font-weight: 500;
+}
+.archivedLists {
+  display: block !important;
+}
+.archivedLists li {
+  margin-bottom: 20px;
+
+  display: flex;
+
+  justify-content: space-between;
+}
+.archivedLists li img {
+  cursor: pointer;
+
+  width: 25px !important;
+  height: 25px !important;
+}
