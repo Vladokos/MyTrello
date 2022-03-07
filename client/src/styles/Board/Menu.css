@@ -1,0 +1,67 @@
+.menu-button {
+  cursor: pointer;
+
+  font-size: 14px;
+  color: #fff;
+
+  border-radius: 3px;
+
+  background-color: #ffffff3d;
+
+  padding: 10px 20px;
+}
+.menu-button button:hover {
+  /* background-color: #ffffff45; */
+}
+.menu {
+  position: absolute;
+  right: 0;
+  top: 108px;
+
+  background-color: #f4f5f7;
+
+  width: 11.3%;
+}
+.menu > div {
+  padding: 20px 10px;
+}
+.menu div:not(.menuTitle) {
+  margin-bottom: 20px;
+}
+.menu div div:not(.menuTitle) {
+  cursor: pointer;
+
+  display: flex;
+  justify-content: space-between;
+}
+.menu div img {
+  width: 20px;
+  height: 20px;
+}
+.menuTitle {
+  display: flex;
+  justify-content: space-between;
+
+  padding: 0 10px;
+
+  font-weight: 500;
+
+  margin-bottom: 0;
+}
+.menu hr {
+  margin-bottom: 20px;
+  border-radius: 3px;
+}
+.menu button {
+  cursor: pointer;
+
+  color: #4a5566;
+  background-color: unset;
+
+  font-weight: 600;
+  font-size: 16px;
+}
+@keyframes menuAppearance {
+  100% {
+  }
+}
