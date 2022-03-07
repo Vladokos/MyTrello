@@ -1,0 +1,39 @@
+.card {
+  cursor: pointer;
+
+  display: block;
+
+  padding: 10px;
+
+  min-height: 20px;
+
+  line-height: 20px;
+
+  border-radius: 3px;
+
+  background-color: #fff;
+
+  box-shadow: 0 1px 0 #091e4240;
+}
+.cards span {
+  pointer-events: none;
+
+  width: 25px;
+  height: 25px;
+
+  position: relative;
+  z-index: 1;
+  transform: translate(228px, -23px);
+}
+.cards:hover span {
+  cursor: pointer;
+  pointer-events: all;
+
+  background: url("../../img/pencil.svg") no-repeat;
+}
+.card div {
+  pointer-events: none;
+}
+.card img {
+  width: 23px;
+}

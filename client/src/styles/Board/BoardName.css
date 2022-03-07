@@ -1,0 +1,49 @@
+.changeBoardName {
+  display: inline-block;
+}
+.boardName {
+  cursor: pointer;
+
+  display: inline-block;
+
+  font-size: 18px;
+  font-weight: 700;
+  line-height: 41px;
+  text-align: center;
+  color: #fbfdfe;
+
+  height: 40px;
+  min-width: 70px;
+
+  border-radius: 3px;
+
+  background-color: #ffffff3d;
+
+  margin-bottom: 20px;
+}
+.boardName .visible {
+  position: absolute;
+  transform: translate(0px, -41px);
+}
+.hiddenBoardName {
+  visibility: hidden;
+  display: block;
+  position: absolute;
+}
+.changeBoardName input {
+  padding: 0 16px;
+
+  font-size: 18px;
+  font-weight: 700;
+  text-align: center;
+
+  height: 40px;
+
+  border-radius: 3px;
+  transition: none;
+}
+.changeBoardName input:focus {
+  padding: 0 16px;
+
+  transition: none;
+}
