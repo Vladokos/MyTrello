@@ -4,6 +4,8 @@ import { Draggable } from "react-beautiful-dnd";
 
 import descriptionImg from "../../img/description.svg";
 
+import "../../styles/Board/Card.css";
+
 export const Card = ({
   card,
   index,

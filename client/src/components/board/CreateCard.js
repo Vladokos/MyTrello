@@ -9,6 +9,8 @@ import TextareaAutosize from "react-textarea-autosize";
 
 import OutsideClick from "../../hooks/outsideClick";
 
+import "../../styles/Board/CreateCard.css";
+
 export const CreateCard = ({
   xPos,
   yPos,

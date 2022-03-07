@@ -7,6 +7,8 @@ import { addList } from "../../features/lists/listsSlice";
 
 import OutsideClick from "../../hooks/outsideClick";
 
+import "../../styles/Board/CreateList.css";
+
 export const CreateList = () => {
   const params = useParams();
   const dispatch = useDispatch();

@@ -8,6 +8,8 @@ import TextareaAutosize from "react-textarea-autosize";
 
 import OutsideClick from "../../hooks/outsideClick";
 
+import "../../styles/Board/ChangeNameCard.css";
+
 export const ChangeNameCard = ({
   nameCard,
   changeNameCard,

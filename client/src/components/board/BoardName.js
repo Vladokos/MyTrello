@@ -8,6 +8,8 @@ import AutosizeInput from "react-input-autosize";
 
 import OutsideClick from "../../hooks/outsideClick";
 
+import "../../styles/Board/BoardName.css";
+
 export const BoardName = ({ name }) => {
   const params = useParams();
   const dispatch = useDispatch();

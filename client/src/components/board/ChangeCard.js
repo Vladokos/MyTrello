@@ -16,6 +16,8 @@ import OutsideClick from "../../hooks/outsideClick";
 import recycling from "../../img/recycling.svg";
 import archive from "../../img/archive.svg";
 
+import "../../styles/Board/ChangeCard.css";
+
 export const ChangeCard = ({
   nameCard,
   descriptionCard,

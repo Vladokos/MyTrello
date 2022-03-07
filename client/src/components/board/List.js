@@ -17,6 +17,8 @@ import dots from "../../img/dots.svg";
 
 import OutsideClick from "../../hooks/outsideClick";
 
+import "../../styles/Board/List.css";
+
 export const List = ({
   listId,
   listName,
