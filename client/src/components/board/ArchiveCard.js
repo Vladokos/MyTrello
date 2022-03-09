@@ -1,4 +1,7 @@
 import React from "react";
+import { useDispatch } from "react-redux";
+
+import { unarchiveCard, deleteCard } from "../../features/card/cardsSlice";
 
 import recycling from "../../img/recycling.svg";
 import restore from "../../img/restore.svg";
@@ -6,6 +9,11 @@ import restore from "../../img/restore.svg";
 import "../../styles/Board/ArchiveCard.css";
 
 export const ArchiveCard = ({ height, back, close, cards }) => {
+  const dispatch = useDispatch();
+
+  const unarchive = (cardId) => dispatch(unarchiveCard({ cardId }));
+  const deleting = (cardId) => dispatch(deleteCard({ cardId }));
+
   return (
     <div className="archive" style={{ height: height - 90 }}>
       <div className="archiveTitle">
@@ -20,8 +28,8 @@ export const ArchiveCard = ({ height, back, close, cards }) => {
             return (
               <li key={card._id}>
                 {card.nameCard}
-                <img src={restore} />
-                <img src={recycling} />
+                <img src={restore} onClick={() => unarchive(card._id)} />
+                <img src={recycling} onClick={() => deleting(card._id)} />
               </li>
             );
           }
