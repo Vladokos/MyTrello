@@ -553,7 +553,7 @@ app.post("/board/list/card/deleteCard", jsonParser, async (req, res) => {
   }
 });
 
-app.post("/board/list/card/archiveCard", jsonParser, async (req, res) => {
+app.post("/board/list/card/archive", jsonParser, async (req, res) => {
   try {
     const { cardId } = req.body;
 
@@ -563,7 +563,7 @@ app.post("/board/list/card/archiveCard", jsonParser, async (req, res) => {
 
     card.archived = true;
 
-    await card.save()
+    await card.save();
 
     return res.status(200).send({ cardId });
   } catch (error) {
@@ -572,6 +572,24 @@ app.post("/board/list/card/archiveCard", jsonParser, async (req, res) => {
   }
 });
 
+app.post("/board/list/card/unarchive", jsonParser, async (req, res) => {
+  try {
+    const { cardId } = req.body;
+
+    const card = await dataCard.findById(cardId);
+
+    if (!card) return res.status(400).send("Error");
+
+    card.archived = false;
+
+    await card.save();
+
+    return res.status(200).send({ cardId });
+  } catch (error) {
+    console.log(error);
+    return res.status(400).send("Error");
+  }
+});
 
 app.post("/board/list/delete", jsonParser, async (req, res) => {
   try {
@@ -596,7 +614,7 @@ app.post("/board/list/delete", jsonParser, async (req, res) => {
     });
 
     await list.remove();
-    await board.lists.remove({_id: listId})
+    await board.lists.remove({ _id: listId });
     await board.save();
 
     return res.status(200).send({ listId });
@@ -616,7 +634,7 @@ app.post("/board/list/archive", jsonParser, async (req, res) => {
 
     list.archived = true;
 
-    await list.save()
+    await list.save();
 
     return res.status(200).send({ listId });
   } catch (error) {
@@ -625,6 +643,24 @@ app.post("/board/list/archive", jsonParser, async (req, res) => {
   }
 });
 
+app.post("/board/list/unarchive", jsonParser, async (req, res) => {
+  try {
+    const { listId } = req.body;
+
+    const list = await dataList.findById(listId);
+
+    if (!list) return res.status(400).send("Error");
+
+    list.archived = false;
+
+    await list.save();
+
+    return res.status(200).send({ listId });
+  } catch (error) {
+    console.log(error);
+    return res.status(400).send("Error");
+  }
+});
 
 app.listen(5000, () => {
   console.log("Server is running");
