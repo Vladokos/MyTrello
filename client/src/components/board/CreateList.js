@@ -55,6 +55,7 @@ export const CreateList = () => {
           placeholder="Enter list name"
           value={nameList}
           onChange={onNameListChange}
+          onKeyDown={(e) => e.key === "Enter"? createList(): null}
         />
         <button onClick={createList}>Add list</button>
         <button onClick={visibleListCreate}>X</button>
