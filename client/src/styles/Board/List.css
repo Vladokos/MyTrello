@@ -10,7 +10,7 @@
 
   background-color: #ebecf0;
 }
-.list button {
+.listCreate > button {
   cursor: pointer;
 
   width: 100%;
@@ -23,7 +23,7 @@
   font-size: 14px;
   color: #818183;
 }
-.list button::before {
+.listCreate > button::before {
   content: "\002B";
 
   font-size: 26px;
@@ -31,7 +31,7 @@
 
   margin-right: 7px;
 }
-.list button:hover {
+.listCreate > button:hover {
   background-color: #091e4214;
   color: #172b4d;
 }
@@ -39,6 +39,8 @@
   cursor: pointer;
 
   display: flex;
+
+  margin-bottom: 15px;
 }
 .list-title img {
   height: 20px;
