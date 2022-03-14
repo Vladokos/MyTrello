@@ -268,9 +268,9 @@ app.post("/token/verify", jsonParser, async (req, res) => {
       await data.save();
 
       return res.status(200).send({ message: "successfully" });
+    } else {
+      res.status(400).send("Error");
     }
-
-    res.status(400).send("Error");
   }
 });
 
@@ -600,8 +600,6 @@ app.post("/board/list/delete", jsonParser, async (req, res) => {
     const [board] = await dataBoards.find({ lists: listId });
 
     if (!list || !board) return res.status(400).send("Error");
-
-    console.log(board);
 
     list.cards.map((card) => {
       dataCard.find({ _id: card }, (err, doc) => {
