@@ -276,7 +276,7 @@ const cardsSlice = createSlice({
 
         for (let i = 0; i < state.cards.length; i++) {
           if (state.cards[i]._id === cardId) {
-            state.cards[i].archived = true;
+            state.cards[i].archived = false;
           }
         }
       });
