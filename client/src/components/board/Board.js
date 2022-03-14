@@ -51,14 +51,14 @@ export const Board = () => {
   const [xPos, setXPos] = useState(null);
   const [yPos, setYPos] = useState(null);
 
-  const visibleCardCreate = (e) => {
-    setListId(e.target.className);
+  // const visibleCardCreate = (e) => {
+  //   setListId(e.target.className);
 
-    setXPos(e.target.getBoundingClientRect().x);
-    setYPos(e.target.getBoundingClientRect().y);
+  //   setXPos(e.target.getBoundingClientRect().x);
+  //   setYPos(e.target.getBoundingClientRect().y);
 
-    setCardFormShow(true);
-  };
+  //   setCardFormShow(true);
+  // };
 
   const visibleChangeCard = (e, id, description) => {
     if (e.target.innerText === "") return null;
@@ -82,11 +82,11 @@ export const Board = () => {
   };
 
   useEffect(() => {
-    const accessToken = sessionStorage.getItem("accessToken");
+    const accessToken = localStorage.getItem("accessToken");
 
     const { boardId } = params;
 
-    if (accessToken === "undefined" || accessToken === null) navigate("/sig");
+    if (!accessToken) navigate("/sig");
 
     axios({
       config: {
@@ -169,12 +169,12 @@ export const Board = () => {
                         !list.archived ? (
                           <List
                             key={listId + index}
+                            boards={boards}
                             listId={list._id}
                             listName={list.nameList}
                             listCards={list.cards}
                             index={index}
                             cards={cards}
-                            visibleCardCreate={visibleCardCreate}
                             visibleChangeCard={visibleChangeCard}
                             visibleChangeNameCard={visibleChangeNameCard}
                             height={height - 307}
@@ -189,16 +189,12 @@ export const Board = () => {
 
               <CreateList />
 
-              <CreateCard
-                xPos={xPos}
-                yPos={yPos}
+              {/* <CreateCard
                 listId={listId}
                 boards={boards}
-                moveForm={() => setYPos(yPos + 55)}
                 formShow={cardFormShow}
                 closeForm={() => setCardFormShow(false)}
-                height={height - 340}
-              />
+              /> */}
             </ul>
             <ChangeCard
               nameCard={nameCard}
