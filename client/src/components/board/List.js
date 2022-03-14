@@ -7,25 +7,27 @@ import {
   archiveList,
 } from "../../features/lists/listsSlice";
 
-import { Draggable, Droppable } from "react-beautiful-dnd";
-
 import { Card } from "./Card";
+
+import { CreateCard } from "./CreateCard";
+
+import { Draggable, Droppable } from "react-beautiful-dnd";
 
 import TextareaAutosize from "react-textarea-autosize";
 
-import dots from "../../img/dots.svg";
-
 import OutsideClick from "../../hooks/outsideClick";
+
+import dots from "../../img/dots.svg";
 
 import "../../styles/Board/List.css";
 
 export const List = ({
+  boards,
   listId,
   listName,
   listCards,
   index,
   cards,
-  visibleCardCreate,
   visibleChangeCard,
   visibleChangeNameCard,
   height,
@@ -34,6 +36,7 @@ export const List = ({
 
   const [nameList, setNameList] = useState(null);
   const [actionShow, setActionShow] = useState(false);
+  const [cardCreateShow, setCardCreateShow] = useState(false);
 
   const actionsFrom = useRef(null);
   const nameInput = useRef(null);
@@ -91,10 +94,13 @@ export const List = ({
                     <div onClick={deletingList}>Delete list</div>
                   </div>
                 </div>
-                <div className="draggable-list" style={{ maxHeight: height - 60 }}>
+                <div
+                  className="draggable-list"
+                  style={{ maxHeight: height - 60 }}
+                >
                   {listCards.map((cardId, index) => {
                     return cards.map((card) => {
-                      if (card._id === cardId && !card.archived)
+                      if (card._id === cardId && !card.archived) {
                         return (
                           <Card
                             key={card._id}
@@ -104,18 +110,26 @@ export const List = ({
                             visibleChangeNameCard={visibleChangeNameCard}
                           />
                         );
+                      }
                     });
                   })}
                 </div>
 
                 {provided.placeholder}
-                <div>
+                <div className="listCreate">
                   <button
-                    onClick={(e) => visibleCardCreate(e)}
+                    onClick={() => setCardCreateShow(true)}
                     className={listId}
                   >
                     Add a card
                   </button>
+
+                  <CreateCard
+                    listId={listId}
+                    boards={boards}
+                    formShow={cardCreateShow}
+                    closeForm={() => setCardCreateShow(false)}
+                  />
                 </div>
               </div>
             )}
