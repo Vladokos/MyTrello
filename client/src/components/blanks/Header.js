@@ -5,9 +5,13 @@ import OutsideClick from "../../hooks/outsideClick";
 
 import avatar from "../../img/avatar.svg";
 
+import "../../styles/Header.css";
+
 export const Header = () => {
   const navigate = useNavigate();
   const params = useParams();
+
+  const userId = localStorage.getItem("userId");
 
   const [createShow, setCreateShow] = useState(false);
   const [profileShow, setProfileShow] = useState(false);
@@ -29,7 +33,9 @@ export const Header = () => {
     <header className="header header-board">
       <div className="container">
         <div className="header__inner">
-          <div className="logo">MyTrello</div>
+          <div className="logo">
+            <Link to={"/" + userId + "/boards"}>MyTrello</Link>
+          </div>
           <div> recent </div>
           <div> favorites </div>
           <div onClick={visibleCreateMenu}>Create</div>
