@@ -12,24 +12,24 @@ export const Boards = () => {
   const navigate = useNavigate();
   const params = useParams();
 
+  localStorage.setItem("userId", params.id);
+
   const dispatch = useDispatch();
   const { boards, status } = useSelector((state) => state.boards);
 
-  const [profileVisibility, setProfileVisibility] = useState(false);
   const [createVisibility, setCreateVisibility] = useState(false);
   const [nameBoard, setNameBoard] = useState("");
 
-  const visibleProfileMenu = () => setProfileVisibility(!profileVisibility);
   const visibleCreateMenu = () => setCreateVisibility(!createVisibility);
 
   const onNameBoardChange = (e) => setNameBoard(e.target.value);
 
   useEffect(() => {
-    const accessToken = sessionStorage.getItem("accessToken");
+    const accessToken = localStorage.getItem("accessToken");
     const { id } = params;
 
-    if (accessToken === "undefined" || accessToken === null) navigate("/sig");
-
+    if (!accessToken) return;
+    
     axios({
       config: {
         headers: {
@@ -55,18 +55,10 @@ export const Boards = () => {
       });
   }, []);
 
-  const logOut = () => {
-    sessionStorage.removeItem("accessToken");
-
-    localStorage.removeItem("refreshToken");
-
-    navigate("/sig");
-  };
-
   const createBoard = () => {
     const { id } = params;
 
-    if (nameBoard.length < 1) return;
+    if (nameBoard.trim().length < 1) return;
 
     dispatch(addBoards({ id, nameBoard }));
 
