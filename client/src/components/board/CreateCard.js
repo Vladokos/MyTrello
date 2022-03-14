@@ -11,22 +11,13 @@ import OutsideClick from "../../hooks/outsideClick";
 
 import "../../styles/Board/CreateCard.css";
 
-export const CreateCard = ({
-  xPos,
-  yPos,
-  moveForm,
-  listId,
-  boards,
-  formShow,
-  closeForm,
-  height,
-}) => {
+export const CreateCard = ({ listId, boards, formShow, closeForm }) => {
   const params = useParams();
   const dispatch = useDispatch();
 
   const [nameCard, setNameCard] = useState("");
 
-  const onNameCardChange = (e) => setNameCard(e.target.value);
+  const onNameCardChange = (e) => setNameCard(e.target.value.trim());
 
   const createCard = () => {
     if (nameCard.replace(/ /g, "").length <= 0 || !listId) {
@@ -41,9 +32,6 @@ export const CreateCard = ({
     dispatch(addCard({ nameCard, boardId, listId })).then(() => {
       dispatch(getLists(boardId)).then(() => {
         dispatch(sortingLists(boards));
-        if (yPos < height) {
-          moveForm();
-        }
       });
     });
 
@@ -63,16 +51,13 @@ export const CreateCard = ({
   }, [cardInput]);
   if (!formShow) return null;
   return (
-    <div
-      style={{ transform: `translate(${xPos - 145}px, ${yPos - 186}px)` }}
-      className="form-createCard"
-      ref={cardFormRef}
-    >
+    <div className="form-createCard" ref={cardFormRef}>
       <div>
         <TextareaAutosize
           placeholder="Enter a title for this card…"
           value={nameCard}
           onChange={onNameCardChange}
+          onKeyDown={(e) => e.key === "Enter"? createCard(): null}
           ref={(e) => e?.focus?.()}
         />
       </div>
