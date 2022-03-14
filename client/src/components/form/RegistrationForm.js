@@ -52,7 +52,7 @@ export const RegistrationForm = () => {
           if (response.status === 200) {
             const { id, refreshToken, accessToken } = response.data;
 
-            sessionStorage.setItem("accessToken", JSON.stringify(accessToken));
+            localStorage.setItem("accessToken", JSON.stringify(accessToken));
 
             localStorage.setItem("refreshToken", JSON.stringify(refreshToken));
 
