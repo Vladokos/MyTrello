@@ -36,7 +36,7 @@ export const Board = () => {
   const dispatch = useDispatch();
   const { boards } = useSelector((state) => state.boards);
   const { lists } = useSelector((state) => state.lists);
-  const { cards } = useSelector((state) => state.cards);
+  const { cards, status } = useSelector((state) => state.cards);
 
   const [cardFormShow, setCardFormShow] = useState(false);
   const [changeCard, setChangeCard] = useState(false);
@@ -138,7 +138,13 @@ export const Board = () => {
     }
   }, [boards]);
 
-  return (
+  return status !== "succeeded" ? (
+    <div class="lds-facebook">
+      <div></div>
+      <div></div>
+      <div></div>
+    </div>
+  ) : (
     <div className="boardMenu" style={{ height: height }}>
       <Header />
       <div className="lists" style={{ height: height - 127 }}>
