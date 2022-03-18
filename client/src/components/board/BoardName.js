@@ -16,6 +16,7 @@ export const BoardName = ({ name }) => {
 
   const [nameBoard, setNameBoard] = useState(name);
   const [visibleInput, setVisibleInput] = useState(false);
+  const [width, setWidth] = useState(null);
 
   const onNameBoardChange = (e) => {
     setNameBoard(e.target.value);
@@ -38,6 +39,9 @@ export const BoardName = ({ name }) => {
   useEffect(() => {
     nameInput?.current?.focus?.();
   }, [nameInput]);
+  useEffect(() => {
+    setWidth(nameForm.current.offsetWidth);
+  }, [nameForm.current.offsetWidth]);
   return (
     <div className="changeBoardName">
       <div
@@ -45,7 +49,7 @@ export const BoardName = ({ name }) => {
           setVisibleInput(true);
         }}
         className={visibleInput ? "hidden" : "boardName"}
-        style={{ width: nameForm.current.offsetWidth }}
+        style={{ width: width }}
       >
         {name}
       </div>
