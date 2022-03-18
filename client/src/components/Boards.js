@@ -4,13 +4,18 @@ import { useNavigate, useParams, Link } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import { getBoards, addBoards } from "../features/boards/boardsSlice";
 
+import useWindowHeight from "../hooks/heightWindowHook";
+
 import axios from "axios";
 
+import { Loader } from "./blanks/Loader";
 import { Header } from "./blanks/Header.js";
 
 export const Boards = () => {
   const navigate = useNavigate();
   const params = useParams();
+
+  const { height } = useWindowHeight();
 
   localStorage.setItem("userId", params.id);
 
@@ -29,7 +34,7 @@ export const Boards = () => {
     const { id } = params;
 
     if (!accessToken) return;
-    
+
     axios({
       config: {
         headers: {
@@ -67,8 +72,10 @@ export const Boards = () => {
     setCreateVisibility(false);
   };
 
-  return (
-    <div className="boardsMenu">
+  return status !== "succeeded" ? (
+    <Loader />
+  ) : (
+    <div className="boardsMenu" style={{ height: height }}>
       <Header />
       <div className="workspace">
         <div className="container">
