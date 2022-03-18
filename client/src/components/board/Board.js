@@ -16,11 +16,11 @@ import axios from "axios";
 
 import useWindowHeight from "../../hooks/heightWindowHook";
 
+import { Loader } from "../blanks/Loader";
 import { Header } from "../blanks/Header";
 import { BoardName } from "./BoardName";
 import { List } from "./List";
 import { CreateList } from "./CreateList";
-import { CreateCard } from "./CreateCard";
 import { ChangeCard } from "./ChangeCard";
 import { ChangeNameCard } from "./ChangeNameCard";
 import { Menu } from "./Menu";
@@ -38,7 +38,6 @@ export const Board = () => {
   const { lists } = useSelector((state) => state.lists);
   const { cards, status } = useSelector((state) => state.cards);
 
-  const [cardFormShow, setCardFormShow] = useState(false);
   const [changeCard, setChangeCard] = useState(false);
   const [changeNameCard, setChangeNameCard] = useState(false);
 
@@ -50,15 +49,6 @@ export const Board = () => {
 
   const [xPos, setXPos] = useState(null);
   const [yPos, setYPos] = useState(null);
-
-  // const visibleCardCreate = (e) => {
-  //   setListId(e.target.className);
-
-  //   setXPos(e.target.getBoundingClientRect().x);
-  //   setYPos(e.target.getBoundingClientRect().y);
-
-  //   setCardFormShow(true);
-  // };
 
   const visibleChangeCard = (e, id, description) => {
     if (e.target.innerText === "") return null;
@@ -139,11 +129,7 @@ export const Board = () => {
   }, [boards]);
 
   return status !== "succeeded" ? (
-    <div class="lds-facebook">
-      <div></div>
-      <div></div>
-      <div></div>
-    </div>
+    <Loader />
   ) : (
     <div className="boardMenu" style={{ height: height }}>
       <Header />
@@ -194,13 +180,6 @@ export const Board = () => {
               </DragDropContext>
 
               <CreateList />
-
-              {/* <CreateCard
-                listId={listId}
-                boards={boards}
-                formShow={cardFormShow}
-                closeForm={() => setCardFormShow(false)}
-              /> */}
             </ul>
             <ChangeCard
               nameCard={nameCard}
