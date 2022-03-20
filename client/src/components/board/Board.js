@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 
 import { DragDropContext, Droppable } from "react-beautiful-dnd";
@@ -128,6 +128,8 @@ export const Board = () => {
     }
   }, [boards]);
 
+  const [drag, setDrag] = useState(false);
+
   return status !== "succeeded" ? (
     <Loader />
   ) : (
@@ -143,8 +145,17 @@ export const Board = () => {
               <Menu height={height - 108} lists={lists} cards={cards} />
             </div>
 
-            <ul className="scrollBoard">
-              <DragDropContext onDragEnd={onDrop}>
+            <ul
+              className="scrollBoard"
+              style={drag === false ? { transform: `translateZ(10px)` } : null}
+            >
+              <DragDropContext
+                onDragEnd={(e) => {
+                  onDrop(e);
+                  setDrag(false);
+                }}
+                onDragStart={() => setDrag(true)}
+              >
                 <Droppable
                   droppableId="lists"
                   direction="horizontal"
