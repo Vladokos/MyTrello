@@ -25,7 +25,9 @@
   display: flex;
   justify-content: space-between;
 }
-
+.scrollBoard{
+  /* transform: translateZ(10px); */
+}
 .scrollBoard::-webkit-scrollbar {
   height: 12px;
   width: 12px;
