@@ -72,6 +72,8 @@ export const Board = () => {
   };
 
   useEffect(() => {
+    console.log(Date.now());
+
     const accessToken = localStorage.getItem("accessToken");
 
     const { boardId } = params;
@@ -150,11 +152,11 @@ export const Board = () => {
               style={drag === false ? { transform: `translateZ(10px)` } : null}
             >
               <DragDropContext
+                onDragStart={() => setDrag(true)}
                 onDragEnd={(e) => {
                   onDrop(e);
                   setDrag(false);
                 }}
-                onDragStart={() => setDrag(true)}
               >
                 <Droppable
                   droppableId="lists"
