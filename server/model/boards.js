@@ -12,6 +12,8 @@ const dataBoardsSchema = new Schema(
       },
     ],
     idUser: { type: Schema.Types.ObjectId, ref: "datausers" },
+    favorites: Boolean,
+    lastVisiting: Date,
   },
   { versionKey: false }
 );
