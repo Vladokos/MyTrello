@@ -107,6 +107,58 @@ export const changeName = createAsyncThunk(
   }
 );
 
+export const addFavorites = createAsyncThunk(
+  "boards/addFavorites",
+  async ({ boardId }) => {
+    const response = await axios({
+      config: {
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "application/json",
+        },
+      },
+      method: "POST",
+      url: "/board/addFavorites",
+      data: {
+        boardId,
+      },
+    })
+      .then((response) => {
+        return response.data;
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+    return response;
+  }
+);
+
+export const removeFavorites = createAsyncThunk(
+  "boards/removeFavorites",
+  async ({ boardId }) => {
+    const response = await axios({
+      config: {
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "application/json",
+        },
+      },
+      method: "POST",
+      url: "/board/removeFavorites",
+      data: {
+        boardId,
+      },
+    })
+      .then((response) => {
+        return response.data;
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+    return response;
+  }
+);
+
 const boardsSlice = createSlice({
   name: "boards",
   initialState,
@@ -155,6 +207,34 @@ const boardsSlice = createSlice({
         for (let i = 0; i < state.boards.length; i++) {
           if (state.boards[i]._id === boardId) {
             state.boards[i].nameBoard = nameBoard;
+          }
+        }
+      })
+      .addCase(addFavorites.pending, (state, action) => {
+        state.status = "loading";
+      })
+      .addCase(addFavorites.fulfilled, (state, action) => {
+        state.status = "succeeded";
+
+        const { boardId } = action.payload;
+
+        for (let i = 0; i < state.boards.length; i++) {
+          if (state.boards[i]._id === boardId) {
+            state.boards[i].favorites = true;
+          }
+        }
+      })
+      .addCase(removeFavorites.pending, (state, action) => {
+        state.status = "loading";
+      })
+      .addCase(removeFavorites.fulfilled, (state, action) => {
+        state.status = "succeeded";
+
+        const { boardId } = action.payload;
+
+        for (let i = 0; i < state.boards.length; i++) {
+          if (state.boards[i]._id === boardId) {
+            state.boards[i].favorites = false;
           }
         }
       });
