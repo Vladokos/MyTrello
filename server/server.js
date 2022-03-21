@@ -312,6 +312,7 @@ app.post("/boards/create", jsonParser, async (req, res) => {
     const newBoard = await new dataBoards({
       nameBoard,
       idUser,
+      favorites: false,
     });
 
     newBoard.save((error) => {
@@ -322,6 +323,43 @@ app.post("/boards/create", jsonParser, async (req, res) => {
     });
 
     res.status(200).send(newBoard);
+  } catch (error) {
+    console.log(error);
+    return res.status(400).send("Error");
+  }
+});
+
+app.post("/board/addFavorites", jsonParser, async (req, res) => {
+  try {
+    const { boardId } = req.body;
+
+    const board = await dataBoards.findById(boardId);
+
+    if(!board) return res.status(400).send("Error");
+
+    board.favorites = true;
+
+    await board.save();
+
+    res.status(200).send({boardId});
+  } catch (error) {
+    console.log(error);
+    return res.status(400).send("Error");
+  }
+});
+app.post("/board/removeFavorites", jsonParser, async (req, res) => {
+  try {
+    const { boardId } = req.body;
+
+    const board = await dataBoards.findById(boardId);
+
+    if(!board) return res.status(400).send("Error");
+
+    board.favorites = false;
+
+    await board.save();
+
+    res.status(200).send({boardId});
   } catch (error) {
     console.log(error);
     return res.status(400).send("Error");
