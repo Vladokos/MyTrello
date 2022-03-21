@@ -2,7 +2,12 @@ import React, { useState, useEffect } from "react";
 import { useNavigate, useParams, Link } from "react-router-dom";
 
 import { useSelector, useDispatch } from "react-redux";
-import { getBoards, addBoards } from "../features/boards/boardsSlice";
+import {
+  getBoards,
+  addBoards,
+  addFavorites,
+  removeFavorites,
+} from "../features/boards/boardsSlice";
 
 import useWindowHeight from "../hooks/heightWindowHook";
 
@@ -10,6 +15,9 @@ import axios from "axios";
 
 import { Loader } from "./blanks/Loader";
 import { Header } from "./blanks/Header.js";
+
+import starUnchecked from "../img/starUnchecked.svg";
+import starChecked from "../img/starChecked.svg";
 
 export const Boards = () => {
   const navigate = useNavigate();
@@ -72,6 +80,19 @@ export const Boards = () => {
     setCreateVisibility(false);
   };
 
+  const favoriteAction = (favorite, boardId) => {
+    switch (favorite) {
+      case false:
+        dispatch(addFavorites({ boardId }));
+        break;
+      case true:
+        dispatch(removeFavorites({ boardId }));
+        break;
+      default:
+        break;
+    }
+  };
+
   return status !== "succeeded" ? (
     <Loader />
   ) : (
@@ -83,6 +104,32 @@ export const Boards = () => {
             <div className="boards">
               <ul>
                 {boards.map((board) => {
+                  if (board.favorites === true) {
+                    return (
+                      <li className="board" key={board.nameBoard}>
+                        <Link
+                          to={"/board/" + board._id + "/" + board.nameBoard}
+                          key={board._id}
+                        >
+                          {board.nameBoard}
+                        </Link>
+                        <img
+                          src={
+                            board.favorites === false
+                              ? starUnchecked
+                              : starChecked
+                          }
+                          onClick={() =>
+                            favoriteAction(board.favorites, board._id)
+                          }
+                        />
+                      </li>
+                    );
+                  }
+                })}
+              </ul>
+              <ul>
+                {boards.map((board) => {
                   return (
                     <li className="board" key={board.nameBoard}>
                       <Link
@@ -91,6 +138,16 @@ export const Boards = () => {
                       >
                         {board.nameBoard}
                       </Link>
+                      <img
+                        src={
+                          board.favorites === false
+                            ? starUnchecked
+                            : starChecked
+                        }
+                        onClick={() =>
+                          favoriteAction(board.favorites, board._id)
+                        }
+                      />
                     </li>
                   );
                 })}
