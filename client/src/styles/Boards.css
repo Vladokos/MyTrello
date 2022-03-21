@@ -5,10 +5,8 @@
 .boards ul {
   margin-top: 120px;
 
-  display: grid;
-  grid-gap: 16px;
-  grid-template-columns: repeat(4, 196px);
-  grid-template-rows: 96px;
+  display: flex;
+  gap: 15px;
 }
 
 .board {
@@ -20,6 +18,30 @@
   font-weight: 700;
 
   background-color: rgb(0, 121, 191);
+
+  width: 197px;
+  height: 96px;
+}
+.board img {
+  cursor: pointer;
+
+  width: 28px;
+  height: 28px;
+
+  justify-self: end;
+
+  margin-right: 10px;
+
+  z-index: 1;
+
+  opacity: 0;
+  transform: translateX(10px);
+
+  transition: 0.6s cubic-bezier(0.33, 1, 0.68, 1);
+}
+.board:hover img {
+  opacity: 1;
+  transform: translateX(0);
 }
 .board::after {
   content: "";
