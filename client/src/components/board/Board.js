@@ -4,7 +4,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import { DragDropContext, Droppable } from "react-beautiful-dnd";
 
 import { useSelector, useDispatch } from "react-redux";
-import { getBoard, changeLists } from "../../features/boards/boardsSlice";
+import { getBoard, changeLists, changeData } from "../../features/boards/boardsSlice";
 import {
   getLists,
   sortingLists,
@@ -72,8 +72,6 @@ export const Board = () => {
   };
 
   useEffect(() => {
-    console.log(Date.now());
-
     const accessToken = localStorage.getItem("accessToken");
 
     const { boardId } = params;
@@ -95,8 +93,10 @@ export const Board = () => {
     })
       .then((response) => {
         if (response.status === 200) {
-          dispatch(getLists(boardId));
+          const date = Date.now();
+          dispatch(changeData({boardId, date}))
           dispatch(getBoard(boardId));
+          dispatch(getLists(boardId));
           dispatch(getCards(boardId));
         }
       })
