@@ -159,6 +159,33 @@ export const removeFavorites = createAsyncThunk(
   }
 );
 
+export const changeData = createAsyncThunk(
+  "boards/changeData",
+  async ({ boardId, date }) => {
+    const response = await axios({
+      config: {
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "application/json",
+        },
+      },
+      method: "POST",
+      url: "/board/changeData",
+      data: {
+        boardId,
+        date,
+      },
+    })
+      .then((response) => {
+        return response.data;
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+    return response;
+  }
+);
+
 const boardsSlice = createSlice({
   name: "boards",
   initialState,
@@ -235,6 +262,19 @@ const boardsSlice = createSlice({
         for (let i = 0; i < state.boards.length; i++) {
           if (state.boards[i]._id === boardId) {
             state.boards[i].favorites = false;
+          }
+        }
+      })
+      .addCase(changeData.pending, (state, action) => {
+        state.status = "loading";
+      }) .addCase(changeData.fulfilled, (state, action) => {
+        state.status = "succeeded";
+
+        const { boardId, date } = action.payload;
+
+        for (let i = 0; i < state.boards.length; i++) {
+          if (state.boards[i]._id === boardId) {
+            state.boards[i].lastVisiting = date;
           }
         }
       });
