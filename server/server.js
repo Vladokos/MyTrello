@@ -313,6 +313,7 @@ app.post("/boards/create", jsonParser, async (req, res) => {
       nameBoard,
       idUser,
       favorites: false,
+      lastVisiting: null,
     });
 
     newBoard.save((error) => {
@@ -335,13 +336,13 @@ app.post("/board/addFavorites", jsonParser, async (req, res) => {
 
     const board = await dataBoards.findById(boardId);
 
-    if(!board) return res.status(400).send("Error");
+    if (!board) return res.status(400).send("Error");
 
     board.favorites = true;
 
     await board.save();
 
-    res.status(200).send({boardId});
+    res.status(200).send({ boardId });
   } catch (error) {
     console.log(error);
     return res.status(400).send("Error");
@@ -353,13 +354,32 @@ app.post("/board/removeFavorites", jsonParser, async (req, res) => {
 
     const board = await dataBoards.findById(boardId);
 
-    if(!board) return res.status(400).send("Error");
+    if (!board) return res.status(400).send("Error");
 
     board.favorites = false;
 
     await board.save();
 
-    res.status(200).send({boardId});
+    res.status(200).send({ boardId });
+  } catch (error) {
+    console.log(error);
+    return res.status(400).send("Error");
+  }
+});
+
+app.post("/board/changeData", jsonParser, async (req, res) => {
+  try {
+    const { boardId, date } = req.body;
+
+    const board = await dataBoards.findById(boardId);
+
+    if (!board) return res.status(400).send("Error");
+
+    board.lastVisiting = date;
+
+    await board.save();
+
+    res.status(200).send({ boardId, date });
   } catch (error) {
     console.log(error);
     return res.status(400).send("Error");
@@ -697,6 +717,8 @@ app.post("/board/list/unarchive", jsonParser, async (req, res) => {
     return res.status(400).send("Error");
   }
 });
+
+
 
 app.listen(5000, () => {
   console.log("Server is running");
