@@ -30,6 +30,9 @@ export const Boards = () => {
   const dispatch = useDispatch();
   const { boards, status } = useSelector((state) => state.boards);
 
+  const [favorites, setFavorites] = useState(false);
+  const [recent, setRecent] = useState(false);
+
   const [createVisibility, setCreateVisibility] = useState(false);
   const [nameBoard, setNameBoard] = useState("");
 
@@ -96,13 +99,14 @@ export const Boards = () => {
   return status !== "succeeded" ? (
     <Loader />
   ) : (
-    <div className="boardsMenu" style={{ height: height }}>
+    <div className="boardsMenu" style={{ minHeight: height }}>
       <Header />
       <div className="workspace">
         <div className="container">
           <div className="workspace__inner">
             <div className="boards">
               <ul>
+                <li> Recent </li>
                 {[...boards]
                   .sort((a, b) => {
                     if (a.lastVisiting > b.lastVisiting) {
@@ -134,7 +138,9 @@ export const Boards = () => {
                     );
                   })}
               </ul>
-              <ul>
+
+              <ul className={favorites === true ? null : "hidden"}>
+                <li> Favorites </li>
                 {boards.map((board) => {
                   if (board.favorites === true) {
                     return (
@@ -161,6 +167,7 @@ export const Boards = () => {
                 })}
               </ul>
               <ul>
+                <li>All boards</li>
                 {boards.map((board) => {
                   return (
                     <li className="board" key={board.nameBoard}>
