@@ -136,7 +136,7 @@ export const Board = () => {
     <Loader />
   ) : (
     <div className="boardMenu" style={{ height: height }}>
-      <Header />
+      <Header boards={boards} />
       <div className="lists" style={{ height: height - 127 }}>
         <div className="container">
           <div className="lists__inner" style={{ height: height - 200 }}>
