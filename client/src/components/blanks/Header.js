@@ -7,7 +7,7 @@ import avatar from "../../img/avatar.svg";
 
 import "../../styles/Header.css";
 
-export const Header = () => {
+export const Header = ({ boards }) => {
   const navigate = useNavigate();
   const params = useParams();
 
@@ -36,8 +36,32 @@ export const Header = () => {
           <div className="logo">
             <Link to={"/" + userId + "/boards"}>MyTrello</Link>
           </div>
-          <div> recent </div>
-          <div> favorites </div>
+          <div className="recent">
+            recent
+            <ul>
+              {[...boards]
+                .sort((a, b) => {
+                  if (a.lastVisiting > b.lastVisiting) {
+                    return -1;
+                  } else {
+                    return 1;
+                  }
+                })
+                .map((board) => {
+                  return (
+                    <li key={board.nameBoard}>
+                      <Link
+                        to={"/board/" + board._id + "/" + board.nameBoard}
+                        key={board._id}
+                      >
+                        {board.nameBoard}
+                      </Link>
+                    </li>
+                  );
+                })}
+            </ul>
+          </div>
+          <div className="favorites"> favorites </div>
           <div onClick={visibleCreateMenu}>Create</div>
           <div className="account">
             <div className="account-avatar" onClick={visibleProfileMenu}>
