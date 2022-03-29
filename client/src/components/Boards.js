@@ -30,7 +30,7 @@ export const Boards = () => {
   const dispatch = useDispatch();
   const { boards, status } = useSelector((state) => state.boards);
 
-  const [favorites, setFavorites] = useState(false);
+  const [favoritesBoards, setFavorites] = useState(0);
   const [recent, setRecent] = useState(false);
 
   const [createVisibility, setCreateVisibility] = useState(false);
@@ -71,6 +71,22 @@ export const Boards = () => {
       });
   }, []);
 
+  useEffect(() => {
+    if (boards.length > 0) {
+      for (let i = 0; i < boards.length; i++) {
+        if (boards[i].favorites === true) {
+          setFavorites(+1);
+        }
+      }
+
+      for (let i = 0; i < boards.length; i++) {
+        if (boards[i].lastVisiting) {
+          setRecent(+1);
+        }
+      }
+    }
+  }, [boards]);
+
   const createBoard = () => {
     const { id } = params;
 
@@ -87,9 +103,11 @@ export const Boards = () => {
     switch (favorite) {
       case false:
         dispatch(addFavorites({ boardId }));
+
         break;
       case true:
         dispatch(removeFavorites({ boardId }));
+        setFavorites(favoritesBoards - 1);
         break;
       default:
         break;
@@ -100,12 +118,12 @@ export const Boards = () => {
     <Loader />
   ) : (
     <div className="boardsMenu" style={{ minHeight: height }}>
-      <Header />
+      <Header boards={boards}/>
       <div className="workspace">
         <div className="container">
           <div className="workspace__inner">
             <div className="boards">
-              <ul>
+              <ul className={recent > 0 ? null : "hidden"}>
                 <li> Recent </li>
                 {[...boards]
                   .sort((a, b) => {
@@ -139,7 +157,7 @@ export const Boards = () => {
                   })}
               </ul>
 
-              <ul className={favorites === true ? null : "hidden"}>
+              <ul className={favoritesBoards > 0 ? null : "hidden"}>
                 <li> Favorites </li>
                 {boards.map((board) => {
                   if (board.favorites === true) {
