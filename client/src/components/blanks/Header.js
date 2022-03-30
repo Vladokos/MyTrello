@@ -15,6 +15,8 @@ export const Header = ({ boards }) => {
 
   const [createShow, setCreateShow] = useState(false);
   const [profileShow, setProfileShow] = useState(false);
+  const [resentShow, setResentShow] = useState(false);
+  const [favoritesShow, setFavoritesShow] = useState(false);
 
   const visibleCreateMenu = () => setCreateShow(!createShow);
   const visibleProfileMenu = () => setProfileShow(!profileShow);
@@ -28,7 +30,12 @@ export const Header = ({ boards }) => {
   };
 
   const profileRef = useRef(null);
+  const recentRef = useRef(null);
+  const favoritesRef = useRef(null);
+
   OutsideClick(profileRef, () => setProfileShow(false));
+  OutsideClick(recentRef, () => setResentShow(false));
+  OutsideClick(favoritesRef, () => setFavoritesShow(false));
   return (
     <header className="header header-board">
       <div className="container">
@@ -36,9 +43,14 @@ export const Header = ({ boards }) => {
           <div className="logo">
             <Link to={"/" + userId + "/boards"}>MyTrello</Link>
           </div>
-          <div className="recent">
-            recent
-            <ul>
+          <div
+            className="recent"
+            ref={recentRef}
+            onClick={() => setResentShow(!resentShow)}
+          >
+            Recent
+            <ul className={resentShow === true ? null : "hidden"}>
+              <li>Recent</li>
               {[...boards]
                 .sort((a, b) => {
                   if (a.lastVisiting > b.lastVisiting) {
@@ -61,7 +73,30 @@ export const Header = ({ boards }) => {
                 })}
             </ul>
           </div>
-          <div className="favorites"> favorites </div>
+          <div
+            className="favorites"
+            ref={favoritesRef}
+            onClick={() => setFavoritesShow(!favoritesShow)}
+          >
+            Favorites
+            <ul className={favoritesShow === true ? null : "hidden"}>
+            <li>Favorites</li>
+              {boards.map((board) => {
+                if (board.favorites === true) {
+                  return (
+                    <li key={board.nameBoard}>
+                      <Link
+                        to={"/board/" + board._id + "/" + board.nameBoard}
+                        key={board._id}
+                      >
+                        {board.nameBoard}
+                      </Link>
+                    </li>
+                  );
+                }
+              })}
+            </ul>
+          </div>
           <div onClick={visibleCreateMenu}>Create</div>
           <div className="account">
             <div className="account-avatar" onClick={visibleProfileMenu}>
