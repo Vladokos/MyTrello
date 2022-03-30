@@ -4,7 +4,6 @@ import { useNavigate, useParams, Link } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import {
   getBoards,
-  addBoards,
   addFavorites,
   removeFavorites,
 } from "../features/boards/boardsSlice";
@@ -15,6 +14,7 @@ import axios from "axios";
 
 import { Loader } from "./blanks/Loader";
 import { Header } from "./blanks/Header.js";
+import { CreateBoards } from "./CreateBoards";
 
 import starUnchecked from "../img/starUnchecked.svg";
 import starChecked from "../img/starChecked.svg";
@@ -33,12 +33,7 @@ export const Boards = () => {
   const [favoritesBoards, setFavorites] = useState(0);
   const [recent, setRecent] = useState(false);
 
-  const [createVisibility, setCreateVisibility] = useState(false);
-  const [nameBoard, setNameBoard] = useState("");
-
-  const visibleCreateMenu = () => setCreateVisibility(!createVisibility);
-
-  const onNameBoardChange = (e) => setNameBoard(e.target.value);
+  const [createShow, setCreateShow] = useState(false);
 
   useEffect(() => {
     const accessToken = localStorage.getItem("accessToken");
@@ -87,18 +82,6 @@ export const Boards = () => {
     }
   }, [boards]);
 
-  const createBoard = () => {
-    const { id } = params;
-
-    if (nameBoard.trim().length < 1) return;
-
-    dispatch(addBoards({ id, nameBoard }));
-
-    setNameBoard("");
-
-    setCreateVisibility(false);
-  };
-
   const favoriteAction = (favorite, boardId) => {
     switch (favorite) {
       case false:
@@ -118,7 +101,7 @@ export const Boards = () => {
     <Loader />
   ) : (
     <div className="boardsMenu" style={{ minHeight: height }}>
-      <Header boards={boards}/>
+      <Header boards={boards} />
       <div className="workspace">
         <div className="container">
           <div className="workspace__inner">
@@ -209,37 +192,17 @@ export const Boards = () => {
                   );
                 })}
                 <li className="createBoards">
-                  <button onClick={visibleCreateMenu}>
+                  <button onClick={(e) => console.log(e) }>
                     Create a new board
                   </button>
                 </li>
               </ul>
             </div>
-          </div>
-        </div>
-      </div>
-      <div
-        className={createVisibility === false ? "hidden" : "menuCreateBoard"}
-      >
-        <div className="blackBG" onClick={visibleCreateMenu}></div>
-        <div className="container">
-          <div className="menuCreateBoard__inner">
-            <div className="settingsBoard">
-              <input
-                type="text"
-                placeholder="Add a board name"
-                value={nameBoard}
-                onChange={onNameBoardChange}
-              />
-            </div>
-
-            <button
-              onClick={createBoard}
-              className={nameBoard.length > 0 ? "activeCreate" : ""}
-            >
-              Create
-            </button>
-            <button onClick={visibleCreateMenu}>X</button>
+            <CreateBoards
+              createShow={createShow}
+              changeShow={() => setCreateShow(false)}
+              height={height}
+            />
           </div>
         </div>
       </div>
