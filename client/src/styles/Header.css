@@ -78,17 +78,19 @@
 
   transform: translateX(-169px) translateY(21px);
 }
+
 .favorites,
 .recent {
   cursor: pointer;
 }
-
+.favorites ul,
 .recent ul {
   position: absolute;
+  transform: translate(-2px, 20px);
 
   background-color: #ffffff;
 
-  padding: 15px;
+  padding: 15px 15px 5px 15px;
 
   width: 10%;
 
@@ -96,6 +98,32 @@
 
   border-radius: 3px;
 }
+.favorites ul li,
 .recent ul li {
   margin-bottom: 24px;
+
+  color: #091e42;
+}
+.favorites ul li:nth-child(1),
+.recent ul li:nth-child(1) {
+  text-align: center;
+
+  color: #5e6c84;
+}
+.favorites ul li:nth-child(1)::after,
+.recent ul li:nth-child(1)::after {
+  content: "";
+
+  position: absolute;
+
+  background-color: #dfe2e7;
+
+  width: 200px;
+  height: 2px;
+
+  transform: translateX(-128px) translateY(21px);
+}
+.favorites ul li a,
+.recent ul li a {
+  color: #091e42;
 }
