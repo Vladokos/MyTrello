@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 
 import { useDispatch } from "react-redux";
 import { addBoards } from "../features/boards/boardsSlice";
@@ -8,6 +8,7 @@ import "../styles/CreateBoard.css";
 
 export const CreateBoards = ({ createShow, changeShow, height }) => {
   const params = useParams();
+  const navigate = useNavigate();
 
   const dispatch = useDispatch();
 
@@ -20,11 +21,19 @@ export const CreateBoards = ({ createShow, changeShow, height }) => {
 
     if (nameBoard.trim().length < 1) return;
 
-    dispatch(addBoards({ id, nameBoard }));
+    dispatch(addBoards({ id, nameBoard })).then(() => {
+  
+    });
 
     setNameBoard("");
 
     changeShow();
+
+    // navigate("/board/" +)
+    // <Link
+    //   to={"/board/" + board._id + "/" + board.nameBoard}
+    //   key={board._id}
+    // ></Link>;
   };
 
   return (
