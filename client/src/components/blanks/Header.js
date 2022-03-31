@@ -7,18 +7,16 @@ import avatar from "../../img/avatar.svg";
 
 import "../../styles/Header.css";
 
-export const Header = ({ boards }) => {
+export const Header = ({ boards, createShow }) => {
   const navigate = useNavigate();
   const params = useParams();
 
   const userId = localStorage.getItem("userId");
 
-  const [createShow, setCreateShow] = useState(false);
   const [profileShow, setProfileShow] = useState(false);
   const [resentShow, setResentShow] = useState(false);
   const [favoritesShow, setFavoritesShow] = useState(false);
 
-  const visibleCreateMenu = () => setCreateShow(!createShow);
   const visibleProfileMenu = () => setProfileShow(!profileShow);
 
   const logOut = () => {
@@ -97,7 +95,7 @@ export const Header = ({ boards }) => {
               })}
             </ul>
           </div>
-          <div onClick={visibleCreateMenu}>Create</div>
+          <div onClick={createShow}>Create</div>
           <div className="account">
             <div className="account-avatar" onClick={visibleProfileMenu}>
               <img src={avatar} />
