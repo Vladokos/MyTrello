@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { useNavigate, useParams, Link } from "react-router-dom";
 
 import { useSelector, useDispatch } from "react-redux";
@@ -34,6 +34,7 @@ export const Boards = () => {
   const [recent, setRecent] = useState(false);
 
   const [createShow, setCreateShow] = useState(false);
+  const [heightBody, setHeightBody] = useState(null);
 
   useEffect(() => {
     const accessToken = localStorage.getItem("accessToken");
@@ -97,11 +98,17 @@ export const Boards = () => {
     }
   };
 
+  const heightRef = useRef(null);
+
+  useEffect(() => {
+    setHeightBody(heightRef?.current?.clientHeight);
+  });
+
   return status !== "succeeded" ? (
     <Loader />
   ) : (
-    <div className="boardsMenu" style={{ minHeight: height }}>
-      <Header boards={boards} />
+    <div className="boardsMenu" style={{ minHeight: height }} ref={heightRef}>
+      <Header boards={boards} createShow={() => setCreateShow(true)}/>
       <div className="workspace">
         <div className="container">
           <div className="workspace__inner">
@@ -192,7 +199,7 @@ export const Boards = () => {
                   );
                 })}
                 <li className="createBoards">
-                  <button onClick={(e) => console.log(e) }>
+                  <button onClick={() => setCreateShow(true)}>
                     Create a new board
                   </button>
                 </li>
@@ -201,7 +208,7 @@ export const Boards = () => {
             <CreateBoards
               createShow={createShow}
               changeShow={() => setCreateShow(false)}
-              height={height}
+              height={heightBody}
             />
           </div>
         </div>
