@@ -1,16 +1,14 @@
-import React, { useLayoutEffect, useState, useRef } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import React, { useState } from "react";
+import { useParams } from "react-router-dom";
 
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import { addBoards } from "../features/boards/boardsSlice";
 
 import "../styles/CreateBoard.css";
 
 export const CreateBoards = ({ createShow, changeShow, height }) => {
-  const navigate = useNavigate();
   const params = useParams();
 
-  const { boards } = useSelector((state) => state.boards);
   const dispatch = useDispatch();
 
   const [nameBoard, setNameBoard] = useState("");
@@ -28,22 +26,6 @@ export const CreateBoards = ({ createShow, changeShow, height }) => {
 
     changeShow();
   };
-
-  const [firstUpdate, setFirstUpdate] = useState(true);
-  useLayoutEffect(() => {
-    if (firstUpdate === true) {
-      setFirstUpdate(false);
-      console.log("asd");
-      return;
-    }
-      const boardId = boards[boards.length - 1]._id;
-      const boardName = boards[boards.length - 1].nameBoard;
-  
-      console.log(boardId, boardName);
-      // navigate("/board/" + boardId + "/" + boardName);
-    
-    
-  }, [boards]);
 
   return (
     <div
