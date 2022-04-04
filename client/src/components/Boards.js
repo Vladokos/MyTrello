@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useLayoutEffect, useRef } from "react";
 import { useNavigate, useParams, Link } from "react-router-dom";
 
 import { useSelector, useDispatch } from "react-redux";
@@ -32,6 +32,7 @@ export const Boards = () => {
 
   const [favoritesBoards, setFavorites] = useState(0);
   const [recent, setRecent] = useState(false);
+  const [firstUpdate, setFirstUpdate] = useState(0);
 
   const [createShow, setCreateShow] = useState(false);
   const [heightBody, setHeightBody] = useState(null);
@@ -104,11 +105,21 @@ export const Boards = () => {
     setHeightBody(heightRef?.current?.clientHeight);
   });
 
+  useLayoutEffect(() => {
+    if (firstUpdate < 2) {
+      setFirstUpdate(firstUpdate + 1);
+      return;
+    }
+    const boardId = boards[boards.length - 1]._id;
+    const boardName = boards[boards.length - 1].nameBoard;
+    navigate("/board/" + boardId + "/" + boardName);
+  }, [boards]);
+
   return status !== "succeeded" ? (
     <Loader />
   ) : (
     <div className="boardsMenu" style={{ minHeight: height }} ref={heightRef}>
-      <Header boards={boards} createShow={() => setCreateShow(true)}/>
+      <Header boards={boards} createShow={() => setCreateShow(true)} />
       <div className="workspace">
         <div className="container">
           <div className="workspace__inner">
