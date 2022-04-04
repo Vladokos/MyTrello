@@ -4,7 +4,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import { DragDropContext, Droppable } from "react-beautiful-dnd";
 
 import { useSelector, useDispatch } from "react-redux";
-import { getBoard, changeLists, changeData } from "../../features/boards/boardsSlice";
+import { getBoard, changeLists, changeData, getBoards } from "../../features/boards/boardsSlice";
 import {
   getLists,
   sortingLists,
@@ -73,6 +73,7 @@ export const Board = () => {
 
   useEffect(() => {
     const accessToken = localStorage.getItem("accessToken");
+    const userId = localStorage.getItem("userId");
 
     const { boardId } = params;
 
@@ -94,9 +95,14 @@ export const Board = () => {
       .then((response) => {
         if (response.status === 200) {
           const date = Date.now();
-          dispatch(changeData({boardId, date}))
+          dispatch(changeData({boardId, date}));
+
           dispatch(getBoard(boardId));
+
+          dispatch(getBoards(userId));
+
           dispatch(getLists(boardId));
+
           dispatch(getCards(boardId));
         }
       })
@@ -141,9 +147,14 @@ export const Board = () => {
         <div className="container">
           <div className="lists__inner" style={{ height: height - 200 }}>
             <div className="action-board">
-              {boards.map((board) => (
-                <BoardName key={board._id} name={board.nameBoard} />
-              ))}
+              {boards.map((board) => {
+                if(board._id === params.boardId){
+                  return(
+                    <BoardName key={board._id} name={board.nameBoard} />
+                  )
+                }
+              
+              })}
               <Menu height={height - 108} lists={lists} cards={cards} />
             </div>
 
