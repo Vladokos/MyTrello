@@ -4,7 +4,11 @@ import { useNavigate, useParams } from "react-router-dom";
 import { DragDropContext, Droppable } from "react-beautiful-dnd";
 
 import { useSelector, useDispatch } from "react-redux";
-import { getBoard, changeLists, changeData, getBoards } from "../../features/boards/boardsSlice";
+import {
+  changeLists,
+  changeData,
+  getBoards,
+} from "../../features/boards/boardsSlice";
 import {
   getLists,
   sortingLists,
@@ -18,6 +22,7 @@ import useWindowHeight from "../../hooks/heightWindowHook";
 
 import { Loader } from "../blanks/Loader";
 import { Header } from "../blanks/Header";
+import { CreateBoards } from "../CreateBoards";
 import { BoardName } from "./BoardName";
 import { List } from "./List";
 import { CreateList } from "./CreateList";
@@ -37,6 +42,8 @@ export const Board = () => {
   const { boards } = useSelector((state) => state.boards);
   const { lists } = useSelector((state) => state.lists);
   const { cards, status } = useSelector((state) => state.cards);
+
+  const [createShow, setCreateShow] = useState(false);
 
   const [changeCard, setChangeCard] = useState(false);
   const [changeNameCard, setChangeNameCard] = useState(false);
@@ -95,9 +102,7 @@ export const Board = () => {
       .then((response) => {
         if (response.status === 200) {
           const date = Date.now();
-          dispatch(changeData({boardId, date}));
-
-          dispatch(getBoard(boardId));
+          dispatch(changeData({ boardId, date }));
 
           dispatch(getBoards(userId));
 
@@ -111,7 +116,7 @@ export const Board = () => {
           navigate("/error/404");
         }
       });
-  }, []);
+  }, [params]);
 
   const onDrop = (e) => {
     if (e.type === "list") {
@@ -142,18 +147,15 @@ export const Board = () => {
     <Loader />
   ) : (
     <div className="boardMenu" style={{ height: height }}>
-      <Header boards={boards} />
+      <Header boards={boards} createShow={() => setCreateShow(true)} />
       <div className="lists" style={{ height: height - 127 }}>
         <div className="container">
           <div className="lists__inner" style={{ height: height - 200 }}>
             <div className="action-board">
               {boards.map((board) => {
-                if(board._id === params.boardId){
-                  return(
-                    <BoardName key={board._id} name={board.nameBoard} />
-                  )
+                if (board._id === params.boardId) {
+                  return <BoardName key={board._id} name={board.nameBoard} />;
                 }
-              
               })}
               <Menu height={height - 108} lists={lists} cards={cards} />
             </div>
@@ -229,6 +231,11 @@ export const Board = () => {
           </div>
         </div>
       </div>
+      <CreateBoards
+        createShow={createShow}
+        changeShow={() => setCreateShow(false)}
+        height={height}
+      />
     </div>
   );
 };
