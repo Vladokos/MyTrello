@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useLayoutEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 
 import { DragDropContext, Droppable } from "react-beautiful-dnd";
@@ -42,6 +42,8 @@ export const Board = () => {
   const { boards } = useSelector((state) => state.boards);
   const { lists } = useSelector((state) => state.lists);
   const { cards, status } = useSelector((state) => state.cards);
+
+  const [firstUpdate, setFirstUpdate] = useState(0);
 
   const [createShow, setCreateShow] = useState(false);
 
@@ -109,6 +111,8 @@ export const Board = () => {
           dispatch(getLists(boardId));
 
           dispatch(getCards(boardId));
+
+          setFirstUpdate(0);
         }
       })
       .catch((error) => {
@@ -139,6 +143,18 @@ export const Board = () => {
     if (boards.length > 0) {
       dispatch(sortingLists(boards));
     }
+  }, [boards]);
+
+  useLayoutEffect(() => {
+    if (firstUpdate < 2) {
+      setFirstUpdate(firstUpdate + 1);
+      return;
+    }
+    const boardId = boards[boards.length - 1]._id;
+    const boardName = boards[boards.length - 1].nameBoard;
+    navigate("/board/" + boardId + "/" + boardName);
+    setFirstUpdate(0);
+    
   }, [boards]);
 
   const [drag, setDrag] = useState(false);
