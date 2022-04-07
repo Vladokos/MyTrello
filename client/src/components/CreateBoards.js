@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import { useParams } from "react-router-dom";
 
 import { useDispatch } from "react-redux";
 import { addBoards } from "../features/boards/boardsSlice";
@@ -7,8 +6,6 @@ import { addBoards } from "../features/boards/boardsSlice";
 import "../styles/CreateBoard.css";
 
 export const CreateBoards = ({ createShow, changeShow, height }) => {
-  const params = useParams();
-
   const dispatch = useDispatch();
 
   const [nameBoard, setNameBoard] = useState("");
@@ -16,7 +13,7 @@ export const CreateBoards = ({ createShow, changeShow, height }) => {
   const onNameBoardChange = (e) => setNameBoard(e.target.value);
 
   const createBoard = () => {
-    const { id } = params;
+    const id = localStorage.getItem("userId");
 
     if (nameBoard.trim().length < 1) return;
 
