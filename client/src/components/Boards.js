@@ -134,27 +134,29 @@ export const Boards = () => {
                       return 1;
                     }
                   })
-                  .map((board) => {
-                    return (
-                      <li className="board" key={board.nameBoard}>
-                        <Link
-                          to={"/board/" + board._id + "/" + board.nameBoard}
-                          key={board._id}
-                        >
-                          {board.nameBoard}
-                        </Link>
-                        <img
-                          src={
-                            board.favorites === false
-                              ? starUnchecked
-                              : starChecked
-                          }
-                          onClick={() =>
-                            favoriteAction(board.favorites, board._id)
-                          }
-                        />
-                      </li>
-                    );
+                  .map((board, index) => {
+                    if (index < 3) {
+                      return (
+                        <li className="board" key={board.nameBoard}>
+                          <Link
+                            to={"/board/" + board._id + "/" + board.nameBoard}
+                            key={board._id}
+                          >
+                            {board.nameBoard}
+                          </Link>
+                          <img
+                            src={
+                              board.favorites === false
+                                ? starUnchecked
+                                : starChecked
+                            }
+                            onClick={() =>
+                              favoriteAction(board.favorites, board._id)
+                            }
+                          />
+                        </li>
+                      );
+                    }
                   })}
               </ul>
 
