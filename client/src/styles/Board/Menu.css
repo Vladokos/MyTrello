@@ -21,6 +21,8 @@
   background-color: #f4f5f7;
 
   width: 11.3%;
+
+  z-index: 1;
 }
 .menu > div {
   padding: 20px 10px;
