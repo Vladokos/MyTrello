@@ -57,17 +57,19 @@ export const Header = ({ boards, createShow }) => {
                     return 1;
                   }
                 })
-                .map((board) => {
-                  return (
-                    <li key={board.nameBoard}>
-                      <Link
-                        to={"/board/" + board._id + "/" + board.nameBoard}
-                        key={board._id}
-                      >
-                        {board.nameBoard}
-                      </Link>
-                    </li>
-                  );
+                .map((board, index) => {
+                  if (index < 3) {
+                    return (
+                      <li key={board.nameBoard}>
+                        <Link
+                          to={"/board/" + board._id + "/" + board.nameBoard}
+                          key={board._id}
+                        >
+                          {board.nameBoard}
+                        </Link>
+                      </li>
+                    );
+                  }
                 })}
             </ul>
           </div>
@@ -78,7 +80,7 @@ export const Header = ({ boards, createShow }) => {
           >
             Favorites
             <ul className={favoritesShow === true ? null : "hidden"}>
-            <li>Favorites</li>
+              <li>Favorites</li>
               {boards.map((board) => {
                 if (board.favorites === true) {
                   return (
