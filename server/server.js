@@ -68,9 +68,9 @@ app.post("/form/oldUser", jsonParser, async (req, res) => {
     await data.save();
 
     return res.status(200).json({
-      id: data.id,
       refreshToken: data.refreshToken,
       accessToken: data.token,
+      userName: data.name,
     });
   } catch (error) {
     console.log(error);
@@ -119,7 +119,7 @@ app.post("/form/registration/newUser", jsonParser, async (req, res) => {
 
     return res
       .status(201)
-      .json({ id: information.id, refreshToken, accessToken: token });
+      .json({ userName: data.name, refreshToken, accessToken: token });
   } catch (error) {
     console.log(error);
     res.status(400).send("Error");
@@ -145,7 +145,7 @@ app.post("/form/signIn", jsonParser, async (req, res) => {
 
       return res
         .status(200)
-        .json({ id: user.id, refreshToken, accessToken: token });
+        .json({ userName: data.name, refreshToken, accessToken: token });
     }
 
     return res.sendStatus(400);
@@ -244,30 +244,36 @@ app.post("/token/verify", jsonParser, async (req, res) => {
   try {
     const { accessToken } = req.body;
 
-    var data = await dataUsers.findOne({ accessToken });
+    const { user_id } = jwt.verify(accessToken, process.env.TOKEN_KEY);
+
+    var data = await dataUsers.findById(user_id);
 
     if (!data) return res.status(400).send("Error");
     // maybe need generate new access and refresh token
     jwt.verify(accessToken, process.env.TOKEN_KEY);
 
-    return res.status(200).send({ message: "successfully" });
+    const idUser = data._id;
+    const userName = data.name;
+
+    return res.status(200).send({ idUser, userName });
   } catch (error) {
     if (error.message === "jwt expired" || error.name === "TokenExpiredError") {
       const { refreshToken } = data;
+      const idUser = data._id;
 
       jwt.verify(refreshToken, process.env.REFRESHTOKEN_KEY, (error) => {
         if (error) return error;
       });
 
-      const newToken = generateAccessToken(data._id, data.email);
-      const newRefreshToken = generateRefreshToken(data._id, data.email);
+      const newToken = generateAccessToken(idUser, data.email);
+      const newRefreshToken = generateRefreshToken(idUser, data.email);
 
       data.token = newToken;
       data.refreshToken = newRefreshToken;
 
       await data.save();
 
-      return res.status(200).send({ message: "successfully" });
+      return res.status(200).send({ newToken, idUser });
     } else {
       res.status(400).send("Error");
     }
