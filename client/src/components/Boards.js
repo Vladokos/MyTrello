@@ -25,8 +25,6 @@ export const Boards = () => {
 
   const { height } = useWindowHeight();
 
-  localStorage.setItem("userId", params.id);
-
   const dispatch = useDispatch();
   const { boards, status } = useSelector((state) => state.boards);
 
@@ -39,7 +37,6 @@ export const Boards = () => {
 
   useEffect(() => {
     const accessToken = localStorage.getItem("accessToken");
-    const { id } = params;
 
     if (!accessToken) return;
 
@@ -58,7 +55,14 @@ export const Boards = () => {
     })
       .then((response) => {
         if (response.status === 200 && boards.length <= 1) {
-          dispatch(getBoards(id));
+          const { newToken, idUser, userName } = response.data;
+
+          if (newToken) localStorage.setItem("accessToken", newToken);
+
+          localStorage.setItem("userId", idUser);
+          localStorage.setItem("userName", userName);
+
+          dispatch(getBoards(idUser));
         }
       })
       .catch((error) => {
