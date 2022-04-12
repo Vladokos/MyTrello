@@ -48,13 +48,13 @@ export const SignInFrom = () => {
       })
         .then((response) => {
           if (response.status === 200) {
-            const { id, refreshToken, accessToken } = response.data;
+            const { userName, refreshToken, accessToken } = response.data;
 
             localStorage.setItem("accessToken", JSON.stringify(accessToken));
 
             localStorage.setItem("refreshToken", JSON.stringify(refreshToken));
 
-            navigate("/" + id + "/boards");
+            navigate("/" + userName + "/boards");
           }
         })
         .catch((error) => {
@@ -82,13 +82,13 @@ export const SignInFrom = () => {
       })
         .then((response) => {
           if (response.status === 200) {
-            const { id, refreshToken, accessToken } = response.data;
+            const { userName, refreshToken, accessToken } = response.data;
 
             sessionStorage.setItem("accessToken", JSON.stringify(accessToken));
 
             localStorage.setItem("refreshToken", JSON.stringify(refreshToken));
 
-            navigate("/" + id + "/boards");
+            navigate("/" + userName + "/boards");
           }
         })
         .catch((error) => {
