@@ -9,6 +9,8 @@ import { ResetForm } from "./components/form/ResetForm";
 import { Boards } from "./components/Boards";
 import { Board } from "./components/board/Board";
 
+import { Profile } from "./components/profile/Profile";
+
 import { NotFound } from "./components/NotFound";
 
 import "./styles/reset.css";
@@ -26,8 +28,10 @@ function App() {
           <Route path="/forg" element={<ForgotForm />} />
           <Route path="/:token/reset/" element={<ResetForm />} />
 
-          <Route path="/:id/boards" element={<Boards />} />
+          <Route path="/:userName/boards" element={<Boards />} />
           <Route path="/board/:boardId/:name" element={<Board />} />
+
+          <Route path="/:userName/profile" element={<Profile />} />
 
           <Route path="/error/:code" element={<NotFound />} />
           <Route path="/" element={<Navigate replace to="/sig" />} />
