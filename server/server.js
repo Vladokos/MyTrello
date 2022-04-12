@@ -724,6 +724,25 @@ app.post("/board/list/unarchive", jsonParser, async (req, res) => {
   }
 });
 
+app.post("/user/change/name", jsonParser, async (req, res) => {
+  try {
+    const { userName, oldName } = req.body;
+
+    const user = await dataUsers.findOne({ name: oldName });
+
+    if (!user) return res.status(400).send("Error");
+    
+    user.name = userName;
+
+    await user.save();
+
+    return res.status(200).send({userName});
+  } catch (error) {
+    console.log(error);
+    return res.status(400).send("Error");
+  }
+});
+
 app.listen(5000, () => {
   console.log("Server is running");
 });
