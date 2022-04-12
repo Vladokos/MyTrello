@@ -9,9 +9,9 @@ import "../../styles/Header.css";
 
 export const Header = ({ boards, createShow }) => {
   const navigate = useNavigate();
-  const params = useParams();
 
   const userId = localStorage.getItem("userId");
+  const userName = localStorage.getItem("userName");
 
   const [profileShow, setProfileShow] = useState(false);
   const [resentShow, setResentShow] = useState(false);
@@ -109,7 +109,7 @@ export const Header = ({ boards, createShow }) => {
               <div className="account__menu-title">Account</div>
               <ul>
                 <li>
-                  <Link to={"/" + params.id + "/profile"}>Profile</Link>
+                  <Link to={"/" + userName + "/profile"}>Profile</Link>
                 </li>
                 <li onClick={logOut}>Log out</li>
               </ul>
