@@ -20,6 +20,10 @@
     "jsonwebtoken": "^8.5.1",
     "mongoose": "^6.0.12",
     "nodemailer": "^6.7.0",
-    "nodemon": "^2.0.15"
+    "nodemon": "^2.0.15",
+    "ws": "^8.5.0"
+  },
+  "optionalDependencies": {
+    "utf-8-validate": "^5.0.9"
   }
 }
