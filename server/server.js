@@ -3,6 +3,8 @@ const nodemailer = require("nodemailer");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 
+const WebSocket = require("ws");
+
 const verifyToken = require("./middleware/verifyToken");
 
 require("./config/database").connect();
@@ -244,7 +246,7 @@ app.post("/token/verify", jsonParser, async (req, res) => {
   try {
     const { accessToken } = req.body;
 
-    const { user_id } = jwt.verify(accessToken, process.env.TOKEN_KEY);
+    const { user_id } = jwt.decode(accessToken, process.env.TOKEN_KEY);
 
     var data = await dataUsers.findById(user_id);
 
@@ -743,6 +745,23 @@ app.post("/user/change/name", jsonParser, async (req, res) => {
   }
 });
 
-app.listen(5000, () => {
-  console.log("Server is running");
+// app.listen(5000, () => {
+//   console.log("Server is running");
+// });
+const http = require("http");
+
+const server = http.createServer(app);
+
+const webSocketServer = new WebSocket.Server({ server });
+
+webSocketServer.on("connection", (ws) => {
+  ws.on("message", (m) => {
+    webSocketServer.clients.forEach((client) => client.send(m));
+  });
+
+  ws.on("error", (e) => ws.send(e));
+
+  ws.send("Hi there, I am a WebSocket server");
 });
+
+server.listen(5000, () => console.log("Server started"));
