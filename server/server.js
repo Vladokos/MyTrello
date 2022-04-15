@@ -47,8 +47,8 @@ const transporter = nodemailer.createTransport({
   port: 465,
   secure: true,
   auth: {
-    user: "t7estes@yandex.ru",
-    pass: "bmjninkovzefmdbu",
+    user: "sd5df.f.sdsdf@yandex.ru",
+    pass: "ckagqjyxprmfbhfk",
   },
 });
 
@@ -104,7 +104,7 @@ app.post("/form/registration/newUser", jsonParser, async (req, res) => {
 
     transporter.sendMail(
       {
-        from: "MyTrello <t7estes@yandex.ru>",
+        from: "MyTrello <sd5df.f.sdsdf@yandex.ru>",
         to: email,
         subject: "Thank you for registering",
         text: "Thank you for registering on my service",
@@ -145,7 +145,7 @@ app.post("/form/signIn", jsonParser, async (req, res) => {
 
       return res
         .status(200)
-        .json({ userName: data.name, refreshToken, accessToken: token });
+        .json({ userName: user.name, refreshToken, accessToken: token });
     }
 
     return res.sendStatus(400);
@@ -170,7 +170,7 @@ app.post("/form/password/forgot", jsonParser, async (req, res) => {
     await user.save();
 
     transporter.sendMail({
-      from: "MyTrello <t7estes@yandex.ru>",
+      from: "MyTrello <sd5df.f.sdsdf@yandex.ru>",
       to: email,
       subject: "your data",
       text:
@@ -731,12 +731,12 @@ app.post("/user/change/name", jsonParser, async (req, res) => {
     const user = await dataUsers.findOne({ name: oldName });
 
     if (!user) return res.status(400).send("Error");
-    
+
     user.name = userName;
 
     await user.save();
 
-    return res.status(200).send({userName});
+    return res.status(200).send({ userName });
   } catch (error) {
     console.log(error);
     return res.status(400).send("Error");
