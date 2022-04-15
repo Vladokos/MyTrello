@@ -21,7 +21,6 @@ import starChecked from "../img/starChecked.svg";
 
 export const Boards = () => {
   const navigate = useNavigate();
-  const params = useParams();
 
   const { height } = useWindowHeight();
 
