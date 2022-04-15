@@ -1,17 +1,21 @@
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState, useRef, useEffect, useLayoutEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
+import { getBoards } from "../../features/boards/boardsSlice";
 
 import { Header } from "../blanks/Header";
 import { CreateBoards } from "../CreateBoards";
 
 import useWindowHeight from "../../hooks/heightWindowHook";
 
-import "../../styles/profile/Profile.css";
 import axios from "axios";
 
+import "../../styles/profile/Profile.css";
+
 export const Profile = () => {
+  const dispatch = useDispatch();
+
   const params = useParams();
   const navigate = useNavigate();
 
@@ -23,7 +27,15 @@ export const Profile = () => {
   const [heightBody, setHeightBody] = useState(null);
   const [name, setName] = useState(params.userName);
 
+  const [firstUpdate, setFirstUpdate] = useState(0);
+
   const heightRef = useRef(null);
+
+  useEffect(() => {
+    const idUser = localStorage.getItem("userId");
+
+    dispatch(getBoards(idUser));
+  }, []);
 
   useEffect(() => {
     setHeightBody(heightRef?.current?.clientHeight);
@@ -52,10 +64,21 @@ export const Profile = () => {
     });
   };
 
+  useLayoutEffect(() => {
+    if (firstUpdate < 2) {
+      setFirstUpdate(firstUpdate + 1);
+      return;
+    }
+    const boardId = boards[boards.length - 1]._id;
+    const boardName = boards[boards.length - 1].nameBoard;
+    navigate("/board/" + boardId + "/" + boardName);
+  }, [boards]);
+
+
+
   return (
     <div className="profile" style={{ minHeight: height }} ref={heightRef}>
       <Header boards={boards} createShow={() => setCreateShow(true)} />
-
       <div className="container">
         <div className="profile__inner">
           <div>Hello {params.userName}</div>
