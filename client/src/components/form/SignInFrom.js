@@ -3,6 +3,11 @@ import axios from "axios";
 import { Link, useNavigate } from "react-router-dom";
 
 export const SignInFrom = () => {
+  const ws = new WebSocket("ws://localhost:5000");
+  ws.onopen = function() {
+    alert("Соединение установлено.");
+};
+
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [incorrect, setIncorrect] = useState(false);
