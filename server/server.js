@@ -1,9 +1,12 @@
 const express = require("express");
+const app = express();
+
 const nodemailer = require("nodemailer");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 
-const WebSocket = require("ws");
+const wss = require("express-ws")(app);
+const aWss = wss.getWss();
 
 const verifyToken = require("./middleware/verifyToken");
 
@@ -12,8 +15,8 @@ const dataUsers = require("./model/user");
 const dataBoards = require("./model/boards");
 const dataList = require("./model/list");
 const dataCard = require("./model/card");
+const { json } = require("express");
 
-const app = express();
 const jsonParser = express.json();
 
 const generateAccessToken = (user_id, email) => {
@@ -745,23 +748,29 @@ app.post("/user/change/name", jsonParser, async (req, res) => {
   }
 });
 
-// app.listen(5000, () => {
-//   console.log("Server is running");
-// });
-const http = require("http");
+app.ws("/", (ws, req) => {
+  ws.on("message", (msg) => {
+    const {method} = JSON.parse(msg);
+    console.log(method);
+    
+    switch (method) {
+      case "connection":
+        console.log("asd");
+        ws.send("you are connected");
+        break;
 
-const server = http.createServer(app);
-
-const webSocketServer = new WebSocket.Server({ server });
-
-webSocketServer.on("connection", (ws) => {
-  ws.on("message", (m) => {
-    webSocketServer.clients.forEach((client) => client.send(m));
+      default:
+        break;
+    }
   });
-
-  ws.on("error", (e) => ws.send(e));
-
-  ws.send("Hi there, I am a WebSocket server");
 });
 
-server.listen(5000, () => console.log("Server started"));
+app.ws("/form/oldUser", jsonParser, async (ws, req) => {
+  ws.on("message", (msg) => {
+    console.log(msg);
+  });
+});
+
+app.listen(5000, () => {
+  console.log("Server is running");
+});

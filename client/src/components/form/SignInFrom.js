@@ -3,11 +3,6 @@ import axios from "axios";
 import { Link, useNavigate } from "react-router-dom";
 
 export const SignInFrom = () => {
-  const ws = new WebSocket("ws://localhost:5000");
-  ws.onopen = function() {
-    alert("Соединение установлено.");
-};
-
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [incorrect, setIncorrect] = useState(false);
@@ -35,36 +30,46 @@ export const SignInFrom = () => {
   };
 
   useEffect(() => {
-    const refreshToken = localStorage.getItem("refreshToken");
+    const ws = new WebSocket("ws://localhost:5000/");
 
-    if (refreshToken !== "undefined" && refreshToken !== null) {
-      axios({
-        config: {
-          headers: {
-            "Content-Type": "application/json",
-            Accept: "application/json",
-          },
-        },
-        method: "POST",
-        url: "/form/oldUser",
-        data: {
-          refreshToken: JSON.parse(refreshToken),
-        },
-      })
-        .then((response) => {
-          if (response.status === 200) {
-            const { userName, refreshToken, accessToken } = response.data;
+    ws.onopen = () => {
+      ws.send(JSON.stringify({method:"connection"}));
 
-            localStorage.setItem("accessToken", JSON.stringify(accessToken));
+      // const refreshToken = localStorage.getItem("refreshToken");
 
-            localStorage.setItem("refreshToken", JSON.stringify(refreshToken));
+      // if (refreshToken !== "undefined" && refreshToken !== null) {
+      //   axios({
+      //     config: {
+      //       headers: {
+      //         "Content-Type": "application/json",
+      //         Accept: "application/json",
+      //       },
+      //     },
+      //     method: "POST",
+      //     url: "/form/oldUser",
+      //     data: {
+      //       refreshToken: JSON.parse(refreshToken),
+      //     },
+      //   })
+      //     .then((response) => {
+      //       if (response.status === 200) {
+      //         const { userName, refreshToken, accessToken } = response.data;
 
-            navigate("/" + userName + "/boards");
-          }
-        })
-        .catch((error) => {
-          console.log(error.response.data);
-        });
+      //         localStorage.setItem("accessToken", JSON.stringify(accessToken));
+
+      //         localStorage.setItem("refreshToken", JSON.stringify(refreshToken));
+
+      //         navigate("/" + userName + "/boards");
+      //       }
+      //     })
+      //     .catch((error) => {
+      //       console.log(error.response.data);
+      //     });
+      // }
+    };
+
+    ws.onmessage = (event) => {
+        console.log(event.data);
     }
   }, []);
 
