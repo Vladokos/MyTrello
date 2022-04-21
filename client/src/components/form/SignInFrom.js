@@ -1,6 +1,9 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { Link, useNavigate } from "react-router-dom";
+import { io } from "socket.io-client";
+
+const socket = io();
 
 export const SignInFrom = () => {
   const [email, setEmail] = useState("");
@@ -30,85 +33,53 @@ export const SignInFrom = () => {
   };
 
   useEffect(() => {
-    const ws = new WebSocket("ws://localhost:5000/");
+    const refreshToken = localStorage.getItem("refreshToken");
+    console.log(socket.emit("oldUser", JSON.parse(refreshToken)));
 
-    ws.onopen = () => {
-      ws.send(JSON.stringify({method:"connection"}));
-
-      // const refreshToken = localStorage.getItem("refreshToken");
-
-      // if (refreshToken !== "undefined" && refreshToken !== null) {
-      //   axios({
-      //     config: {
-      //       headers: {
-      //         "Content-Type": "application/json",
-      //         Accept: "application/json",
-      //       },
-      //     },
-      //     method: "POST",
-      //     url: "/form/oldUser",
-      //     data: {
-      //       refreshToken: JSON.parse(refreshToken),
-      //     },
-      //   })
-      //     .then((response) => {
-      //       if (response.status === 200) {
-      //         const { userName, refreshToken, accessToken } = response.data;
-
-      //         localStorage.setItem("accessToken", JSON.stringify(accessToken));
-
-      //         localStorage.setItem("refreshToken", JSON.stringify(refreshToken));
-
-      //         navigate("/" + userName + "/boards");
-      //       }
-      //     })
-      //     .catch((error) => {
-      //       console.log(error.response.data);
-      //     });
-      // }
-    };
-
-    ws.onmessage = (event) => {
-        console.log(event.data);
+    if (refreshToken !== "undefined" && refreshToken !== null) {
+      socket.emit("oldUser", JSON.parse(refreshToken));
     }
   }, []);
 
+  useEffect(() => {
+    socket.on("oldUser", (data) => {
+      if (data !== "Error") {
+        const { userName, refreshToken, accessToken } = data;
+
+        localStorage.setItem("accessToken", JSON.stringify(accessToken));
+
+        localStorage.setItem("refreshToken", JSON.stringify(refreshToken));
+
+        localStorage.setItem("userName", JSON.stringify(userName));
+
+        // navigate("/" + userName + "/boards");
+      }
+    });
+
+    socket.on("signIn", (data) => {
+      if (data !== "Error") {
+        const { userName, refreshToken, accessToken } = data;
+
+        localStorage.setItem("accessToken", JSON.stringify(accessToken));
+
+        localStorage.setItem("refreshToken", JSON.stringify(refreshToken));
+
+        localStorage.setItem("userName", JSON.stringify(userName));
+
+        // navigate("/" + userName + "/boards");
+      } else {
+        setDataExists(true);
+      }
+    });
+
+   
+  }, [socket]);
+
   const sendForm = (e) => {
     e.preventDefault();
-    if (incorrect === false && password.length >= 6) {
-      axios({
-        config: {
-          headers: {
-            "Content-Type": "application/json",
-            Accept: "application/json",
-          },
-        },
-        method: "POST",
-        url: "/form/signIn",
-        data: {
-          email,
-          password,
-        },
-      })
-        .then((response) => {
-          if (response.status === 200) {
-            const { userName, refreshToken, accessToken } = response.data;
 
-            sessionStorage.setItem("accessToken", JSON.stringify(accessToken));
-
-            localStorage.setItem("refreshToken", JSON.stringify(refreshToken));
-
-            navigate("/" + userName + "/boards");
-          }
-        })
-        .catch((error) => {
-          const response = error.response;
-
-          if (response.status === 400) {
-            setDataExists(true);
-          }
-        });
-    }
+    if (incorrect === false && password.length >= 6)
+      socket.emit("signIn", email, password);
   };
 
   return (
