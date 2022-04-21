@@ -1,6 +1,9 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { Link, useNavigate } from "react-router-dom";
+import { io } from "socket.io-client";
+
+const socket = io();
 
 export const RegistrationForm = () => {
   const [email, setEmail] = useState("");
@@ -33,37 +36,27 @@ export const RegistrationForm = () => {
 
   useEffect(() => {
     const refreshToken = localStorage.getItem("refreshToken");
+    console.log(socket.emit("oldUser", JSON.parse(refreshToken)));
 
     if (refreshToken !== "undefined" && refreshToken !== null) {
-      axios({
-        config: {
-          headers: {
-            "Content-Type": "application/json",
-            Accept: "application/json",
-          },
-        },
-        method: "POST",
-        url: "/form/oldUser",
-        data: {
-          refreshToken: JSON.parse(refreshToken),
-        },
-      })
-        .then((response) => {
-          if (response.status === 200) {
-            const { userName, refreshToken, accessToken } = response.data;
-
-            localStorage.setItem("accessToken", JSON.stringify(accessToken));
-
-            localStorage.setItem("refreshToken", JSON.stringify(refreshToken));
-
-            navigate("/" + userName + "/boards");
-          }
-        })
-        .catch((error) => {
-          console.log(error.response.data);
-        });
+      socket.emit("oldUser", JSON.parse(refreshToken));
     }
   }, []);
+  useEffect(() => {
+    socket.on("oldUser", (data) => {
+      if (data !== "Error") {
+        const { userName, refreshToken, accessToken } = data;
+
+        localStorage.setItem("accessToken", JSON.stringify(accessToken));
+
+        localStorage.setItem("refreshToken", JSON.stringify(refreshToken));
+
+        localStorage.setItem("userName", JSON.stringify(userName));
+
+        // navigate("/" + userName + "/boards");
+      }
+    });
+  }, [socket]);
 
   const sendForm = (e) => {
     e.preventDefault();
