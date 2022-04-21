@@ -17,13 +17,19 @@ import "./styles/reset.css";
 import "./styles/blanks.css";
 import "./styles/formStyles.css";
 import "./styles/Boards.css";
+import { io } from "socket.io-client";
 
+const socket = io("http://localhost:3000");
 function App() {
+  socket.on("connect", () => {
+    console.log(socket.id); 
+  });
+
   return (
     <BrowserRouter>
       <div className="App">
         <Routes>
-          <Route path="/sig" element={<SignInFrom />} />
+          <Route path="/sig" element={<SignInFrom socket={socket}/>} />
           <Route path="/reg" element={<RegistrationForm />} />
           <Route path="/forg" element={<ForgotForm />} />
           <Route path="/:token/reset/" element={<ResetForm />} />
