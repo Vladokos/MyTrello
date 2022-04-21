@@ -5,9 +5,6 @@ const nodemailer = require("nodemailer");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 
-const wss = require("express-ws")(app);
-const aWss = wss.getWss();
-
 const verifyToken = require("./middleware/verifyToken");
 
 require("./config/database").connect();
@@ -748,29 +745,78 @@ app.post("/user/change/name", jsonParser, async (req, res) => {
   }
 });
 
-app.ws("/", (ws, req) => {
-  ws.on("message", (msg) => {
-    const {method} = JSON.parse(msg);
-    console.log(method);
-    
-    switch (method) {
-      case "connection":
-        console.log("asd");
-        ws.send("you are connected");
-        break;
+const { createServer } = require("http");
+const { Server } = require("socket.io");
 
-      default:
-        break;
+const httpServer = createServer(app);
+const io = new Server(httpServer, {
+  /* options */
+});
+const socket = io;
+
+io.on("connect", (socket) => {
+  console.log(socket.id);
+  socket.on("oldUser", async (refreshToken) => {
+    try {
+      jwt.verify(refreshToken, process.env.REFRESHTOKEN_KEY);
+
+      const user = await dataUsers.findOne({ refreshToken });
+
+      if (!user) return socket.emit("oldUser", "Error");
+
+      user.token = generateAccessToken(user._id, user.email);
+      user.refreshToken = generateRefreshToken(user._id, user.email);
+
+      await user.save();
+
+      socket.emit("oldUser", {
+        refreshToken: user.refreshToken,
+        accessToken: user.token,
+        userName: user.name,
+        userID: user._id,
+      });
+      // return res.status(200).json({
+      //   refreshToken: data.refreshToken,
+      //   accessToken: data.token,
+      //   userName: data.name,
+      // });
+    } catch (error) {
+      console.log(error);
+      return socket.emit("oldUser", "Error");
+      // res.status(400).send("Error");
+    }
+  });
+  socket.on("signIn", async (email, password) => {
+    try {
+      const user = await dataUsers.findOne({ email });
+
+      const decryptPassword = await bcrypt.compare(password, user.password);
+
+      if (user && decryptPassword) {
+        const token = generateAccessToken(user._id, email);
+        const refreshToken = generateRefreshToken(user._id, email);
+
+        user.token = token;
+        user.refreshToken = refreshToken;
+
+        await user.save();
+
+        socket.emit("signIn", {
+          userName: user.name,
+          refreshToken,
+          accessToken: token,
+        });
+      }
+
+      // return res.sendStatus(400);
+      return socket.emit("signIn", "Error");
+    } catch (error) {
+      console.log(error);
+      return socket.emit("signIn", "Error");
     }
   });
 });
 
-app.ws("/form/oldUser", jsonParser, async (ws, req) => {
-  ws.on("message", (msg) => {
-    console.log(msg);
-  });
-});
-
-app.listen(5000, () => {
+httpServer.listen(5000, () => {
   console.log("Server is running");
 });
