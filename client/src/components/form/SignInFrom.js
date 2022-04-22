@@ -32,9 +32,8 @@ export const SignInFrom = ({socket}) => {
 
   useEffect(() => {
     const refreshToken = localStorage.getItem("refreshToken");
-    console.log(socket.emit("oldUser", JSON.parse(refreshToken)));
 
-    if (refreshToken !== "undefined" && refreshToken !== null) {
+    if (refreshToken) {
       socket.emit("oldUser", JSON.parse(refreshToken));
     }
   }, []);
@@ -55,6 +54,7 @@ export const SignInFrom = ({socket}) => {
     });
 
     socket.on("signIn", (data) => {
+      console.log(data);
       if (data !== "Error") {
         const { userName, refreshToken, accessToken } = data;
 
@@ -64,7 +64,7 @@ export const SignInFrom = ({socket}) => {
 
         localStorage.setItem("userName", JSON.stringify(userName));
 
-        navigate("/" + userName + "/boards");
+       navigate("/" + userName + "/boards");
       } else {
         setDataExists(true);
       }

@@ -1,8 +1,8 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { Link } from "react-router-dom";
 
-export const ForgotForm = () => {
+export const ForgotForm = ({socket}) => {
   const [email, setEmail] = useState("");
   const [name, setName] = useState("");
   const [incorrect, setIncorrect] = useState(false);
@@ -32,34 +32,19 @@ export const ForgotForm = () => {
   const sendForm = (e) => {
     e.preventDefault();
     if (incorrect === false && email.length > 0) {
-      axios({
-        config: {
-          headers: {
-            "Content-Type": "application/json",
-            Accept: "application/json",
-          },
-        },
-        method: "POST",
-        url: "/form/password/forgot",
-        data: {
-          email,
-          name,
-        },
-      })
-        .then((response) => {
-          if (response.status === 200) {
-            setSuccessfully(true);
-          }
-        })
-        .catch((error) => {
-          const response = error.response;
-
-          if (response.status === 400) {
-            setDataExists(true);
-          }
-        });
+      socket.emit("forgot", email, name);
     }
   };
+
+  useEffect(() => {
+    socket.on("forgot", (data) => {
+      if (data === "Success") {
+        setSuccessfully(true);
+      } else {
+        setDataExists(true);
+      }
+    });
+  }, [socket]);
 
   return (
     <div className="form">

@@ -1,11 +1,9 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { Link, useNavigate } from "react-router-dom";
-import { io } from "socket.io-client";
 
-const socket = io();
 
-export const RegistrationForm = () => {
+export const RegistrationForm = ({socket}) => {
   const [email, setEmail] = useState("");
   const [name, setName] = useState("");
   const [password, setPassword] = useState("");
@@ -53,7 +51,22 @@ export const RegistrationForm = () => {
 
         localStorage.setItem("userName", JSON.stringify(userName));
 
-        // navigate("/" + userName + "/boards");
+        navigate("/" + userName + "/boards");
+      }
+    });
+    socket.on("registration", (data) => {
+      if (data !== "Exist") {
+        const { userName, refreshToken, accessToken } = data;
+
+        localStorage.setItem("accessToken", JSON.stringify(accessToken));
+
+        localStorage.setItem("refreshToken", JSON.stringify(refreshToken));
+
+        localStorage.setItem("userName", JSON.stringify(userName));
+
+        navigate("/" + userName + "/boards");
+      } else if (data === "Exist") {
+        setDataExists(true);
       }
     });
   }, [socket]);
@@ -61,39 +74,7 @@ export const RegistrationForm = () => {
   const sendForm = (e) => {
     e.preventDefault();
     if (incorrect === false && name.length > 0 && password.length >= 6) {
-      axios({
-        config: {
-          headers: {
-            "Content-Type": "application/json",
-            Accept: "application/json",
-          },
-        },
-        method: "POST",
-        url: "/form/registration/newUser",
-        data: {
-          email: email,
-          name: name,
-          password: password,
-        },
-      })
-        .then((response) => {
-          if (response.status === 201) {
-            const { userName, refreshToken, accessToken } = response.data;
-
-            sessionStorage.setItem("accessToken", JSON.stringify(accessToken));
-
-            localStorage.setItem("refreshToken", JSON.stringify(refreshToken));
-
-            navigate("/" + userName + "/boards");
-          }
-        })
-        .catch((error) => {
-          const response = error.response;
-
-          if (response.status === 409) {
-            setDataExists(true);
-          }
-        });
+      socket.emit("registration", email, name, password);
     }
   };
 
