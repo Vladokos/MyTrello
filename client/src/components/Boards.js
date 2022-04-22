@@ -19,7 +19,7 @@ import { CreateBoards } from "./CreateBoards";
 import starUnchecked from "../img/starUnchecked.svg";
 import starChecked from "../img/starChecked.svg";
 
-export const Boards = () => {
+export const Boards = ({ socket }) => {
   const navigate = useNavigate();
 
   const { height } = useWindowHeight();
@@ -39,37 +39,25 @@ export const Boards = () => {
 
     if (!accessToken) return;
 
-    axios({
-      config: {
-        headers: {
-          "Content-Type": "application/json",
-          Accept: "application/json",
-        },
-      },
-      method: "POST",
-      url: "/token/verify",
-      data: {
-        accessToken: JSON.parse(accessToken),
-      },
-    })
-      .then((response) => {
-        if (response.status === 200 && boards.length <= 1) {
-          const { newToken, idUser, userName } = response.data;
-
-          if (newToken) localStorage.setItem("accessToken", newToken);
-
-          localStorage.setItem("userId", idUser);
-          localStorage.setItem("userName", userName);
-
-          dispatch(getBoards(idUser));
-        }
-      })
-      .catch((error) => {
-        if (error.response.data === "Error" || error.response.status === 400) {
-          navigate("/error/404");
-        }
-      });
+    socket.emit("tokenVerify", JSON.parse(accessToken));
   }, []);
+
+  useEffect(() => {
+    socket.on("tokenVerify", (data) => {
+      if (data !== "Error") {
+        const { newToken, idUser, userName } = data;
+
+        if (newToken) localStorage.setItem("accessToken", newToken);
+
+        localStorage.setItem("userId", idUser);
+        localStorage.setItem("userName", userName);
+        
+        dispatch(getBoards(idUser));
+      } else {
+        navigate("/error/404");
+      }
+    });
+  }, [socket]);
 
   useEffect(() => {
     if (boards.length > 0) {
@@ -115,6 +103,7 @@ export const Boards = () => {
     }
     const boardId = boards[boards.length - 1]._id;
     const boardName = boards[boards.length - 1].nameBoard;
+    setFirstUpdate(0);
     navigate("/board/" + boardId + "/" + boardName);
   }, [boards]);
 
