@@ -749,10 +749,7 @@ const { createServer } = require("http");
 const { Server } = require("socket.io");
 
 const httpServer = createServer(app);
-const io = new Server(httpServer, {
-  /* options */
-});
-const socket = io;
+const io = new Server(httpServer, {});
 
 io.on("connect", (socket) => {
   console.log(socket.id);
@@ -813,6 +810,170 @@ io.on("connect", (socket) => {
     } catch (error) {
       console.log(error);
       return socket.emit("signIn", "Error");
+    }
+  });
+  socket.on("registration", async (email, name, password) => {
+    try {
+      const oldUser = await dataUsers.findOne({ email });
+
+      if (oldUser) return socket.emit("registration", "Exist");
+
+      const encryptPassword = await bcrypt.hash(password, 12);
+
+      const information = await new dataUsers({
+        email: email.toLowerCase(),
+        name,
+        password: encryptPassword,
+      });
+
+      const token = generateAccessToken(information._id, email);
+      const refreshToken = generateRefreshToken(information._id, email);
+
+      information.token = token;
+      information.refreshToken = refreshToken;
+
+      transporter.sendMail(
+        {
+          from: "MyTrello <sd5df.f.sdsdf@yandex.ru>",
+          to: email,
+          subject: "Thank you for registering",
+          text: "Thank you for registering on my service",
+        },
+        (error, info) => {
+          if (error) return console.log(error);
+          return console.log(info);
+        }
+      );
+
+      await information.save();
+
+      return socket.emit("registration", {
+        userName: data.name,
+        refreshToken,
+        accessToken: token,
+      });
+    } catch (error) {
+      console.log(error);
+      // res.status(400).send("Error");
+      return socket.emit("oldUser", "Error");
+    }
+  });
+  socket.on("forgot", async (email, name) => {
+    try {
+      const user = await dataUsers.findOne({ email, name });
+
+      if (!user) return socket.emit("forgot", "User not found");
+
+      const resetToken = generateResetPasswordToken(user._id, name, email);
+
+      user.resetToken = resetToken;
+
+      await user.save();
+
+      transporter.sendMail({
+        from: "MyTrello <sd5df.f.sdsdf@yandex.ru>",
+        to: email,
+        subject: "your data",
+        text:
+          "link to reset your password\n you have 30 minutes\n " +
+          "http://localhost:3000/" +
+          user.resetToken +
+          "/reset/",
+      });
+
+      return socket.emit("forgot", "Success");
+    } catch (error) {
+      console.log(error);
+      // res.status(400).send("Error");
+      return socket.emit("oldUser", "Error");
+    }
+  });
+
+  socket.on("tokenValidate", async (token) => {
+    try {
+      console.log(token);
+      const { resetToken } = await dataUsers.findOne({ resetToken: token });
+
+      if (!resetToken) return socket.emit("tokenValidate", "User not found");
+
+      return socket.emit("tokenValidate", "Valid");
+    } catch (error) {
+      console.log(error);
+      // res.status(400).send("Error");
+      return socket.emit("tokenValidate", "Error");
+    }
+  });
+
+  socket.on("passwordReset", async (token, password) => {
+    try {
+      const data = await dataUsers.findOne({ resetToken: token });
+
+      if (!data) return socket.emit("passwordReset", "User not found");
+
+      const decryptPassword = await bcrypt.compare(password, data.password);
+
+      if (decryptPassword) {
+        return socket.emit("passwordReset", "Need another password");
+      }
+
+      const encryptPassword = await bcrypt.hash(password, 12);
+
+      const newToken = generateAccessToken(data._id, data.email);
+      const refreshToken = generateRefreshToken(data._id, data.email);
+
+      data.password = encryptPassword;
+      data.resetToken = null;
+      data.token = newToken;
+      data.refreshToken = refreshToken;
+
+      await data.save();
+
+      return socket.emit("passwordReset", "Success");
+    } catch (error) {
+      console.log(error);
+      // res.status(400).send("Error");
+      return socket.emit("passwordReset", "Error");
+    }
+  });
+
+  socket.on("tokenVerify", async (accessToken) => {
+    try {
+      const { user_id } = jwt.decode(accessToken, process.env.TOKEN_KEY);
+
+      var data = await dataUsers.findById(user_id);
+
+      if (!data) return socket.emit("tokenVerify", "Error");
+      // maybe need generate new access and refresh token
+      jwt.verify(accessToken, process.env.TOKEN_KEY);
+
+      const idUser = data._id;
+      const userName = data.name;
+
+      return socket.emit("tokenVerify", { idUser, userName });
+    } catch (error) {
+      if (
+        error.message === "jwt expired" ||
+        error.name === "TokenExpiredError"
+      ) {
+        const { refreshToken } = data;
+        const idUser = data._id;
+
+        jwt.verify(refreshToken, process.env.REFRESHTOKEN_KEY, (error) => {
+          if (error) return error;
+        });
+
+        const newToken = generateAccessToken(idUser, data.email);
+        const newRefreshToken = generateRefreshToken(idUser, data.email);
+
+        data.token = newToken;
+        data.refreshToken = newRefreshToken;
+
+        await data.save();
+
+        return socket.emit("tokenVerify", {newToken, idUser, userName});
+      } else {
+        socket.emit("tokenVerify", "Error");
+      }
     }
   });
 });
