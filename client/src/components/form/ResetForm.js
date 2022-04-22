@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { Link, useParams, useNavigate } from "react-router-dom";
 
-export const ResetForm = () => {
+export const ResetForm = ({ socket }) => {
   const params = useParams();
   const navigate = useNavigate();
 
@@ -17,57 +17,32 @@ export const ResetForm = () => {
   };
 
   useEffect(() => {
-    axios({
-      config: {
-        headers: {
-          "Content-Type": "application/json",
-          Accept: "application/json",
-        },
-      },
-      method: "POST",
-      url: "/form/password/reset/token/validate",
-      data: {
-        token: params.token,
-      },
-    }).catch((error) => {
-      const response = error.response;
+    const token = params.token;
+    socket.emit("tokenValidate", token);
+  }, []);
 
-      if (/4([0-9]+)/.test(response.status)) {
+  useEffect(() => {
+    socket.on("tokenValidate", (data) => {
+      if (data !== "Valid") {
         navigate("/error/404");
       }
     });
-  }, []);
+    socket.on("passwordReset", (data) => {
+      if (data === "Success") {
+        navigate("/sig");
+      } else {
+        setDataExists(true);
+      }
+    });
+  }, [socket]);
 
   const sendForm = (e) => {
     e.preventDefault();
 
     if (password.length > 6) {
-      axios({
-        config: {
-          headers: {
-            "Content-Type": "application/json",
-            Accept: "application/json",
-          },
-        },
-        method: "POST",
-        url: "/form/password/reset",
-        data: {
-          token: params.token,
-          password,
-        },
-      })
-        .then((response) => {
-          if (response.status === 200) {
-            navigate("/sig");
-          }
-        })
-        .catch((error) => {
-          const response = error.response;
+      const token = params.token;
 
-          if (response.status === 400) {
-            setDataExists(true);
-          }
-        });
+      socket.emit("passwordReset", token, password);
     }
   };
 
