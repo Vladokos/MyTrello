@@ -35,9 +35,15 @@ function App({ socket }) {
             path="/:userName/boards"
             element={<Boards socket={socket} />}
           />
-          <Route path="/board/:boardId/:name" element={<Board />} />
+          <Route
+            path="/board/:boardId/:name"
+            element={<Board socket={socket} />}
+          />
 
-          <Route path="/:userName/profile" element={<Profile />} />
+          <Route
+            path="/:userName/profile"
+            element={<Profile socket={socket} />}
+          />
 
           <Route path="/error/:code" element={<NotFound />} />
           <Route path="/" element={<Navigate replace to="/sig" />} />
