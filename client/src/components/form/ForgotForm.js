@@ -40,6 +40,7 @@ export const ForgotForm = ({socket}) => {
     socket.on("forgot", (data) => {
       if (data === "Success") {
         setSuccessfully(true);
+        socket.off("forgot");
       } else {
         setDataExists(true);
       }

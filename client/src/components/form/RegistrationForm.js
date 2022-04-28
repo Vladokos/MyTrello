@@ -2,8 +2,7 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { Link, useNavigate } from "react-router-dom";
 
-
-export const RegistrationForm = ({socket}) => {
+export const RegistrationForm = ({ socket }) => {
   const [email, setEmail] = useState("");
   const [name, setName] = useState("");
   const [password, setPassword] = useState("");
@@ -51,6 +50,8 @@ export const RegistrationForm = ({socket}) => {
 
         localStorage.setItem("userName", JSON.stringify(userName));
 
+        socket.off("oldUser");
+
         navigate("/" + userName + "/boards");
       }
     });
@@ -63,6 +64,8 @@ export const RegistrationForm = ({socket}) => {
         localStorage.setItem("refreshToken", JSON.stringify(refreshToken));
 
         localStorage.setItem("userName", JSON.stringify(userName));
+
+        socket.off("registration");
 
         navigate("/" + userName + "/boards");
       } else if (data === "Exist") {

@@ -51,8 +51,9 @@ export const Boards = ({ socket }) => {
 
         localStorage.setItem("userId", idUser);
         localStorage.setItem("userName", userName);
-        
-        dispatch(getBoards(idUser));
+
+        dispatch(getBoards(idUser))
+        socket.off("tokenVerify");
       } else {
         navigate("/error/404");
       }
@@ -101,6 +102,7 @@ export const Boards = ({ socket }) => {
       setFirstUpdate(firstUpdate + 1);
       return;
     }
+
     const boardId = boards[boards.length - 1]._id;
     const boardName = boards[boards.length - 1].nameBoard;
     setFirstUpdate(0);

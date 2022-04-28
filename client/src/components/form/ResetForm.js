@@ -24,11 +24,15 @@ export const ResetForm = ({ socket }) => {
   useEffect(() => {
     socket.on("tokenValidate", (data) => {
       if (data !== "Valid") {
+        socket.off("tokenValidate");
+
         navigate("/error/404");
       }
     });
     socket.on("passwordReset", (data) => {
       if (data === "Success") {
+        socket.off("passwordReset");
+
         navigate("/sig");
       } else {
         setDataExists(true);

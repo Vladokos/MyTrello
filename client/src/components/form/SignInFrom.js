@@ -2,8 +2,7 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { Link, useNavigate } from "react-router-dom";
 
-
-export const SignInFrom = ({socket}) => {
+export const SignInFrom = ({ socket }) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [incorrect, setIncorrect] = useState(false);
@@ -49,12 +48,13 @@ export const SignInFrom = ({socket}) => {
 
         localStorage.setItem("userName", JSON.stringify(userName));
 
+        socket.off("oldUser");
+
         navigate("/" + userName + "/boards");
       }
     });
 
     socket.on("signIn", (data) => {
-      console.log(data);
       if (data !== "Error") {
         const { userName, refreshToken, accessToken } = data;
 
@@ -64,13 +64,13 @@ export const SignInFrom = ({socket}) => {
 
         localStorage.setItem("userName", JSON.stringify(userName));
 
-       navigate("/" + userName + "/boards");
+        socket.off("signIn");
+
+        navigate("/" + userName + "/boards");
       } else {
         setDataExists(true);
       }
     });
-
-   
   }, [socket]);
 
   const sendForm = (e) => {
