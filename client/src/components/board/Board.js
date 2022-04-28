@@ -32,7 +32,7 @@ import { Menu } from "./Menu";
 
 import "../../styles/Board/Board.css";
 
-export const Board = () => {
+export const Board = ({ socket }) => {
   const navigate = useNavigate();
   const params = useParams();
 
@@ -82,45 +82,73 @@ export const Board = () => {
 
   useEffect(() => {
     const accessToken = localStorage.getItem("accessToken");
-    const userId = localStorage.getItem("userId");
-
-    const { boardId } = params;
 
     if (!accessToken) navigate("/sig");
 
-    axios({
-      config: {
-        headers: {
-          "Content-Type": "application/json",
-          Accept: "application/json",
-        },
-      },
-      method: "POST",
-      url: "/token/verify",
-      data: {
-        accessToken: JSON.parse(accessToken),
-      },
-    })
-      .then((response) => {
-        if (response.status === 200) {
-          const date = Date.now();
-          dispatch(changeData({ boardId, date }));
+    socket.emit("tokenVerify", JSON.parse(accessToken));
 
-          dispatch(getBoards(userId));
+    socket.on("tokenVerify", (data) => {
+      if (data !== "Error") {
+        const { newToken, idUser, userName } = data;
 
-          dispatch(getLists(boardId));
+        const userId = localStorage.getItem("userId");
 
-          dispatch(getCards(boardId));
+        const { boardId } = params;
 
-          setFirstUpdate(0);
-        }
-      })
-      .catch((error) => {
-        if (error.response.data === "Error" || error.response.status === 400) {
-          navigate("/error/404");
-        }
-      });
+        if (newToken) localStorage.setItem("accessToken", newToken);
+
+        localStorage.setItem("userId", idUser);
+        localStorage.setItem("userName", userName);
+
+        const date = Date.now();
+        dispatch(changeData({ boardId, date }));
+
+        dispatch(getBoards(userId));
+
+        dispatch(getLists(boardId));
+
+        dispatch(getCards(boardId));
+
+        setFirstUpdate(0);
+
+        socket.off("tokenVerify");
+      } else {
+        navigate("/error/404");
+      }
+    });
   }, [params]);
+
+  useEffect(() => {
+    // socket.on("tokenVerify", (data) => {
+    //   if (data !== "Error") {
+    //     const { newToken, idUser, userName } = data;
+
+    //     const userId = localStorage.getItem("userId");
+
+    //     const { boardId } = params;
+
+    //     if (newToken) localStorage.setItem("accessToken", newToken);
+
+    //     localStorage.setItem("userId", idUser);
+    //     localStorage.setItem("userName", userName);
+
+    //     const date = Date.now();
+    //     dispatch(changeData({ boardId, date }));
+
+    //     dispatch(getBoards(userId));
+
+    //     dispatch(getLists(boardId));
+
+    //     dispatch(getCards(boardId));
+
+    //     setFirstUpdate(0);
+
+    //     socket.off("tokenVerify");
+    //   } else {
+    //     navigate("/error/404");
+    //   }
+    // });
+  }, [socket]);
 
   const onDrop = (e) => {
     if (e.type === "list") {
@@ -152,9 +180,8 @@ export const Board = () => {
     }
     const boardId = boards[boards.length - 1]._id;
     const boardName = boards[boards.length - 1].nameBoard;
-    navigate("/board/" + boardId + "/" + boardName);
     setFirstUpdate(0);
-    
+    navigate("/board/" + boardId + "/" + boardName);
   }, [boards]);
 
   const [drag, setDrag] = useState(false);
