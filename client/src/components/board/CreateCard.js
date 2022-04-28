@@ -38,9 +38,6 @@ export const CreateCard = ({ listId, boards, formShow, closeForm }) => {
     setNameCard("");
   };
 
-  // because initial xPos is give some different position
-  // xPos -= 145;
-  // yPos -= 186;
 
   const cardInput = useRef(null);
   const cardFormRef = useRef(null);

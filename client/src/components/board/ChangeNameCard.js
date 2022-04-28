@@ -30,11 +30,6 @@ export const ChangeNameCard = ({
 
   OutsideClick(form, () => closeForm());
 
-  // xPos -= 228;
-  // yPos -= 7;
-  // transform: translate(792px, 298px);
-  // transform: translate(810px, 297px);
-
   yPos > height ? (yPos = height) : (yPos -= 7);
 
   return (
