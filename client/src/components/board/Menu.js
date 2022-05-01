@@ -2,10 +2,12 @@ import React, { useState, useRef } from "react";
 
 import { ArchiveList } from "./ArchiveList";
 import { ArchiveCard } from "./ArchiveCard";
+import { ShareBoard } from "./ShareBoard";
 
 import OutsideClick from "../../hooks/outsideClick";
 
 import archive from "../../img/archive.svg";
+import link from "../../img/makeLink.svg";
 
 import "../../styles/Board/Menu.css";
 
@@ -13,6 +15,7 @@ export const Menu = ({ height, lists, cards }) => {
   const [menuOpen, setMenuOpen] = useState(false);
   const [archiveListOpen, setArchiveListOpen] = useState(false);
   const [archiveCardOpen, setArchiveCardOpen] = useState(false);
+  const [shareBoard, setShareBoard] = useState(false);
 
   const menu = useRef(null);
   OutsideClick(menu, () => setMenuOpen(false));
@@ -38,6 +41,9 @@ export const Menu = ({ height, lists, cards }) => {
           <div onClick={() => setArchiveCardOpen(true)}>
             Archived cards <img src={archive} />
           </div>
+          <div onClick={() => setShareBoard(true)}>
+            Share board <img src={link} />
+          </div>
         </div>
         {archiveListOpen === true ? (
           <ArchiveList
@@ -53,6 +59,13 @@ export const Menu = ({ height, lists, cards }) => {
             back={() => setArchiveCardOpen(false)}
             close={() => setMenuOpen(false)}
             cards={cards}
+          />
+        ) : null}
+        {shareBoard === true ? (
+          <ShareBoard
+            height={height}
+            back={() => setShareBoard(false)}
+            close={() => setMenuOpen(false)}
           />
         ) : null}
       </div>
