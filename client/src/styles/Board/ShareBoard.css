@@ -1,0 +1,25 @@
+.share {
+  transform: translateY(-224px);
+
+  background-color: #f4f5f7;
+}
+.shareTitle {
+  font-weight: 500;
+}
+.sharedMenu {
+  display: block !important;
+}
+.share input {
+  height: 50px;
+  width: 100px;
+
+  padding: 0 35px;
+
+  border-radius: 3px;
+}
+.share input:focus {
+  padding: 0 35px;
+}
+.sharedMenu li{
+    margin-bottom: 20px;
+}
