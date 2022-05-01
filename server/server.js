@@ -947,7 +947,7 @@ io.on("connect", (socket) => {
       jwt.verify(accessToken, process.env.TOKEN_KEY);
 
       const idUser = data._id;
-      const userName = data.name;
+      var userName = data.name;
 
       return socket.emit("tokenVerify", { idUser, userName });
     } catch (error) {
