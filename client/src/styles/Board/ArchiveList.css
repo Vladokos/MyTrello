@@ -1,11 +1,3 @@
-.archive {
-  transform: translateY(-191px);
-
-  background-color: #f4f5f7;
-}
-.archiveTitle {
-  font-weight: 500;
-}
 .archivedLists {
   display: block !important;
 }
