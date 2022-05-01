@@ -11,9 +11,10 @@ const dataBoardsSchema = new Schema(
         ref: "datalists",
       },
     ],
-    idUser: { type: Schema.Types.ObjectId, ref: "datausers" },
+    idUser: [{ type: Schema.Types.ObjectId, ref: "datausers" }],
     favorites: Boolean,
     lastVisiting: Date,
+    roomId: String,
   },
   { versionKey: false }
 );
