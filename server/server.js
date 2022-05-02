@@ -319,9 +319,12 @@ app.post("/boards/create", jsonParser, async (req, res) => {
 
     const newBoard = await new dataBoards({
       nameBoard,
+      owner: idUser,
+      lists: null,
       idUser,
       favorites: false,
       lastVisiting: null,
+      shareLink: null,
     });
 
     newBoard.save((error) => {
@@ -970,10 +973,52 @@ io.on("connect", (socket) => {
 
         await data.save();
 
-        return socket.emit("tokenVerify", {newToken, idUser, userName});
+        return socket.emit("tokenVerify", { newToken, idUser, userName });
       } else {
         socket.emit("tokenVerify", "Error");
       }
+    }
+  });
+
+  socket.on("room", async (roomId) => {
+    try {
+      console.log(roomId);
+      socket.join(roomId);
+    } catch (error) {
+      console.log(error);
+      // res.status(400).send("Error");
+      return socket.emit("room", "Error");
+    }
+  });
+
+  socket.on("test", async (roomId) => {
+    try {
+      console.log(roomId);
+      socket.to(roomId).emit("test", "message");
+    } catch (error) {
+      console.log(error);
+      // res.status(400).send("Error");
+      return socket.emit("test", "Error");
+    }
+  });
+
+  socket.on("addLink", async (link, boardId) => {
+    try {
+      const board = await dataBoards.findById(boardId);
+
+      if (!board) return socket.emit("addLink", "Error");
+
+      board.shareLink = link;
+
+      await board.save();
+
+      socket.join(boardId);
+
+      return socket.emit("addLink", "Added");
+    } catch (error) {
+      console.log(error);
+      // res.status(400).send("Error");
+      return socket.emit("addLink", "Error");
     }
   });
 });
