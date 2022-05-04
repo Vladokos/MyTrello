@@ -1,4 +1,5 @@
 import React, { useRef } from "react";
+import { useParams} from "react-router-dom";
 
 import { useDispatch } from "react-redux";
 
@@ -18,11 +19,17 @@ export const ChangeNameCard = ({
   xPos,
   yPos,
   height,
+  socket,
 }) => {
+  const params = useParams();
   const dispatch = useDispatch();
 
   const sendForm = () => {
-    dispatch(changeName({ cardId, nameCard }));
+    const { boardId } = params;
+
+    dispatch(changeName({ cardId, nameCard })).then(() => {
+      socket.emit("bond", { roomId: boardId, message: "card changed", cardId });
+    });
     closeForm();
   };
 
