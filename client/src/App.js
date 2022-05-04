@@ -9,6 +9,8 @@ import { ResetForm } from "./components/form/ResetForm";
 import { Boards } from "./components/Boards";
 import { Board } from "./components/board/Board";
 
+import {ValidateInvite} from "./components/ValidateInvite";
+
 import { Profile } from "./components/profile/Profile";
 
 import { NotFound } from "./components/NotFound";
@@ -39,6 +41,10 @@ function App({ socket }) {
             path="/board/:boardId/:name"
             element={<Board socket={socket} />}
           />
+          <Route
+            path="invite/b/:boardId/:uniqId/:name"
+            element={<ValidateInvite socket={socket} />}
+          />
 
           <Route
             path="/:userName/profile"
@@ -46,6 +52,7 @@ function App({ socket }) {
           />
 
           <Route path="/error/:code" element={<NotFound />} />
+
           <Route path="/" element={<Navigate replace to="/sig" />} />
         </Routes>
       </div>
