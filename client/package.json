@@ -21,7 +21,8 @@
     "react-scripts": "^4.0.3",
     "react-textarea-autosize": "^8.3.3",
     "socket.io-client": "^4.4.1",
-    "styled-components": "^5.3.3"
+    "styled-components": "^5.3.3",
+    "uniqid": "^5.4.0"
   },
   "scripts": {
     "start": "react-scripts start",
