@@ -11,7 +11,7 @@ import OutsideClick from "../../hooks/outsideClick";
 
 import "../../styles/Board/CreateCard.css";
 
-export const CreateCard = ({ listId, boards, formShow, closeForm }) => {
+export const CreateCard = ({ listId, boards, formShow, closeForm, socket }) => {
   const params = useParams();
   const dispatch = useDispatch();
 
@@ -32,12 +32,13 @@ export const CreateCard = ({ listId, boards, formShow, closeForm }) => {
     dispatch(addCard({ nameCard, boardId, listId })).then(() => {
       dispatch(getLists(boardId)).then(() => {
         dispatch(sortingLists(boards));
+        socket.emit("bond", { roomId: boardId, message: "card added" });
       });
+
     });
 
     setNameCard("");
   };
-
 
   const cardInput = useRef(null);
   const cardFormRef = useRef(null);
@@ -54,7 +55,7 @@ export const CreateCard = ({ listId, boards, formShow, closeForm }) => {
           placeholder="Enter a title for this card…"
           value={nameCard}
           onChange={onNameCardChange}
-          onKeyDown={(e) => e.key === "Enter"? createCard(): null}
+          onKeyDown={(e) => (e.key === "Enter" ? createCard() : null)}
           ref={(e) => e?.focus?.()}
         />
       </div>
