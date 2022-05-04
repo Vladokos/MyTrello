@@ -11,7 +11,7 @@ import link from "../../img/makeLink.svg";
 
 import "../../styles/Board/Menu.css";
 
-export const Menu = ({ height, lists, cards }) => {
+export const Menu = ({ height, lists, cards, socket, shareLink }) => {
   const [menuOpen, setMenuOpen] = useState(false);
   const [archiveListOpen, setArchiveListOpen] = useState(false);
   const [archiveCardOpen, setArchiveCardOpen] = useState(false);
@@ -66,6 +66,8 @@ export const Menu = ({ height, lists, cards }) => {
             height={height}
             back={() => setShareBoard(false)}
             close={() => setMenuOpen(false)}
+            socket={socket}
+            shareLink={shareLink}
           />
         ) : null}
       </div>
