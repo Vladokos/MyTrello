@@ -1,4 +1,5 @@
 import React, { useRef, useState, useEffect } from "react";
+import { useParams } from "react-router-dom";
 
 import { useDispatch } from "react-redux";
 
@@ -22,31 +23,66 @@ export const ChangeCard = ({
   nameCard,
   descriptionCard,
   cardId,
-  changeNameCard,
+  changeCard,
   isOpen,
   closeForm,
+  socket,
 }) => {
+  const params = useParams();
   const dispatch = useDispatch();
 
   const [description, setDescription] = useState("");
   const [visible, setVisible] = useState("none");
 
+  const [update, setUpdate] = useState(0);
+
   const sendForm = (e) => {
     if (e.key === "Enter" || e.keyCode === 13 || e.type === "click") {
+      const { boardId } = params;
+
       switch (e.target.id) {
         case "name":
-          dispatch(changeName({ cardId, nameCard }));
+          dispatch(changeName({ cardId, nameCard })).then(() => {
+            socket.emit("bond", {
+              roomId: boardId,
+              message: "card changed",
+              cardId,
+            });
+          });
+
           nameInput.current.blur();
           break;
         case "description":
-          dispatch(changeDescription({ cardId, description }));
+          dispatch(changeDescription({ cardId, description })).then(() => {
+            socket.emit("bond", {
+              roomId: boardId,
+              message: "card changed",
+              cardId,
+            });
+          });
+          console.log(description);
+          setDescription(descriptionCard);
           break;
         case "delete":
-          dispatch(deleteCard({ cardId }));
+          dispatch(deleteCard({ cardId })).then(() => {
+            socket.emit("bond", {
+              roomId: boardId,
+              message: "card deleted",
+              cardId,
+            });
+          });
+
           closeForm();
           break;
         case "archive":
-          dispatch(archiveCard({ cardId }));
+          dispatch(archiveCard({ cardId })).then(() => {
+            socket.emit("bond", {
+              roomId: boardId,
+              message: "card changed",
+              cardId,
+            });
+          });
+
           closeForm();
           break;
         default:
@@ -56,7 +92,10 @@ export const ChangeCard = ({
   };
 
   useEffect(() => {
-    setDescription(descriptionCard);
+    if (update < 1) {
+      setDescription(descriptionCard);
+      setUpdate(update + 1);
+    }
   }, [descriptionCard]);
 
   const nameInput = useRef(false);
@@ -75,7 +114,7 @@ export const ChangeCard = ({
           <TextareaAutosize
             id="name"
             value={nameCard}
-            onChange={changeNameCard}
+            onChange={changeCard}
             onKeyDown={sendForm}
             onBlur={(e) => {
               sendForm(e);
