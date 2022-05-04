@@ -11,15 +11,15 @@
 }
 .share input {
   height: 50px;
-  width: 100px;
+  width: 175px;
 
-  padding: 0 35px;
+  padding: 0 0 0 15px;
 
   border-radius: 3px;
 }
 .share input:focus {
-  padding: 0 35px;
+  padding: 0 0 0 15px;
 }
-.sharedMenu li{
-    margin-bottom: 20px;
+.sharedMenu li {
+  margin-bottom: 20px;
 }
