@@ -31,6 +31,7 @@ export const List = ({
   visibleChangeCard,
   visibleChangeNameCard,
   height,
+  socket,
 }) => {
   const dispatch = useDispatch();
 
@@ -129,6 +130,7 @@ export const List = ({
                     boards={boards}
                     formShow={cardCreateShow}
                     closeForm={() => setCardCreateShow(false)}
+                    socket={socket}
                   />
                 </div>
               </div>
