@@ -1,9 +1,35 @@
-import React from "react";
-import { useDispatch } from "react-redux";
+import React, {useState, useEffect} from "react";
+import { useParams } from "react-router-dom";
+
+import uniqid from "uniqid";
 
 import "../../styles/Board/ShareBoard.css";
 
-export const ShareBoard = ({ height, back, close }) => {
+export const ShareBoard = ({ height, back, close, socket, shareLink }) => {
+  const params = useParams();
+
+  const [link, setLink] = useState(shareLink);
+
+  const generateLink = () => {
+    const boardId = params.boardId;
+    const boardName = params.name;
+
+    setLink(
+      `http://localhost:3000/invite/b/${boardId}/${uniqid()}/${boardName}`
+    );
+
+    socket.emit("addLink", link, boardId);
+  };
+
+  const useEffect = ((data) => {
+    socket.on("addLink", (data) => {
+      if(data === "Added"){
+        const boardId = params.boardId;
+        socket.join(boardId);
+      }
+    });
+  }, [socket])
+
   return (
     <div className="share" style={{ height: height - 90 }}>
       <div className="shareTitle">
@@ -14,10 +40,10 @@ export const ShareBoard = ({ height, back, close }) => {
       <hr />
       <ul className="sharedMenu">
         <li>
-          <input readOnly="readonly" />
+          <input readOnly="readonly" value={link} />
         </li>
         <li>
-          <button>Generate link</button>
+          <button onClick={generateLink}>Generate link</button>
         </li>
         <li>
           <button>Delete link</button>
