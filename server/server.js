@@ -320,7 +320,6 @@ app.post("/boards/create", jsonParser, async (req, res) => {
     const newBoard = await new dataBoards({
       nameBoard,
       owner: idUser,
-      lists: null,
       idUser,
       favorites: false,
       lastVisiting: null,
@@ -459,6 +458,20 @@ app.post("/board/list/card/get", jsonParser, async (req, res) => {
     const { boardId } = req.body;
 
     const cardData = await dataCard.find({ boardId });
+
+    if (!cardData) return res.status(400).send("Error");
+
+    return res.status(200).send(cardData);
+  } catch (error) {
+    console.log(error);
+    return res.status(400).send("Error");
+  }
+});
+app.post("/board/list/card/getOne", jsonParser, async (req, res) => {
+  try {
+    const { cardId } = req.body;
+
+    const cardData = await dataCard.findById(cardId);
 
     if (!cardData) return res.status(400).send("Error");
 
@@ -750,6 +763,8 @@ app.post("/user/change/name", jsonParser, async (req, res) => {
 
 const { createServer } = require("http");
 const { Server } = require("socket.io");
+const { link } = require("fs");
+const { Mongoose } = require("mongoose");
 
 const httpServer = createServer(app);
 const io = new Server(httpServer, {});
@@ -981,24 +996,37 @@ io.on("connect", (socket) => {
   });
 
   socket.on("room", async (roomId) => {
-    try {
-      console.log(roomId);
-      socket.join(roomId);
-    } catch (error) {
-      console.log(error);
-      // res.status(400).send("Error");
-      return socket.emit("room", "Error");
-    }
+    console.log(roomId);
+    return await socket.join(roomId);
   });
 
-  socket.on("test", async (roomId) => {
+  socket.on("bond", async (data) => {
     try {
-      console.log(roomId);
-      socket.to(roomId).emit("test", "message");
+      const { roomId, message, cardId } = data;
+      switch (message) {
+        case "list added":
+          socket.broadcast.to(roomId).emit("bond", { message: "Update list" });
+          break;
+        case "card added":
+          socket.broadcast.to(roomId).emit("bond", { message: "Update card" });
+          break;
+        case "card changed":
+          socket.broadcast
+            .to(roomId)
+            .emit("bond", { message: "Update card", cardId });
+          break;
+          case "card deleted":
+            socket.broadcast
+            .to(roomId)
+            .emit("bond", { message: "Delete card", cardId });
+            break;
+        default:
+          break;
+      }
     } catch (error) {
       console.log(error);
       // res.status(400).send("Error");
-      return socket.emit("test", "Error");
+      return socket.emit("bond", "Error");
     }
   });
 
@@ -1019,6 +1047,30 @@ io.on("connect", (socket) => {
       console.log(error);
       // res.status(400).send("Error");
       return socket.emit("addLink", "Error");
+    }
+  });
+
+  socket.on("validateInvite", async (data) => {
+    try {
+      const { link, userId } = data;
+
+      const board = await dataBoards.findOne({ shareLink: link });
+
+      for (let i = 0; i < board.idUser.length; i++) {
+        if (board.idUser[i].equals(userId)) {
+          return socket.emit("validateInvite", "Already added");
+        }
+      }
+
+      board.idUser.push(userId);
+
+      await board.save();
+
+      return socket.emit("validateInvite", "Added");
+    } catch (error) {
+      console.log(error);
+
+      return socket.emit("validateInvite", "Error");
     }
   });
 });
