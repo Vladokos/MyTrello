@@ -6,15 +6,15 @@ import { Provider } from "react-redux";
 
 import { io } from "socket.io-client";
 
-const socket = io("http://localhost:3000");
+const socket = io("http://localhost:3000/");
 socket.on("connect", () => {
-  console.log(socket.id); 
+  console.log(socket.id);
 });
 
 ReactDOM.render(
   <React.StrictMode>
     <Provider store={store}>
-      <App socket={socket}/>
+      <App socket={socket} />
     </Provider>
   </React.StrictMode>,
   document.getElementById("root")
