@@ -30,6 +30,29 @@ export const getCards = createAsyncThunk("cards/getCards", async (boardId) => {
   return response;
 });
 
+export const getCard = createAsyncThunk("cards/getCard", async (cardId) => {
+  const response = await axios({
+    config: {
+      headers: {
+        "Content-Type": "application/json",
+        Accept: "application/json",
+      },
+    },
+    method: "POST",
+    url: "/board/list/card/getOne",
+    data: {
+      cardId,
+    },
+  })
+    .then((response) => {
+      return response.data;
+    })
+    .catch((error) => {
+      console.log(error);
+    });
+  return response;
+});
+
 export const addCard = createAsyncThunk(
   "cards/addCard",
   async ({ nameCard, boardId, listId }) => {
@@ -193,7 +216,17 @@ export const unarchiveCard = createAsyncThunk(
 const cardsSlice = createSlice({
   name: "cards",
   initialState,
-  reducers: {},
+  reducers: {
+    removeCard(state, action) {
+      const { cardId } = action;
+
+      for (let i = 0; i < state.cards.length; i++) {
+        if (state.cards[i]._id === cardId) {
+          state.cards.splice(i, 1);
+        }
+      }
+    },
+  },
   extraReducers(builder) {
     builder
       .addCase(getCards.pending, (state, action) => {
@@ -202,6 +235,20 @@ const cardsSlice = createSlice({
       .addCase(getCards.fulfilled, (state, action) => {
         state.status = "succeeded";
         state.cards = action.payload;
+      })
+      .addCase(getCard.pending, (state, action) => {
+        state.status = "loading";
+      })
+      .addCase(getCard.fulfilled, (state, action) => {
+        state.status = "succeeded";
+
+        const cardId = action.payload._id;
+
+        for (let i = 0; i < state.cards.length; i++) {
+          if (state.cards[i]._id === cardId) {
+            state.cards.splice(i, 1, action.payload);
+          }
+        }
       })
       .addCase(addCard.pending, (state, action) => {
         state.status = "loading";
@@ -282,5 +329,7 @@ const cardsSlice = createSlice({
       });
   },
 });
+
+export const { removeCard } = cardsSlice.actions;
 
 export default cardsSlice.reducer;
