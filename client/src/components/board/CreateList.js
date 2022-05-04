@@ -9,7 +9,7 @@ import OutsideClick from "../../hooks/outsideClick";
 
 import "../../styles/Board/CreateList.css";
 
-export const CreateList = () => {
+export const CreateList = ({ socket }) => {
   const params = useParams();
   const dispatch = useDispatch();
 
@@ -27,8 +27,10 @@ export const CreateList = () => {
 
     const { boardId } = params;
 
-    dispatch(addList({ nameList, boardId }));
-    dispatch(getBoard(boardId));
+    dispatch(addList({ nameList, boardId })).then(() => {
+      socket.emit("bond", { roomId: boardId, message: "list added" });
+      dispatch(getBoard(boardId));
+    });
 
     setNameList("");
   };
@@ -55,7 +57,7 @@ export const CreateList = () => {
           placeholder="Enter list name"
           value={nameList}
           onChange={onNameListChange}
-          onKeyDown={(e) => e.key === "Enter"? createList(): null}
+          onKeyDown={(e) => (e.key === "Enter" ? createList() : null)}
         />
         <button onClick={createList}>Add list</button>
         <button onClick={visibleListCreate}>X</button>
