@@ -14,9 +14,7 @@ import {
   sortingLists,
   changeCards,
 } from "../../features/lists/listsSlice";
-import { getCards } from "../../features/card/cardsSlice";
-
-import axios from "axios";
+import { getCards, getCard, removeCard } from "../../features/card/cardsSlice";
 
 import useWindowHeight from "../../hooks/heightWindowHook";
 
@@ -58,6 +56,8 @@ export const Board = ({ socket }) => {
 
   const [xPos, setXPos] = useState(null);
   const [yPos, setYPos] = useState(null);
+
+  const [connect, setConnect] = useState(false);
 
   const visibleChangeCard = (e, id, description) => {
     if (e.target.innerText === "") return null;
@@ -119,35 +119,42 @@ export const Board = ({ socket }) => {
   }, [params]);
 
   useEffect(() => {
-    // socket.on("tokenVerify", (data) => {
-    //   if (data !== "Error") {
-    //     const { newToken, idUser, userName } = data;
+    socket.on("bond", (data) => {
+      const { message, cardId } = data;
 
-    //     const userId = localStorage.getItem("userId");
+      const userId = localStorage.getItem("userId");
 
-    //     const { boardId } = params;
+      const { boardId } = params;
 
-    //     if (newToken) localStorage.setItem("accessToken", newToken);
+      switch (message) {
+        case "Update list":
+          dispatch(getBoards(userId));
 
-    //     localStorage.setItem("userId", idUser);
-    //     localStorage.setItem("userName", userName);
+          dispatch(getLists(boardId));
 
-    //     const date = Date.now();
-    //     dispatch(changeData({ boardId, date }));
+          break;
 
-    //     dispatch(getBoards(userId));
+        case "Update card":
+          dispatch(getLists(boardId));
 
-    //     dispatch(getLists(boardId));
+          dispatch(getCards(boardId));
 
-    //     dispatch(getCards(boardId));
+          break;
 
-    //     setFirstUpdate(0);
+        case "Update card":
+          dispatch(getCard(cardId));
 
-    //     socket.off("tokenVerify");
-    //   } else {
-    //     navigate("/error/404");
-    //   }
-    // });
+          break;
+
+        case "Delete card":
+          dispatch(removeCard(cardId));
+
+          break;
+
+        default:
+          break;
+      }
+    });
   }, [socket]);
 
   const onDrop = (e) => {
@@ -169,7 +176,16 @@ export const Board = ({ socket }) => {
 
   useEffect(() => {
     if (boards.length > 0) {
-      dispatch(sortingLists(boards));
+      boards.map((board) => {
+        if (board._id === params.boardId && board.shareLink && !connect) {
+          dispatch(sortingLists(boards));
+
+          const roomId = params.boardId;
+          socket.emit("room", roomId);
+
+          setConnect(true);
+        }
+      });
     }
   }, [boards]);
 
@@ -194,14 +210,22 @@ export const Board = ({ socket }) => {
       <div className="lists" style={{ height: height - 127 }}>
         <div className="container">
           <div className="lists__inner" style={{ height: height - 200 }}>
-            <div className="action-board">
-              {boards.map((board) => {
-                if (board._id === params.boardId) {
-                  return <BoardName key={board._id} name={board.nameBoard} />;
-                }
-              })}
-              <Menu height={height - 108} lists={lists} cards={cards} />
-            </div>
+            {boards.map((board) => {
+              if (board._id === params.boardId) {
+                return (
+                  <div key={board._id} className="action-board">
+                    <BoardName name={board.nameBoard} />,
+                    <Menu
+                      height={height - 108}
+                      lists={lists}
+                      cards={cards}
+                      socket={socket}
+                      shareLink={board.shareLink}
+                    />
+                  </div>
+                );
+              }
+            })}
 
             <ul
               className="scrollBoard"
@@ -239,6 +263,7 @@ export const Board = ({ socket }) => {
                             visibleChangeCard={visibleChangeCard}
                             visibleChangeNameCard={visibleChangeNameCard}
                             height={height - 307}
+                            socket={socket}
                           />
                         ) : null
                       )}
@@ -248,7 +273,7 @@ export const Board = ({ socket }) => {
                 </Droppable>
               </DragDropContext>
 
-              <CreateList />
+              <CreateList socket={socket} />
             </ul>
             <ChangeCard
               nameCard={nameCard}
@@ -258,6 +283,7 @@ export const Board = ({ socket }) => {
               changeCard={(e) => setNameCard(e.target.value)}
               isOpen={changeCard}
               closeForm={() => setChangeCard(false)}
+              socket={socket}
             />
 
             {changeNameCard === false ? null : (
@@ -269,6 +295,7 @@ export const Board = ({ socket }) => {
                 xPos={xPos}
                 yPos={yPos}
                 height={height - 270}
+                socket={socket}
               />
             )}
           </div>
