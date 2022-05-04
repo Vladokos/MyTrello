@@ -5,6 +5,7 @@ const Schema = mongoose.Schema;
 const dataBoardsSchema = new Schema(
   {
     nameBoard: String,
+    owner: { type: Schema.Types.ObjectId, ref: "datausers" },
     lists: [
       {
         type: Schema.Types.ObjectId,
@@ -14,7 +15,8 @@ const dataBoardsSchema = new Schema(
     idUser: [{ type: Schema.Types.ObjectId, ref: "datausers" }],
     favorites: Boolean,
     lastVisiting: Date,
-    roomId: String,
+    shareLink: String,
+
   },
   { versionKey: false }
 );
