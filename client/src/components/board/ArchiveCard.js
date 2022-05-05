@@ -1,4 +1,6 @@
 import React from "react";
+import { useParams } from "react-router-dom";
+
 import { useDispatch } from "react-redux";
 
 import { unarchiveCard, deleteCard } from "../../features/card/cardsSlice";
@@ -8,11 +10,29 @@ import restore from "../../img/restore.svg";
 
 import "../../styles/Board/ArchiveCard.css";
 
-export const ArchiveCard = ({ height, back, close, cards }) => {
+export const ArchiveCard = ({ height, back, close, cards, socket }) => {
+  const params = useParams();
+
+  const { boardId } = params;
+
   const dispatch = useDispatch();
 
-  const unarchive = (cardId) => dispatch(unarchiveCard({ cardId }));
-  const deleting = (cardId) => dispatch(deleteCard({ cardId }));
+  const unarchive = (cardId) =>
+    dispatch(unarchiveCard({ cardId })).then(() => {
+      socket.emit("bond", {
+        roomId: boardId,
+        message: "card changed",
+        cardId,
+      });
+    });
+  const deleting = (cardId) =>
+    dispatch(deleteCard({ cardId })).then(() => {
+      socket.emit("bond", {
+        roomId: boardId,
+        message: "card deleted",
+        cardId,
+      });
+    });
 
   return (
     <div className="archive" style={{ height: height - 90 }}>
