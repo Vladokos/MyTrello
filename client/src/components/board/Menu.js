@@ -51,6 +51,7 @@ export const Menu = ({ height, lists, cards, socket, shareLink }) => {
             back={() => setArchiveListOpen(false)}
             close={() => setMenuOpen(false)}
             lists={lists}
+            socket={socket}
           />
         ) : null}
         {archiveCardOpen === true ? (
@@ -59,6 +60,7 @@ export const Menu = ({ height, lists, cards, socket, shareLink }) => {
             back={() => setArchiveCardOpen(false)}
             close={() => setMenuOpen(false)}
             cards={cards}
+            socket={socket}
           />
         ) : null}
         {shareBoard === true ? (
