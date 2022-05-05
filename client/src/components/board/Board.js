@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useLayoutEffect } from "react";
+import React, { useState, useEffect, useLayoutEffect, useMemo } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 
 import { DragDropContext, Droppable } from "react-beautiful-dnd";
@@ -11,8 +11,10 @@ import {
 } from "../../features/boards/boardsSlice";
 import {
   getLists,
+  getList,
   sortingLists,
   changeCards,
+  removeList,
 } from "../../features/lists/listsSlice";
 import { getCards, getCard, removeCard } from "../../features/card/cardsSlice";
 
@@ -120,21 +122,32 @@ export const Board = ({ socket }) => {
 
   useEffect(() => {
     socket.on("bond", (data) => {
-      const { message, cardId } = data;
+      const { message, cardId, listId, position, currentListId } = data;
 
       const userId = localStorage.getItem("userId");
 
       const { boardId } = params;
 
       switch (message) {
-        case "Update list":
+        case "Update lists":
           dispatch(getBoards(userId));
 
           dispatch(getLists(boardId));
 
           break;
+        case "Update list":
+          dispatch(getList(listId));
 
-        case "Update card":
+          break;
+        case "Delete list":
+          dispatch(removeList(listId));
+          break;
+
+        case "Move list":
+          dispatch(changeLists({ position, boardId, currentListId }));
+          break;
+
+        case "Update cards":
           dispatch(getLists(boardId));
 
           dispatch(getCards(boardId));
@@ -147,7 +160,7 @@ export const Board = ({ socket }) => {
           break;
 
         case "Delete card":
-          dispatch(removeCard(cardId));
+          dispatch(removeCard({ cardId }));
 
           break;
 
@@ -197,8 +210,10 @@ export const Board = ({ socket }) => {
     const boardId = boards[boards.length - 1]._id;
     const boardName = boards[boards.length - 1].nameBoard;
     setFirstUpdate(0);
-    navigate("/board/" + boardId + "/" + boardName);
+    // navigate("/board/" + boardId + "/" + boardName);
   }, [boards]);
+
+
 
   const [drag, setDrag] = useState(false);
 
