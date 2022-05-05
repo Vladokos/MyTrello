@@ -1,4 +1,5 @@
 import React, { useState, useRef } from "react";
+import { useParams } from "react-router-dom";
 
 import { useDispatch } from "react-redux";
 import {
@@ -33,6 +34,10 @@ export const List = ({
   height,
   socket,
 }) => {
+  const params = useParams();
+
+  const { boardId } = params;
+
   const dispatch = useDispatch();
 
   const [nameList, setNameList] = useState(null);
@@ -50,11 +55,15 @@ export const List = ({
   };
 
   const deletingList = () => {
-    dispatch(deleteList({ listId }));
+    dispatch(deleteList({ listId })).then(() => {
+      socket.emit("bond", { roomId: boardId, message: "list deleted", listId });
+    });
   };
 
   const archivingList = () => {
-    dispatch(archiveList({ listId }));
+    dispatch(archiveList({ listId })).then(() => {
+      socket.emit("bond", { roomId: boardId, message: "list changed", listId });
+    });;
   };
 
   OutsideClick(actionsFrom, () => setActionShow(false));
