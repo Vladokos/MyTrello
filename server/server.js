@@ -411,6 +411,21 @@ app.post("/board/lists/get", jsonParser, async (req, res) => {
   }
 });
 
+app.post("/board/lists/getOne", jsonParser, async (req, res) => {
+  try {
+    const { listId } = req.body;
+
+    const listsData = await dataList.findById(listId);
+
+    if (!listsData) return res.status(400).send("Error");
+
+    return res.status(200).send(listsData);
+  } catch (error) {
+    console.log(error);
+    return res.status(400).send("Error");
+  }
+});
+
 app.post("/board/list/create", jsonParser, async (req, res) => {
   try {
     const { nameList, boardId } = req.body;
@@ -1002,24 +1017,47 @@ io.on("connect", (socket) => {
 
   socket.on("bond", async (data) => {
     try {
-      const { roomId, message, cardId } = data;
+      const { roomId, message, position } = data;
+      const { cardId } = data;
+      const { listId, currentListId } = data;
       switch (message) {
         case "list added":
-          socket.broadcast.to(roomId).emit("bond", { message: "Update list" });
+          socket.broadcast.to(roomId).emit("bond", { message: "Update lists" });
+          break;
+        case "list changed":
+          socket.broadcast
+            .to(roomId)
+            .emit("bond", { message: "Update list", listId });
+          break;
+        case "list deleted":
+          socket.broadcast
+            .to(roomId)
+            .emit("bond", { message: "Delete list", listId });
+          break;
+        case "list moved":
+          socket.broadcast
+            .to(roomId)
+            .emit("bond", {
+              message: "Move list",
+              position,
+              currentListId,
+            });
           break;
         case "card added":
-          socket.broadcast.to(roomId).emit("bond", { message: "Update card" });
+          socket.broadcast.to(roomId).emit("bond", { message: "Update cards" });
           break;
         case "card changed":
           socket.broadcast
             .to(roomId)
             .emit("bond", { message: "Update card", cardId });
           break;
-          case "card deleted":
-            socket.broadcast
+        case "card deleted":
+          socket.broadcast
             .to(roomId)
             .emit("bond", { message: "Delete card", cardId });
-            break;
+          break;
+        case "card moved":
+          break;
         default:
           break;
       }
