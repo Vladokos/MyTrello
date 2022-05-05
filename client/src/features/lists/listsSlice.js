@@ -30,6 +30,29 @@ export const getLists = createAsyncThunk("lists/getLists", async (boardId) => {
   return response;
 });
 
+export const getList = createAsyncThunk("lists/getList", async (listId) => {
+  const response = await axios({
+    config: {
+      headers: {
+        "Content-Type": "application/json",
+        Accept: "application/json",
+      },
+    },
+    method: "POST",
+    url: "/board/lists/getOne",
+    data: {
+      listId,
+    },
+  })
+    .then((response) => {
+      return response.data;
+    })
+    .catch((error) => {
+      console.log(error);
+    });
+  return response;
+});
+
 export const addList = createAsyncThunk(
   "lists/addList",
   async ({ nameList, boardId }) => {
@@ -197,19 +220,38 @@ const listsSlice = createSlice({
   initialState,
   reducers: {
     sortingLists(state, action) {
-      const orderLists = action.payload[0].lists;
-
-      let result = [];
-
-      for (let i = 0; i < orderLists.length; i++) {
-        for (let j = 0; j < state.lists.length; j++) {
-          if (orderLists[i] === state.lists[j]._id) {
-            result.push(state.lists[j]);
+      if (state.lists[0]?.boardId) {
+        function getUsedBoard() {
+          for (let i = 0; i < action.payload.length; i++) {
+            if (action.payload[i]._id === state.lists[0].boardId) {
+              return action.payload[i].lists;
+            }
           }
         }
-      }
 
-      state.lists = result;
+        const orderLists = getUsedBoard();
+
+        let result = [];
+
+        for (let i = 0; i < orderLists.length; i++) {
+          for (let j = 0; j < state.lists.length; j++) {
+            if (orderLists[i] === state.lists[j]._id) {
+              result.push(state.lists[j]);
+            }
+          }
+        }
+
+        state.lists = result;
+      }
+    },
+    removeList(state, action) {
+      const listId = action.payload;
+
+      for (let i = 0; i < state.lists.length; i++) {
+        if (state.lists[i]._id === listId) {
+          state.lists.splice(i, 1);
+        }
+      }
     },
   },
   extraReducers(builder) {
@@ -221,6 +263,20 @@ const listsSlice = createSlice({
         state.status = "succeeded";
 
         state.lists = action.payload;
+      })
+      .addCase(getList.pending, (state, action) => {
+        state.status = "loading";
+      })
+      .addCase(getList.fulfilled, (state, action) => {
+        state.status = "succeeded";
+
+        const listId = action.payload._id;
+
+        for (let i = 0; i < state.lists.length; i++) {
+          if (state.lists[i]._id === listId) {
+            state.lists.splice(i, 1, action.payload);
+          }
+        }
       })
       .addCase(addList.pending, (state, action) => {
         state.status = "loading";
@@ -313,6 +369,6 @@ const listsSlice = createSlice({
   },
 });
 
-export const { sortingLists } = listsSlice.actions;
+export const { sortingLists, removeList } = listsSlice.actions;
 
 export default listsSlice.reducer;
