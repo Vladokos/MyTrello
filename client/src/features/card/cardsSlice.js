@@ -218,7 +218,7 @@ const cardsSlice = createSlice({
   initialState,
   reducers: {
     removeCard(state, action) {
-      const { cardId } = action;
+      const { cardId } = action.payload;
 
       for (let i = 0; i < state.cards.length; i++) {
         if (state.cards[i]._id === cardId) {
