@@ -1,4 +1,5 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useMemo } from "react";
+import { useParams } from "react-router-dom";
 
 import { ArchiveList } from "./ArchiveList";
 import { ArchiveCard } from "./ArchiveCard";
@@ -11,7 +12,24 @@ import link from "../../img/makeLink.svg";
 
 import "../../styles/Board/Menu.css";
 
-export const Menu = ({ height, lists, cards, socket, shareLink }) => {
+let currentBoard;
+
+export const Menu = ({ height, boards, lists, cards, socket, shareLink }) => {
+  const params = useParams();
+
+  const userId = localStorage.getItem("userId");
+
+  useMemo(() => {
+    for (let i = 0; i < boards.length; i++) {
+      if (boards[i]._id === params.boardId) {
+        console.log(boards[i]);
+        currentBoard = boards[i];
+      }
+    }
+  }, [boards]);
+
+  console.log(currentBoard);
+
   const [menuOpen, setMenuOpen] = useState(false);
   const [archiveListOpen, setArchiveListOpen] = useState(false);
   const [archiveCardOpen, setArchiveCardOpen] = useState(false);
@@ -41,9 +59,11 @@ export const Menu = ({ height, lists, cards, socket, shareLink }) => {
           <div onClick={() => setArchiveCardOpen(true)}>
             Archived cards <img src={archive} />
           </div>
-          <div onClick={() => setShareBoard(true)}>
-            Share board <img src={link} />
-          </div>
+          {currentBoard.owner === userId ? (
+            <div onClick={() => setShareBoard(true)}>
+              Share board <img src={link} />
+            </div>
+          ) : null}
         </div>
         {archiveListOpen === true ? (
           <ArchiveList
