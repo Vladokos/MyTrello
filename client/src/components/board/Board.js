@@ -15,6 +15,7 @@ import {
   sortingLists,
   changeCards,
   removeList,
+  moveCard,
 } from "../../features/lists/listsSlice";
 import { getCards, getCard, removeCard } from "../../features/card/cardsSlice";
 
@@ -105,9 +106,9 @@ export const Board = ({ socket }) => {
         const date = Date.now();
         dispatch(changeData({ boardId, date }));
 
-        dispatch(getBoards(userId));
-
         dispatch(getLists(boardId));
+
+        dispatch(getBoards(userId));
 
         dispatch(getCards(boardId));
 
@@ -122,7 +123,9 @@ export const Board = ({ socket }) => {
 
   useEffect(() => {
     socket.on("bond", (data) => {
-      const { message, cardId, listId, position, currentListId } = data;
+      const { message, position } = data;
+      const { listId, currentListId } = data;
+      const { cardId, fromListId, toListId } = data;
 
       const userId = localStorage.getItem("userId");
 
@@ -164,6 +167,12 @@ export const Board = ({ socket }) => {
 
           break;
 
+        case "Move card":
+          dispatch(getList(fromListId));
+          dispatch(getList(toListId));
+
+          break;
+
         default:
           break;
       }
@@ -177,28 +186,45 @@ export const Board = ({ socket }) => {
       const currentListId = e.draggableId;
 
       dispatch(changeLists({ position, boardId, currentListId }));
+
+      socket.emit("bond", {
+        roomId: boardId,
+        message: "list moved",
+        position,
+        currentListId,
+      });
     } else if (e.type === "card") {
+      const { boardId } = params;
+
       const fromListId = e.source.droppableId;
       const toListId = e.destination.droppableId;
       const position = e.destination.index;
       const cardId = e.draggableId;
 
       dispatch(changeCards({ fromListId, toListId, position, cardId }));
+
+      socket.emit("bond", {
+        roomId: boardId,
+        message: "card moved",
+        cardId,
+        fromListId,
+        toListId,
+        position,
+      });
     }
   };
 
   useEffect(() => {
-    if (boards.length > 0) {
+    if (boards.length > 0 && lists.length > 0) {
       boards.map((board) => {
         if (board._id === params.boardId && board.shareLink && !connect) {
-          dispatch(sortingLists(boards));
-
           const roomId = params.boardId;
           socket.emit("room", roomId);
 
           setConnect(true);
         }
       });
+      dispatch(sortingLists(boards));
     }
   }, [boards]);
 
@@ -212,8 +238,6 @@ export const Board = ({ socket }) => {
     setFirstUpdate(0);
     // navigate("/board/" + boardId + "/" + boardName);
   }, [boards]);
-
-
 
   const [drag, setDrag] = useState(false);
 
@@ -229,9 +253,10 @@ export const Board = ({ socket }) => {
               if (board._id === params.boardId) {
                 return (
                   <div key={board._id} className="action-board">
-                    <BoardName name={board.nameBoard} />,
+                    <BoardName name={board.nameBoard} />
                     <Menu
                       height={height - 108}
+                      boards={boards}
                       lists={lists}
                       cards={cards}
                       socket={socket}
