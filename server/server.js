@@ -1018,7 +1018,7 @@ io.on("connect", (socket) => {
   socket.on("bond", async (data) => {
     try {
       const { roomId, message, position } = data;
-      const { cardId } = data;
+      const { cardId, fromListId, toListId } = data;
       const { listId, currentListId } = data;
       switch (message) {
         case "list added":
@@ -1035,13 +1035,11 @@ io.on("connect", (socket) => {
             .emit("bond", { message: "Delete list", listId });
           break;
         case "list moved":
-          socket.broadcast
-            .to(roomId)
-            .emit("bond", {
-              message: "Move list",
-              position,
-              currentListId,
-            });
+          socket.broadcast.to(roomId).emit("bond", {
+            message: "Move list",
+            position,
+            currentListId,
+          });
           break;
         case "card added":
           socket.broadcast.to(roomId).emit("bond", { message: "Update cards" });
@@ -1057,6 +1055,9 @@ io.on("connect", (socket) => {
             .emit("bond", { message: "Delete card", cardId });
           break;
         case "card moved":
+          socket.broadcast
+            .to(roomId)
+            .emit("bond", { message: "Move card", fromListId, toListId });
           break;
         default:
           break;
