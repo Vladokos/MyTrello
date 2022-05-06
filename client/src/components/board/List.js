@@ -49,7 +49,13 @@ export const List = ({
 
   const sendForm = (e) => {
     if (e.key === "Enter" || e.keyCode === 13) {
-      dispatch(changeName({ listId, nameList }));
+      dispatch(changeName({ listId, nameList })).then(() => {
+        socket.emit("bond", {
+          roomId: boardId,
+          message: "list changed",
+          listId,
+        });
+      });
       e.target.blur();
     }
   };
@@ -63,7 +69,7 @@ export const List = ({
   const archivingList = () => {
     dispatch(archiveList({ listId })).then(() => {
       socket.emit("bond", { roomId: boardId, message: "list changed", listId });
-    });;
+    });
   };
 
   OutsideClick(actionsFrom, () => setActionShow(false));
