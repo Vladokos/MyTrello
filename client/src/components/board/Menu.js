@@ -22,13 +22,12 @@ export const Menu = ({ height, boards, lists, cards, socket, shareLink }) => {
   useMemo(() => {
     for (let i = 0; i < boards.length; i++) {
       if (boards[i]._id === params.boardId) {
-        console.log(boards[i]);
         currentBoard = boards[i];
       }
     }
   }, [boards]);
 
-  console.log(currentBoard);
+
 
   const [menuOpen, setMenuOpen] = useState(false);
   const [archiveListOpen, setArchiveListOpen] = useState(false);
