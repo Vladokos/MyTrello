@@ -34,8 +34,6 @@ export const ChangeCard = ({
   const [description, setDescription] = useState("");
   const [visible, setVisible] = useState("none");
 
-  const [update, setUpdate] = useState(0);
-
   const sendForm = (e) => {
     if (e.key === "Enter" || e.keyCode === 13 || e.type === "click") {
       const { boardId } = params;
@@ -60,8 +58,6 @@ export const ChangeCard = ({
               cardId,
             });
           });
-          console.log(description);
-          setDescription(descriptionCard);
           break;
         case "delete":
           dispatch(deleteCard({ cardId })).then(() => {
@@ -92,9 +88,8 @@ export const ChangeCard = ({
   };
 
   useEffect(() => {
-    if (update < 1) {
+    if (descriptionCard.length > 0) {
       setDescription(descriptionCard);
-      setUpdate(update + 1);
     }
   }, [descriptionCard]);
 
