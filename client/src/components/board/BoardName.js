@@ -10,11 +10,11 @@ import OutsideClick from "../../hooks/outsideClick";
 
 import "../../styles/Board/BoardName.css";
 
-export const BoardName = ({ name }) => {
+export const BoardName = ({ name, socket }) => {
   const params = useParams();
   const dispatch = useDispatch();
 
-  const [nameBoard, setNameBoard] = useState(name);
+  const [nameBoard, setNameBoard] = useState("");
   const [visibleInput, setVisibleInput] = useState(false);
   const [width, setWidth] = useState(null);
 
@@ -25,40 +25,23 @@ export const BoardName = ({ name }) => {
   const sendForm = (e) => {
     if (e.key === "Enter" || e.keyCode === 13) {
       const { boardId } = params;
-      dispatch(changeName({ nameBoard, boardId })).then(() =>
-        setVisibleInput(false)
-      );
+      dispatch(changeName({ nameBoard, boardId })).then(() => {
+        socket.emit("bond", { roomId: boardId, message: "board changed" });
+      });
     }
   };
-  const nameInput = useRef(false);
-  const nameForm = useRef(0);
-  OutsideClick(nameForm, () => {
-    setVisibleInput(false);
-  });
 
   useEffect(() => {
-    nameInput?.current?.focus?.();
-  }, [nameInput]);
-  useEffect(() => {
-    setWidth(nameForm.current.offsetWidth);
-  }, [nameForm.current.offsetWidth]);
+    setNameBoard(name);
+  }, [name]);
+
   return (
     <div className="changeBoardName">
       <div
-        onClick={() => {
-          setVisibleInput(true);
-        }}
         className={visibleInput ? "hidden" : "boardName"}
         style={{ width: width }}
       >
-        {name}
-      </div>
-      <div
-        className={visibleInput ? "visible" : "hiddenBoardName"}
-        ref={nameForm}
-      >
         <AutosizeInput
-          ref={(e) => e?.focus?.()}
           value={nameBoard}
           onChange={onNameBoardChange}
           onKeyDown={sendForm}
