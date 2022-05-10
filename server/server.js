@@ -282,6 +282,20 @@ app.post("/token/verify", jsonParser, async (req, res) => {
   }
 });
 
+app.get("/boards/:id/one", async (req, res) => {
+  try {
+    const boardId = req.params.id;
+    const boardData = await dataBoards.findById(boardId);
+
+    if (!boardData) return res.status(400).send("Error");
+
+    return res.status(200).send(boardData);
+  } catch (error) {
+    console.log(error);
+    return res.status(400).send("Error");
+  }
+});
+
 app.get("/boards/:id/all", async (req, res) => {
   try {
     const idUser = req.params.id;
@@ -298,20 +312,7 @@ app.get("/boards/:id/all", async (req, res) => {
     res.status(400).send("Error");
   }
 });
-app.get("/boards/:id/one", async (req, res) => {
-  try {
-    const boardId = req.params.id;
 
-    const boardData = await dataBoards.findById(boardId);
-
-    if (!boardData) return res.status(400).send("Error");
-
-    return res.status(200).send(boardData);
-  } catch (error) {
-    console.log(error);
-    return res.status(400).send("Error");
-  }
-});
 
 app.post("/boards/create", jsonParser, async (req, res) => {
   try {
@@ -778,14 +779,12 @@ app.post("/user/change/name", jsonParser, async (req, res) => {
 
 const { createServer } = require("http");
 const { Server } = require("socket.io");
-const { link } = require("fs");
-const { Mongoose } = require("mongoose");
 
 const httpServer = createServer(app);
 const io = new Server(httpServer, {});
 
 io.on("connect", (socket) => {
-  console.log(socket.id);
+  // console.log(socket.id );
   socket.on("oldUser", async (refreshToken) => {
     try {
       jwt.verify(refreshToken, process.env.REFRESHTOKEN_KEY);
@@ -805,15 +804,9 @@ io.on("connect", (socket) => {
         userName: user.name,
         userID: user._id,
       });
-      // return res.status(200).json({
-      //   refreshToken: data.refreshToken,
-      //   accessToken: data.token,
-      //   userName: data.name,
-      // });
     } catch (error) {
       console.log(error);
       return socket.emit("oldUser", "Error");
-      // res.status(400).send("Error");
     }
   });
   socket.on("signIn", async (email, password) => {
@@ -1011,7 +1004,7 @@ io.on("connect", (socket) => {
   });
 
   socket.on("room", async (roomId) => {
-    console.log(roomId);
+    // console.log(roomId);
     return await socket.join(roomId);
   });
 
@@ -1021,6 +1014,9 @@ io.on("connect", (socket) => {
       const { cardId, fromListId, toListId } = data;
       const { listId, currentListId } = data;
       switch (message) {
+        case "board changed":
+          socket.broadcast.to(roomId).emit("bond", { message: "Update board" });
+          break;
         case "list added":
           socket.broadcast.to(roomId).emit("bond", { message: "Update lists" });
           break;
