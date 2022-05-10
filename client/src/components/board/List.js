@@ -81,39 +81,35 @@ export const List = ({
           ref={provided.innerRef}
           {...provided.draggableProps}
           {...provided.dragHandleProps}
+          className="listBlock"
         >
+          <div className="list-title">
+            <TextareaAutosize
+              value={nameList === null ? listName : nameList}
+              onChange={(e) => setNameList(e.target.value)}
+              onKeyDown={sendForm}
+              spellCheck="false"
+              ref={nameInput}
+            />
+            <img src={dots} onClick={() => setActionShow(!actionShow)} />
+            <div
+              className={actionShow === false ? "hidden" : "active"}
+              ref={actionsFrom}
+            >
+              <img src={dots} onClick={() => setActionShow(!actionShow)} />
+              <div onClick={archivingList}>Archive list</div>
+              <div onClick={deletingList}>Delete list</div>
+            </div>
+          </div>
           <Droppable droppableId={listId} type="card">
             {(provided) => (
               <div
                 {...provided.droppableProps}
                 ref={provided.innerRef}
+                style={{ maxHeight: height }}
                 className={"list " + listName}
               >
-                <div className="list-title">
-                  <TextareaAutosize
-                    value={nameList === null ? listName : nameList}
-                    onChange={(e) => setNameList(e.target.value)}
-                    onKeyDown={sendForm}
-                    spellCheck="false"
-                    ref={nameInput}
-                  />
-                  <img src={dots} onClick={() => setActionShow(!actionShow)} />
-                  <div
-                    className={actionShow === false ? "hidden" : "active"}
-                    ref={actionsFrom}
-                  >
-                    <img
-                      src={dots}
-                      onClick={() => setActionShow(!actionShow)}
-                    />
-                    <div onClick={archivingList}>Archive list</div>
-                    <div onClick={deletingList}>Delete list</div>
-                  </div>
-                </div>
-                <div
-                  className="draggable-list"
-                  style={{ maxHeight: height - 60 }}
-                >
+                <div>
                   {listCards.map((cardId, index) => {
                     return cards.map((card) => {
                       if (card._id === cardId && !card.archived) {
