@@ -19,7 +19,7 @@
 
   height: 100%;
 
-  overflow: auto;
+  overflow: auto hidden;
 }
 .action-board {
   display: flex;
