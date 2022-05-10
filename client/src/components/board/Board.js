@@ -5,9 +5,10 @@ import { DragDropContext, Droppable } from "react-beautiful-dnd";
 
 import { useSelector, useDispatch } from "react-redux";
 import {
+  getBoard,
+  getBoards,
   changeLists,
   changeData,
-  getBoards,
 } from "../../features/boards/boardsSlice";
 import {
   getLists,
@@ -15,7 +16,6 @@ import {
   sortingLists,
   changeCards,
   removeList,
-  moveCard,
 } from "../../features/lists/listsSlice";
 import { getCards, getCard, removeCard } from "../../features/card/cardsSlice";
 
@@ -54,7 +54,6 @@ export const Board = ({ socket }) => {
   const [nameCard, setNameCard] = useState("");
   const [descriptionCard, setDescriptionCard] = useState("");
 
-  const [listId, setListId] = useState(null);
   const [cardId, setCardId] = useState(null);
 
   const [xPos, setXPos] = useState(null);
@@ -123,15 +122,19 @@ export const Board = ({ socket }) => {
 
   useEffect(() => {
     socket.on("bond", (data) => {
+      const { boardId } = params;
+
       const { message, position } = data;
       const { listId, currentListId } = data;
       const { cardId, fromListId, toListId } = data;
 
       const userId = localStorage.getItem("userId");
 
-      const { boardId } = params;
-
       switch (message) {
+        case "Update board":
+          dispatch(getBoard(boardId));
+
+          break;
         case "Update lists":
           dispatch(getBoards(userId));
 
@@ -228,7 +231,7 @@ export const Board = ({ socket }) => {
     }
   }, [boards]);
 
-  useLayoutEffect(() => {
+  useMemo(() => {
     if (firstUpdate < 2) {
       setFirstUpdate(firstUpdate + 1);
       return;
@@ -236,12 +239,12 @@ export const Board = ({ socket }) => {
     const boardId = boards[boards.length - 1]._id;
     const boardName = boards[boards.length - 1].nameBoard;
     setFirstUpdate(0);
-    // navigate("/board/" + boardId + "/" + boardName);
-  }, [boards]);
+    navigate("/board/" + boardId + "/" + boardName);
+  }, [boards.length]);
 
   const [drag, setDrag] = useState(false);
 
-  return status !== "succeeded" ? (
+  return status !== "succeeded" && firstUpdate === 0 ? (
     <Loader />
   ) : (
     <div className="boardMenu" style={{ height: height }}>
@@ -253,7 +256,7 @@ export const Board = ({ socket }) => {
               if (board._id === params.boardId) {
                 return (
                   <div key={board._id} className="action-board">
-                    <BoardName name={board.nameBoard} />
+                    <BoardName name={board.nameBoard} socket={socket} />
                     <Menu
                       height={height - 108}
                       boards={boards}
@@ -271,48 +274,49 @@ export const Board = ({ socket }) => {
               className="scrollBoard"
               style={drag === false ? { transform: `translateZ(10px)` } : null}
             >
-              <DragDropContext
-                onDragStart={() => setDrag(true)}
-                onDragEnd={(e) => {
-                  onDrop(e);
-                  setDrag(false);
-                }}
-              >
-                <Droppable
-                  droppableId="lists"
-                  direction="horizontal"
-                  type="list"
+              <li>
+                <DragDropContext
+                  onDragStart={() => setDrag(true)}
+                  onDragEnd={(e) => {
+                    onDrop(e);
+                    setDrag(false);
+                  }}
                 >
-                  {(provided) => (
-                    <div
-                      ref={provided.innerRef}
-                      {...provided.draggableProps}
-                      {...provided.dragHandleProps}
-                      className="sheetList"
-                    >
-                      {lists.map((list, index) =>
-                        !list.archived ? (
-                          <List
-                            key={listId + index}
-                            boards={boards}
-                            listId={list._id}
-                            listName={list.nameList}
-                            listCards={list.cards}
-                            index={index}
-                            cards={cards}
-                            visibleChangeCard={visibleChangeCard}
-                            visibleChangeNameCard={visibleChangeNameCard}
-                            height={height - 307}
-                            socket={socket}
-                          />
-                        ) : null
-                      )}
-                      {provided.placeholder}
-                    </div>
-                  )}
-                </Droppable>
-              </DragDropContext>
-
+                  <Droppable
+                    droppableId="lists"
+                    direction="horizontal"
+                    type="list"
+                  >
+                    {(provided) => (
+                      <div
+                        ref={provided.innerRef}
+                        {...provided.draggableProps}
+                        {...provided.dragHandleProps}
+                        className="sheetList"
+                      >
+                        {lists.map((list, index) =>
+                          !list.archived ? (
+                            <List
+                              key={list._id + index}
+                              boards={boards}
+                              listId={list._id}
+                              listName={list.nameList}
+                              listCards={list.cards}
+                              index={index}
+                              cards={cards}
+                              visibleChangeCard={visibleChangeCard}
+                              visibleChangeNameCard={visibleChangeNameCard}
+                              height={height - 310}
+                              socket={socket}
+                            />
+                          ) : null
+                        )}
+                        {provided.placeholder}
+                      </div>
+                    )}
+                  </Droppable>
+                </DragDropContext>
+              </li>
               <CreateList socket={socket} />
             </ul>
             <ChangeCard
