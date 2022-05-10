@@ -2,22 +2,7 @@
   display: inline-block;
 }
 .boardName {
-  cursor: pointer;
-
-  display: inline-block;
-
-  font-size: 18px;
-  font-weight: 700;
-  line-height: 41px;
-  text-align: center;
-  color: #fbfdfe;
-
   height: 40px;
-  min-width: 70px;
-
-  border-radius: 3px;
-
-  background-color: #ffffff3d;
 
   margin-bottom: 20px;
 }
@@ -25,6 +10,12 @@
   position: absolute;
   transform: translate(0px, -41px);
 }
+
+.changeBoardName > .boardName input {
+  color: #fbfdfe;
+  background-color: #3d99ce;
+}
+
 .hiddenBoardName {
   visibility: hidden;
   display: block;
@@ -46,4 +37,7 @@
   padding: 0 16px;
 
   transition: none;
+
+  color: #2c3e5d;
+  background-color: #ebebeb;
 }
