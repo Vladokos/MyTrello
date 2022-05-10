@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useLayoutEffect, useRef } from "react";
-import { useNavigate, useParams, Link } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 
 import { useSelector, useDispatch } from "react-redux";
 import {
@@ -9,8 +9,6 @@ import {
 } from "../features/boards/boardsSlice";
 
 import useWindowHeight from "../hooks/heightWindowHook";
-
-import axios from "axios";
 
 import { Loader } from "./blanks/Loader";
 import { Header } from "./blanks/Header.js";
@@ -37,7 +35,7 @@ export const Boards = ({ socket }) => {
   useEffect(() => {
     const accessToken = localStorage.getItem("accessToken");
 
-    if (!accessToken) return;
+    if (!accessToken) navigate("/");
 
     socket.emit("tokenVerify", JSON.parse(accessToken));
   }, []);
