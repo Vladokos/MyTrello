@@ -131,7 +131,7 @@ export const List = ({
                 <div className="listCreate">
                   <button
                     onClick={() => setCardCreateShow(true)}
-                    className={listId}
+                    className={cardCreateShow === false ? null : "hidden"}
                   >
                     Add a card
                   </button>
