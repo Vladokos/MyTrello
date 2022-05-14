@@ -17,7 +17,7 @@ export const Header = ({ boards, createShow }) => {
   const [resentShow, setResentShow] = useState(false);
   const [favoritesShow, setFavoritesShow] = useState(false);
 
-  const visibleProfileMenu = () => setProfileShow(!profileShow);
+  const visibleProfileMenu = () => setProfileShow(true);
 
   const logOut = () => {
     sessionStorage.removeItem("accessToken");
@@ -99,12 +99,12 @@ export const Header = ({ boards, createShow }) => {
           </div>
           <div onClick={createShow}>Create</div>
           <div className="account">
-            <div className="account-avatar" onClick={visibleProfileMenu}>
+            <div className="account-avatar" onClick={visibleProfileMenu} ref={profileRef}>
               <img src={avatar} />
             </div>
             <div
               className={profileShow === false ? "hidden" : "account__menu"}
-              ref={profileRef}
+              
             >
               <div className="account__menu-title">Account</div>
               <ul>
