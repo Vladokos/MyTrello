@@ -1,11 +1,16 @@
-import React, { useState } from "react";
+import React, { useState, useMemo, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 
 import { useDispatch } from "react-redux";
 import { addBoards } from "../features/boards/boardsSlice";
 
 import "../styles/CreateBoard.css";
 
-export const CreateBoards = ({ createShow, changeShow, height }) => {
+let firstUpdate = null;
+
+export const CreateBoards = ({ createShow, changeShow, height, boards }) => {
+  const navigate = useNavigate();
+
   const dispatch = useDispatch();
 
   const [nameBoard, setNameBoard] = useState("");
@@ -23,6 +28,23 @@ export const CreateBoards = ({ createShow, changeShow, height }) => {
 
     changeShow();
   };
+
+  useEffect(() => {
+    if (!firstUpdate) {
+      firstUpdate = boards.length;
+
+      return;
+    } else if (boards.length > firstUpdate) {
+      firstUpdate = null;
+
+      const boardId = boards[boards.length - 1]._id;
+      const boardName = boards[boards.length - 1].nameBoard;
+
+      console.log(boardId, boardName);
+
+      navigate("/board/" + boardId + "/" + boardName);
+    }
+  }, [boards.length]);
 
   return (
     <div
