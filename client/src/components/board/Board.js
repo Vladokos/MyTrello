@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useLayoutEffect, useMemo } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 
 import { DragDropContext, Droppable } from "react-beautiful-dnd";
@@ -231,17 +231,6 @@ export const Board = ({ socket }) => {
     }
   }, [boards]);
 
-  useMemo(() => {
-    if (firstUpdate < 2) {
-      setFirstUpdate(firstUpdate + 1);
-      return;
-    }
-    const boardId = boards[boards.length - 1]._id;
-    const boardName = boards[boards.length - 1].nameBoard;
-    setFirstUpdate(0);
-    navigate("/board/" + boardId + "/" + boardName);
-  }, [boards.length]);
-
   const [drag, setDrag] = useState(false);
 
   return status !== "succeeded" && firstUpdate === 0 ? (
@@ -349,6 +338,7 @@ export const Board = ({ socket }) => {
         createShow={createShow}
         changeShow={() => setCreateShow(false)}
         height={height}
+        boards={boards}
       />
     </div>
   );

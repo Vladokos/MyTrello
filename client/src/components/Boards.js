@@ -50,7 +50,7 @@ export const Boards = ({ socket }) => {
         localStorage.setItem("userId", idUser);
         localStorage.setItem("userName", userName);
 
-        dispatch(getBoards(idUser))
+        dispatch(getBoards(idUser));
         socket.off("tokenVerify");
       } else {
         navigate("/error/404");
@@ -94,18 +94,6 @@ export const Boards = ({ socket }) => {
   useEffect(() => {
     setHeightBody(heightRef?.current?.clientHeight);
   });
-
-  useLayoutEffect(() => {
-    if (firstUpdate < 2) {
-      setFirstUpdate(firstUpdate + 1);
-      return;
-    }
-
-    const boardId = boards[boards.length - 1]._id;
-    const boardName = boards[boards.length - 1].nameBoard;
-    setFirstUpdate(0);
-    navigate("/board/" + boardId + "/" + boardName);
-  }, [boards]);
 
   return status !== "succeeded" ? (
     <Loader />
@@ -214,6 +202,7 @@ export const Boards = ({ socket }) => {
               createShow={createShow}
               changeShow={() => setCreateShow(false)}
               height={heightBody}
+              boards={boards}
             />
           </div>
         </div>
