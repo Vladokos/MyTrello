@@ -39,6 +39,8 @@
   box-shadow: 0 8px 16px -4px rgb(9 30 66 / 25%), 0 0 0 1px rgb(9 30 66 / 8%);
 
   transform: translateX(-236px) translateY(10px);
+
+  z-index: 1;
 }
 .account__menu-title {
   margin: 20px 0;
