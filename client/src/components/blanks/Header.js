@@ -48,7 +48,11 @@ export const Header = ({ boards, createShow }) => {
           >
             Recent
             <ul className={resentShow === true ? null : "hidden"}>
-              <li>Recent</li>
+              <li>
+                Recent
+                <hr />
+              </li>
+
               {[...boards]
                 .sort((a, b) => {
                   if (a.lastVisiting > b.lastVisiting) {
@@ -80,7 +84,10 @@ export const Header = ({ boards, createShow }) => {
           >
             Favorites
             <ul className={favoritesShow === true ? null : "hidden"}>
-              <li>Favorites</li>
+              <li>
+                Favorites
+                <hr />
+              </li>
               {boards.map((board) => {
                 if (board.favorites === true) {
                   return (
@@ -98,14 +105,11 @@ export const Header = ({ boards, createShow }) => {
             </ul>
           </div>
           <div onClick={createShow}>Create</div>
-          <div className="account">
-            <div className="account-avatar" onClick={visibleProfileMenu} ref={profileRef}>
+          <div className="account" ref={profileRef}>
+            <div className="account-avatar" onClick={visibleProfileMenu}>
               <img src={avatar} />
             </div>
-            <div
-              className={profileShow === false ? "hidden" : "account__menu"}
-              
-            >
+            <div className={profileShow === false ? "hidden" : "account__menu"}>
               <div className="account__menu-title">Account</div>
               <ul>
                 <li>
