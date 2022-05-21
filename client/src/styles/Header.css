@@ -114,18 +114,9 @@
 
   color: #5e6c84;
 }
-.favorites ul li:nth-child(1)::after,
-.recent ul li:nth-child(1)::after {
-  content: "";
-
-  position: absolute;
-
-  background-color: #dfe2e7;
-
-  width: 200px;
-  height: 2px;
-
-  transform: translateX(-128px) translateY(21px);
+.favorites ul > li > hr,
+.recent ul > li > hr {
+  background-repeat: 3px;
 }
 .favorites ul li a,
 .recent ul li a {
