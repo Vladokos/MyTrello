@@ -40,8 +40,6 @@ export const CreateBoards = ({ createShow, changeShow, height, boards }) => {
       const boardId = boards[boards.length - 1]._id;
       const boardName = boards[boards.length - 1].nameBoard;
 
-      console.log(boardId, boardName);
-
       navigate("/board/" + boardId + "/" + boardName);
     }
   }, [boards.length]);
