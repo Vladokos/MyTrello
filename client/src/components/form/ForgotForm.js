@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from "react";
-import axios from "axios";
 import { Link } from "react-router-dom";
+import { CrossMark } from "../blanks/CrossMark";
+import { CorrectMark } from "../blanks/CorrectMark";
 
-export const ForgotForm = ({socket}) => {
+export const ForgotForm = ({ socket }) => {
   const [email, setEmail] = useState("");
   const [name, setName] = useState("");
   const [incorrect, setIncorrect] = useState(false);
@@ -86,87 +87,12 @@ export const ForgotForm = ({socket}) => {
               <Link to="/sig"> SIGN IN </Link>
             </div>
           </form>
-          <div className={!dataExists ? "notExist" : "exist forgot"}>
-            <svg
-              className="checkmark"
-              width="297"
-              height="297"
-              viewBox="0 0 297 297"
-              fill="none"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <g className="Error">
-                <circle
-                  className="Ellipse"
-                  cx="148.5"
-                  cy="148.5"
-                  r="143.5"
-                  strokeWidth="10"
-                />
-                <line
-                  className="Line1"
-                  x1="92.506"
-                  y1="88.0566"
-                  x2="209.506"
-                  y2="208.057"
-                  strokeWidth="7"
-                />
-                <line
-                  className="Line2"
-                  x1="209.506"
-                  y1="88.4434"
-                  x2="92.506"
-                  y2="208.443"
-                  strokeWidth="7"
-                />
-              </g>
-            </svg>
-            A user with this email address or name does not exist
-            <br />
-            <button className="closePopup" onClick={closeWindow}>
-              Close
-            </button>
-          </div>
-          <div className={successfully ? "successfully" : "unsuccessful"}>
-            <svg
-              className="check"
-              width="297"
-              height="297"
-              viewBox="0 0 297 297"
-              fill="none"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <g className="done">
-                <circle
-                  className="StokeRound"
-                  cx="148.5"
-                  cy="148.5"
-                  r="143.5"
-                  strokeWidth="10"
-                />
-                <path
-                  className="SmallLine"
-                  d="M66 142.565L134.634 200.069"
-                  strokeWidth="7"
-                  strokeLinecap="round"
-                />
-                <line
-                  className="BigLine"
-                  x1="231.493"
-                  y1="84.9316"
-                  x2="135.001"
-                  y2="199.576"
-                  strokeWidth="7"
-                  strokeLinecap="round"
-                />
-              </g>
-            </svg>
-            Check your email, we sent you a link to reset your password
-            <br />
-            <button className="closePopup" onClick={closeWindow}>
-              Close
-            </button>
-          </div>
+          <CrossMark
+            dataExists={dataExists}
+            close={closeWindow}
+            text={" A user with this email address or name does not exist"}
+          />
+          <CorrectMark successfully={successfully} close={closeWindow} />
         </div>
       </div>
     </div>
