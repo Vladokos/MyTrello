@@ -134,13 +134,15 @@ input:focus {
 
   display: grid;
 
-  position: absolute;
+  position: static;
+
+  margin: 0 auto;
 
   background-color: #fff;
 
   box-shadow: 0 3px 20px 0px rgb(0 0 0 / 10%);
 
-  transform: translateX(446px) translateY(-430px);
+  transform: translateY(-555px);
 
   width: 560px;
   height: 316px;
