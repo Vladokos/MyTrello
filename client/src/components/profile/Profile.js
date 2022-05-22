@@ -94,6 +94,7 @@ export const Profile = () => {
         createShow={createShow}
         changeShow={() => setCreateShow(false)}
         height={heightBody}
+        boards={boards}
       />
     </div>
   );
