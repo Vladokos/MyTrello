@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from "react";
-import axios from "axios";
+
 import { Link, useParams, useNavigate } from "react-router-dom";
+
+import { CrossMark } from "../blanks/CrossMark";
 
 export const ResetForm = ({ socket }) => {
   const params = useParams();
@@ -72,47 +74,11 @@ export const ResetForm = ({ socket }) => {
               <Link to="/sig"> SIGN IN </Link>
             </div>
           </form>
-          <div className={!dataExists ? "notExist" : "exist"}>
-            <svg
-              className="checkmark"
-              width="297"
-              height="297"
-              viewBox="0 0 297 297"
-              fill="none"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <g className="Error">
-                <circle
-                  className="Ellipse"
-                  cx="148.5"
-                  cy="148.5"
-                  r="143.5"
-                  strokeWidth="10"
-                />
-                <line
-                  className="Line1"
-                  x1="92.506"
-                  y1="88.0566"
-                  x2="209.506"
-                  y2="208.057"
-                  strokeWidth="7"
-                />
-                <line
-                  className="Line2"
-                  x1="209.506"
-                  y1="88.4434"
-                  x2="92.506"
-                  y2="208.443"
-                  strokeWidth="7"
-                />
-              </g>
-            </svg>
-            Please use a password different from the old one
-            <br />
-            <button className="closePopup" onClick={closeWindow}>
-              Close
-            </button>
-          </div>
+          <CrossMark
+            dataExists={dataExists}
+            close={closeWindow}
+            text={"Please use a password different from the old one"}
+          />
         </div>
       </div>
     </div>
