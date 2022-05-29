@@ -5,16 +5,19 @@ const nodemailer = require("nodemailer");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 
-const verifyToken = require("./middleware/verifyToken");
-
 require("./config/database").connect();
 const dataUsers = require("./model/user");
 const dataBoards = require("./model/boards");
 const dataList = require("./model/list");
 const dataCard = require("./model/card");
-const { json } = require("express");
 
 const jsonParser = express.json();
+
+const { createServer } = require("http");
+const { Server } = require("socket.io");
+
+const httpServer = createServer(app);
+const io = new Server(httpServer, {});
 
 const generateAccessToken = (user_id, email) => {
   const payload = {
@@ -547,12 +550,6 @@ app.post("/user/change/name", jsonParser, async (req, res) => {
     return res.status(400).send("Error");
   }
 });
-
-const { createServer } = require("http");
-const { Server } = require("socket.io");
-
-const httpServer = createServer(app);
-const io = new Server(httpServer, {});
 
 io.on("connect", (socket) => {
   
