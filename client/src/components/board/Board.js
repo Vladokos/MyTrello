@@ -87,7 +87,11 @@ export const Board = ({ socket }) => {
 
     if (!accessToken) navigate("/sig");
 
-    socket.emit("tokenVerify", JSON.parse(accessToken));
+    try {
+      socket.emit("tokenVerify", JSON.parse(accessToken));
+    } catch (error) {
+      socket.emit("tokenVerify", accessToken);
+    }
 
     socket.on("tokenVerify", (data) => {
       if (data !== "Error") {
