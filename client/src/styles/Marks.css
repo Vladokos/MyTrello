@@ -1,0 +1,233 @@
+/* modal */
+.successfully,
+.exist {
+  font-family: "Montserrat", sans-serif;
+  font-size: 28px;
+  font-weight: bold;
+  color: #000;
+  text-align: center;
+
+  display: grid;
+
+  position: static;
+
+  margin: 0 auto;
+
+  background-color: #fff;
+
+  box-shadow: 0 3px 20px 0px rgb(0 0 0 / 10%);
+
+  transform: translateY(-555px);
+
+  width: 560px;
+  height: 316px;
+
+  border-radius: 20px;
+}
+.exist.forgot {
+  transform: translateX(446px) translateY(-496px);
+}
+
+/* svg cross */
+.checkmark {
+  display: block;
+
+  align-self: center;
+
+  margin: 0 auto;
+
+  width: 150px;
+  height: 150px;
+
+  border-radius: 50%;
+
+  stroke-width: 2;
+  stroke: #fff;
+  stroke-miterlimit: 10;
+
+  box-shadow: inset 0px 0px 0px #d06079;
+
+  animation: fill 0.55s ease-in-out 0.65s forwards,
+    scale 0.35s ease-in-out 0.9s both;
+}
+
+.Error {
+  stroke: #d06079;
+}
+
+.Ellipse {
+  stroke-dasharray: 1000;
+  stroke-dashoffset: 0;
+
+  animation: dash 0.9s ease-in-out;
+}
+
+.Line1 {
+  stroke-dasharray: 1000;
+  stroke-dashoffset: 1000;
+  stroke: #fff;
+
+  animation: dash 0.9s 1.1s ease-in-out forwards;
+}
+
+.Line2 {
+  stroke-dasharray: 1000;
+  stroke-dashoffset: 1000;
+  stroke: #fff;
+
+  animation: dashReverse 0.9s 0.7s ease-in-out forwards;
+}
+
+@keyframes dash {
+  0% {
+    stroke-dashoffset: 1000;
+  }
+
+  100% {
+    stroke-dashoffset: 0;
+  }
+}
+@keyframes dashReverse {
+  0% {
+    stroke-dashoffset: -1000;
+  }
+
+  100% {
+    stroke-dashoffset: 0;
+  }
+}
+
+@keyframes scale {
+  0% {
+    transform: none;
+  }
+
+  50% {
+    transform: scale3d(1, 1, 1);
+  }
+
+  100% {
+    transform: none;
+  }
+}
+
+@keyframes fill {
+  100% {
+    box-shadow: inset 0px 0px 0px 200px #d06079;
+  }
+}
+
+/* svg check */
+.closePopup {
+  font-family: "Montserrat", sans-serif;
+  font-weight: bold;
+  font-size: 15px;
+  color: #fff;
+
+  border: none;
+  border-radius: 20px;
+
+  outline: none;
+
+  background-color: #31bf37;
+
+  padding: 15px 65px;
+
+  cursor: pointer;
+
+  align-self: center;
+  justify-self: center;
+
+  transition: 0.3s cubic-bezier(0.65, 0, 0.35, 1);
+}
+.closePopup:hover {
+  background-color: #368726;
+}
+
+.SmallLine,
+.BigLine {
+  stroke: #fff;
+}
+
+.SmallLine {
+  stroke-dasharray: 1000;
+  stroke-dashoffset: 1000;
+
+  animation: dash 0.9s 1.1s ease-in forwards;
+}
+.BigLine {
+  stroke-dasharray: 1000;
+  stroke-dashoffset: 1000;
+
+  animation: dashReverse 0.9s 0.7s cubic-bezier(0.65, 0, 0.35, 1) forwards;
+}
+
+.check {
+  display: block;
+
+  align-self: center;
+
+  margin: 0 auto;
+
+  width: 150px;
+  height: 150px;
+
+  border-radius: 50%;
+
+  stroke-width: 2;
+  stroke: #fff;
+  stroke-miterlimit: 10;
+
+  box-shadow: inset 0px 0px 0px #70d060;
+
+  animation: fillCheck 0.55s ease-in-out 0.65s forwards,
+    scale 0.35s ease-in-out 0.9s both;
+}
+
+.StokeRound {
+  stroke-dasharray: 1000;
+  stroke-dashoffset: 1000;
+  stroke: #70d060;
+
+  animation: dash 0.9s ease-in-out forwards;
+}
+
+@keyframes fillCheck {
+  100% {
+    box-shadow: inset 0px 0px 0px 200px #70d060;
+  }
+}
+
+.notFound__inner {
+  font-family: "Montserrat", sans-serif;
+  font-weight: bold;
+  font-size: 30px;
+  text-align: center;
+}
+.notFound__inner h1 {
+  font-weight: 500;
+  font-size: 186px;
+  color: transparent;
+
+  background: linear-gradient(183deg, #70d060, #398ce3);
+  background-clip: text;
+
+  margin-bottom: 80px;
+}
+.notFound__inner div {
+  font-size: 32px;
+
+  margin-bottom: 28px;
+}
+.notFound__inner a {
+  color: #70d060;
+}
+
+/* media */
+
+@media (max-width: 320px) {
+  .successfully,
+  .exist {
+    width: 499px;
+  }
+}
