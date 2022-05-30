@@ -1,5 +1,6 @@
 import React from "react";
 
+import "../../styles/Marks.css";
 
 export const CorrectMark = ({successfully, close}) => {
 
