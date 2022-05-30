@@ -1,11 +1,12 @@
 import React, { useState, useRef } from "react";
-import { useNavigate, useParams, Link } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 
 import OutsideClick from "../../hooks/outsideClick";
 
 import avatar from "../../img/avatar.svg";
 
 import "../../styles/Header.css";
+import { BurgerButton } from "./BurgerButton";
 
 export const Header = ({ boards, createShow }) => {
   const navigate = useNavigate();
@@ -16,6 +17,8 @@ export const Header = ({ boards, createShow }) => {
   const [profileShow, setProfileShow] = useState(false);
   const [resentShow, setResentShow] = useState(false);
   const [favoritesShow, setFavoritesShow] = useState(false);
+
+  const [menuShow, setMenuShow] = useState(false);
 
   const visibleProfileMenu = () => setProfileShow(true);
 
@@ -41,28 +44,58 @@ export const Header = ({ boards, createShow }) => {
           <div className="logo">
             <Link to={"/" + userId + "/boards"}>MyTrello</Link>
           </div>
-          <div
-            className="recent"
-            ref={recentRef}
-            onClick={() => setResentShow(!resentShow)}
-          >
-            Recent
-            <ul className={resentShow === true ? null : "hidden"}>
-              <li>
-                Recent
-                <hr />
-              </li>
 
-              {[...boards]
-                .sort((a, b) => {
-                  if (a.lastVisiting > b.lastVisiting) {
-                    return -1;
-                  } else {
-                    return 1;
-                  }
-                })
-                .map((board, index) => {
-                  if (index < 3) {
+          <BurgerButton Switch={() => setMenuShow(!menuShow)} switchState={menuShow} />
+          <div className={menuShow == false ? "burgerMenu" : "burgerMenu open"}>
+            <div
+              className="recent"
+              ref={recentRef}
+              onClick={() => setResentShow(!resentShow)}
+            >
+              Recent
+              <ul className={resentShow === true ? null : "hidden"}>
+                <li>
+                  Recent
+                  <hr />
+                </li>
+
+                {[...boards]
+                  .sort((a, b) => {
+                    if (a.lastVisiting > b.lastVisiting) {
+                      return -1;
+                    } else {
+                      return 1;
+                    }
+                  })
+                  .map((board, index) => {
+                    if (index < 3) {
+                      return (
+                        <li key={board.nameBoard}>
+                          <Link
+                            to={"/board/" + board._id + "/" + board.nameBoard}
+                            key={board._id}
+                          >
+                            {board.nameBoard}
+                          </Link>
+                        </li>
+                      );
+                    }
+                  })}
+              </ul>
+            </div>
+            <div
+              className="favorites"
+              ref={favoritesRef}
+              onClick={() => setFavoritesShow(!favoritesShow)}
+            >
+              Favorites
+              <ul className={favoritesShow === true ? null : "hidden"}>
+                <li>
+                  Favorites
+                  <hr />
+                </li>
+                {boards.map((board) => {
+                  if (board.favorites === true) {
                     return (
                       <li key={board.nameBoard}>
                         <Link
@@ -75,36 +108,10 @@ export const Header = ({ boards, createShow }) => {
                     );
                   }
                 })}
-            </ul>
+              </ul>
+            </div>
+            <div onClick={createShow}>Create</div>
           </div>
-          <div
-            className="favorites"
-            ref={favoritesRef}
-            onClick={() => setFavoritesShow(!favoritesShow)}
-          >
-            Favorites
-            <ul className={favoritesShow === true ? null : "hidden"}>
-              <li>
-                Favorites
-                <hr />
-              </li>
-              {boards.map((board) => {
-                if (board.favorites === true) {
-                  return (
-                    <li key={board.nameBoard}>
-                      <Link
-                        to={"/board/" + board._id + "/" + board.nameBoard}
-                        key={board._id}
-                      >
-                        {board.nameBoard}
-                      </Link>
-                    </li>
-                  );
-                }
-              })}
-            </ul>
-          </div>
-          <div onClick={createShow}>Create</div>
           <div className="account" ref={profileRef}>
             <div className="account-avatar" onClick={visibleProfileMenu}>
               <img src={avatar} />
