@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useLayoutEffect, useRef } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { useNavigate, Link } from "react-router-dom";
 
 import { useSelector, useDispatch } from "react-redux";
@@ -27,7 +27,6 @@ export const Boards = ({ socket }) => {
 
   const [favoritesBoards, setFavorites] = useState(0);
   const [recent, setRecent] = useState(false);
-  const [firstUpdate, setFirstUpdate] = useState(0);
 
   const [createShow, setCreateShow] = useState(false);
   const [heightBody, setHeightBody] = useState(null);
@@ -37,7 +36,11 @@ export const Boards = ({ socket }) => {
 
     if (!accessToken) navigate("/");
 
-    socket.emit("tokenVerify", JSON.parse(accessToken));
+    try {
+      socket.emit("tokenVerify", JSON.parse(accessToken));
+    } catch (error) {
+      socket.emit("tokenVerify", accessToken);
+    }
   }, []);
 
   useEffect(() => {
