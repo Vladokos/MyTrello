@@ -94,3 +94,38 @@
   font-weight: 400;
   color: #172b4d;
 }
+
+/* media */
+@media (max-width: 670px) {
+  .boards ul {
+    grid-auto-rows: 1fr;
+    grid-template-rows: unset;
+
+    grid-template-columns: 1fr 1fr;
+
+    justify-items: start;
+  }
+  .boards ul li:nth-child(1) {
+    grid-column: 1/3;
+  }
+
+  .board {
+    grid-row: unset;
+  }
+  .createBoards {
+    grid-row: unset;
+  }
+}
+@media (max-width: 424px) {
+  .boards ul {
+    grid-auto-rows: 1fr;
+    grid-template-rows: unset;
+
+    grid-template-columns: 1fr;
+
+    justify-items: start;
+  }
+  .boards ul li:nth-child(1) {
+    grid-column: 1/2;
+  }
+}
