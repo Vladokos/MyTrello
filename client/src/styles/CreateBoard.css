@@ -92,3 +92,27 @@
 
   border-radius: 5px;
 }
+
+@media (max-width: 862px) {
+  .blackBG {
+    z-index: 2;
+  }
+  .menuCreateBoard__inner {
+    transform: translateX(225px);
+  }
+}
+@media (max-width: 670px) {
+  .menuCreateBoard__inner {
+    transform: translateX(199px);
+  }
+}
+@media (max-width: 528px) {
+  .menuCreateBoard__inner {
+    transform: translateX(65px);
+  }
+}
+@media (max-width: 388px) {
+  .menuCreateBoard__inner {
+    transform: translateX(5px);
+  }
+}
