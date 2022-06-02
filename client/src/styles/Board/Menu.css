@@ -63,7 +63,10 @@
   font-weight: 600;
   font-size: 16px;
 }
-@keyframes menuAppearance {
-  100% {
+
+
+@media (max-width:1024px) {
+  .menu{
+    width: initial;
   }
 }
