@@ -135,16 +135,16 @@
 
   .favorites ul,
   .recent ul {
-    transform: translate(-2px, -30px);
+    transform: translate(0, -30px);
 
-    width: 96.6%;
+    width: calc(100% - 30px);
 
     background-color: #004269;
 
     box-shadow: none;
   }
   .favorites ul{
-    transform: translate(-2px, -40px);
+    transform: translate(0, -58px);
   }
 
   .favorites ul li,
@@ -218,9 +218,4 @@
 
   
 }
-@media (max-width: 424px) {
-  .favorites ul,
-  .recent ul {
-    width: initial;
-  }
-}
+
