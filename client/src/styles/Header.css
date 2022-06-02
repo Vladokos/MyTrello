@@ -101,7 +101,7 @@
 
   border-radius: 3px;
 
-  z-index: 1;
+  z-index: 2;
 }
 .favorites ul li,
 .recent ul li {
@@ -133,6 +133,33 @@
     grid-template-columns: repeat(3, 1fr);
   }
 
+  .favorites ul,
+  .recent ul {
+    transform: translate(-2px, -30px);
+
+    width: 96.6%;
+
+    background-color: #004269;
+
+    box-shadow: none;
+  }
+  .favorites ul{
+    transform: translate(-2px, -40px);
+  }
+
+  .favorites ul li,
+  .recent ul li {
+    color: #ffffff;
+  }
+  .favorites ul li:nth-child(1),
+  .recent ul li:nth-child(1) {
+    color: #ffffff;
+  }
+  .favorites ul li a,
+  .recent ul li a {
+    color: #ffffff;
+  }
+
   .account {
     grid-row: 1/1;
     grid-column: 2/2;
@@ -157,7 +184,7 @@
   .burgerMenu {
     pointer-events: none;
 
-    z-index: 1;
+    z-index: 2;
 
     display: flex;
     flex-direction: column;
@@ -185,5 +212,15 @@
 
   .burgerMenu.open {
     opacity: 1;
+
+    pointer-events: initial;
+  }
+
+  
+}
+@media (max-width: 424px) {
+  .favorites ul,
+  .recent ul {
+    width: initial;
   }
 }
