@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 
 import { DragDropContext, Droppable } from "react-beautiful-dnd";
@@ -201,23 +201,27 @@ export const Board = ({ socket }) => {
         currentListId,
       });
     } else if (e.type === "card") {
-      const { boardId } = params;
+      try {
+        const { boardId } = params;
 
-      const fromListId = e.source.droppableId;
-      const toListId = e.destination.droppableId;
-      const position = e.destination.index;
-      const cardId = e.draggableId;
+        const fromListId = e.source.droppableId;
+        const toListId = e.destination.droppableId;
+        const position = e.destination.index;
+        const cardId = e.draggableId;
 
-      dispatch(changeCards({ fromListId, toListId, position, cardId }));
+        dispatch(changeCards({ fromListId, toListId, position, cardId }));
 
-      socket.emit("bond", {
-        roomId: boardId,
-        message: "card moved",
-        cardId,
-        fromListId,
-        toListId,
-        position,
-      });
+        socket.emit("bond", {
+          roomId: boardId,
+          message: "card moved",
+          cardId,
+          fromListId,
+          toListId,
+          position,
+        });
+      } catch (error) {
+        
+      }
     }
   };
 
