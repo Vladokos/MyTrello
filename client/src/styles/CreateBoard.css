@@ -1,3 +1,13 @@
+
+.blackBG {
+  position: absolute;
+  z-index: 2;
+
+  width: 100%;
+  height: 100%;
+
+  background-color: rgba(0, 0, 0, 0.75);
+}
 .menuCreateBoard {
   position: absolute;
   left: 0;
@@ -13,18 +23,10 @@
   position: absolute;
   z-index: 2;
 
-  transform: translateX(544px);
+  left: calc(50% - 150px);
   top: 50%;
 }
-.blackBG {
-  position: absolute;
-  z-index: 1;
 
-  width: 100%;
-  height: 100%;
-
-  background-color: rgba(0, 0, 0, 0.75);
-}
 .menuCreateBoard__inner input {
   height: 28px;
   width: 185px;
@@ -93,7 +95,7 @@
   border-radius: 5px;
 }
 
-@media (max-width: 862px) {
+/* @media (max-width: 862px) {
   .blackBG {
     z-index: 2;
   }
@@ -115,4 +117,4 @@
   .menuCreateBoard__inner {
     transform: translateX(5px);
   }
-}
+} */
