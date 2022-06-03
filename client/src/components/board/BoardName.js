@@ -6,8 +6,6 @@ import { changeName } from "../../features/boards/boardsSlice";
 
 import AutosizeInput from "react-input-autosize";
 
-import OutsideClick from "../../hooks/outsideClick";
-
 import "../../styles/Board/BoardName.css";
 
 export const BoardName = ({ name, socket }) => {
