@@ -5,7 +5,7 @@ import { ArchiveList } from "./ArchiveList";
 import { ArchiveCard } from "./ArchiveCard";
 import { ShareBoard } from "./ShareBoard";
 
-import OutsideClick from "../../hooks/outsideClick";
+import OutsideClick from "../../hooks/OutsideClick";
 
 import archive from "../../img/archive.svg";
 import link from "../../img/makeLink.svg";

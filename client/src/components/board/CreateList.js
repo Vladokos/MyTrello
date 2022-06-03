@@ -5,7 +5,7 @@ import { useDispatch } from "react-redux";
 import { getBoard } from "../../features/boards/boardsSlice";
 import { addList } from "../../features/lists/listsSlice";
 
-import OutsideClick from "../../hooks/outsideClick";
+import OutsideClick from "../../hooks/OutsideClick";
 
 import "../../styles/Board/CreateList.css";
 

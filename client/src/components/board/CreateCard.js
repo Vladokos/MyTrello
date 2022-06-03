@@ -7,7 +7,7 @@ import { addCard } from "../../features/card/cardsSlice";
 
 import TextareaAutosize from "react-textarea-autosize";
 
-import OutsideClick from "../../hooks/outsideClick";
+import OutsideClick from "../../hooks/OutsideClick";
 
 import "../../styles/Board/CreateCard.css";
 
