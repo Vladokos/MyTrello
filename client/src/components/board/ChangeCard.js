@@ -12,7 +12,7 @@ import {
 
 import TextareaAutosize from "react-textarea-autosize";
 
-import OutsideClick from "../../hooks/outsideClick";
+import OutsideClick from "../../hooks/OutsideClick";
 
 import recycling from "../../img/recycling.svg";
 import archive from "../../img/archive.svg";
