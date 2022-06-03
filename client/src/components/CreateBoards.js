@@ -1,10 +1,12 @@
-import React, { useState, useMemo, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 
 import { useDispatch } from "react-redux";
 import { addBoards } from "../features/boards/boardsSlice";
 
 import "../styles/CreateBoard.css";
+
+import OutsideClick from "../hooks/OutsideClick";
 
 let firstUpdate = null;
 
@@ -14,6 +16,8 @@ export const CreateBoards = ({ createShow, changeShow, height, boards }) => {
   const dispatch = useDispatch();
 
   const [nameBoard, setNameBoard] = useState("");
+
+  const menuRef = useRef(null);
 
   const onNameBoardChange = (e) => setNameBoard(e.target.value);
 
@@ -44,14 +48,14 @@ export const CreateBoards = ({ createShow, changeShow, height, boards }) => {
     }
   }, [boards.length]);
 
+  OutsideClick(menuRef, () => changeShow());
   return (
     <div
       className={createShow === false ? "hidden" : "menuCreateBoard"}
       style={{ height: height }}
     >
-      <div className="blackBG" onClick={changeShow}></div>
-      <div className="container">
-        <div className="menuCreateBoard__inner">
+      <div className="blackBG">
+        <div className="menuCreateBoard__inner" ref={menuRef}>
           <div className="settingsBoard">
             <input
               type="text"
