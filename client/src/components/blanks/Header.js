@@ -1,7 +1,7 @@
 import React, { useState, useRef } from "react";
 import { useNavigate, Link } from "react-router-dom";
 
-import OutsideClick from "../../hooks/outsideClick";
+import OutsideClick from "../../hooks/OutsideClick";
 
 import avatar from "../../img/avatar.svg";
 
