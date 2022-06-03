@@ -552,7 +552,6 @@ app.post("/user/change/name", jsonParser, async (req, res) => {
 });
 
 io.on("connect", (socket) => {
-  
   socket.on("oldUser", async (refreshToken) => {
     try {
       jwt.verify(refreshToken, process.env.REFRESHTOKEN_KEY);
@@ -839,7 +838,9 @@ io.on("connect", (socket) => {
 
       if (!board) return socket.emit("addLink", "Error");
 
+      // check it later
       board.shareLink = link;
+      board.idUser.splice(1, board.idUser.length);
 
       await board.save();
 
