@@ -1,34 +1,36 @@
-import React, {useState, useEffect} from "react";
+import React, { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 
 import uniqid from "uniqid";
 
 import "../../styles/Board/ShareBoard.css";
 
+let link = null;
+
 export const ShareBoard = ({ height, back, close, socket, shareLink }) => {
   const params = useParams();
 
-  const [link, setLink] = useState(shareLink);
+  link = shareLink;
 
   const generateLink = () => {
     const boardId = params.boardId;
     const boardName = params.name;
 
-    setLink(
-      `http://localhost:3000/invite/b/${boardId}/${uniqid()}/${boardName}`
-    );
+    link =  `http://localhost:3000/invite/b/${boardId}/${uniqid()}/${boardName}`;
 
     socket.emit("addLink", link, boardId);
   };
 
-  const useEffect = ((data) => {
+
+
+  useEffect(() => {
     socket.on("addLink", (data) => {
-      if(data === "Added"){
+      if (data === "Added") {
         const boardId = params.boardId;
         socket.join(boardId);
       }
     });
-  }, [socket])
+  }, [socket]);
 
   return (
     <div className="share" style={{ height: height - 90 }}>
