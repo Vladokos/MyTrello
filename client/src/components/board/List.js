@@ -16,7 +16,7 @@ import { Draggable, Droppable } from "react-beautiful-dnd";
 
 import TextareaAutosize from "react-textarea-autosize";
 
-import OutsideClick from "../../hooks/outsideClick";
+import OutsideClick from "../../hooks/OutsideClick";
 
 import dots from "../../img/dots.svg";
 
