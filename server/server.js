@@ -53,7 +53,7 @@ const transporter = nodemailer.createTransport({
   secure: true,
   auth: {
     user: "sd5df.f.sdsdf@yandex.ru",
-    pass: "ckagqjyxprmfbhfk",
+    pass: "mzgnrrfawsinvics",
   },
 });
 
@@ -634,7 +634,7 @@ io.on("connect", (socket) => {
         },
         (error, info) => {
           if (error) return console.log(error);
-          return console.log(info);
+          return;
         }
       );
 
@@ -684,7 +684,6 @@ io.on("connect", (socket) => {
 
   socket.on("tokenValidate", async (token) => {
     try {
-      console.log(token);
       const { resetToken } = await dataUsers.findOne({ resetToken: token });
 
       if (!resetToken) return socket.emit("tokenValidate", "User not found");
@@ -822,6 +821,9 @@ io.on("connect", (socket) => {
             .to(roomId)
             .emit("bond", { message: "Move card", fromListId, toListId });
           break;
+        case "disconnect":
+          socket.broadcast.to(roomId).emit("bond", { message: "disconnect" });
+          break;
         default:
           break;
       }
@@ -850,6 +852,28 @@ io.on("connect", (socket) => {
     } catch (error) {
       console.log(error);
       // res.status(400).send("Error");
+      return socket.emit("addLink", "Error");
+    }
+  });
+
+  socket.on("checkUser", async (data) => {
+    try {
+      const { idUser, boardId } = data;
+
+      const board = await dataBoards.findById(boardId);
+
+      if (!board) return socket.emit("addLink", "Error");
+
+      const hasUser = board.idUser.includes(idUser);
+
+      if (hasUser) {
+        return socket.emit("checkUser", "True");
+      } else {
+        return socket.emit("checkUser", "Error");
+      }
+    } catch (error) {
+      console.log(error);
+
       return socket.emit("addLink", "Error");
     }
   });
