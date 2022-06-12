@@ -4,13 +4,17 @@ import { Link, useNavigate } from "react-router-dom";
 
 import { CrossMark } from "../blanks/CrossMark";
 
-export const SignInFrom = ({ socket }) => {
+
+
+export const SignInFrom = ({ socket, height }) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [incorrect, setIncorrect] = useState(false);
   const [dataExists, setDataExists] = useState(false);
 
   const navigate = useNavigate();
+
+
 
   const validateMail =
     /[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?/;
@@ -85,7 +89,7 @@ export const SignInFrom = ({ socket }) => {
   return (
     <div className="form">
       <div className="container">
-        <div className="form__inner">
+        <div className="form__inner" style={{'height': height}}>
           <form className="signFrom">
             <div className="title">Sign In</div>
             <div className="inputs">
@@ -124,7 +128,11 @@ export const SignInFrom = ({ socket }) => {
               <Link to="/reg"> SIGN UP NOW </Link>
             </div>
           </form>
-          <CrossMark dataExists={dataExists} close={closeWindow} text={"Check right your email address and password"} />
+          <CrossMark
+            dataExists={dataExists}
+            close={closeWindow}
+            text={"Check right your email address and password"}
+          />
         </div>
       </div>
     </div>
