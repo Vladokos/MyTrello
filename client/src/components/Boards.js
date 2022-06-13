@@ -8,8 +8,6 @@ import {
   removeFavorites,
 } from "../features/boards/boardsSlice";
 
-import useWindowHeight from "../hooks/heightWindowHook";
-
 import { Loader } from "./blanks/Loader";
 import { Header } from "./blanks/Header.js";
 import { CreateBoards } from "./CreateBoards";
@@ -17,10 +15,8 @@ import { CreateBoards } from "./CreateBoards";
 import starUnchecked from "../img/starUnchecked.svg";
 import starChecked from "../img/starChecked.svg";
 
-export const Boards = ({ socket }) => {
+export const Boards = ({ socket, height }) => {
   const navigate = useNavigate();
-
-  const { height } = useWindowHeight();
 
   const dispatch = useDispatch();
   const { boards, status } = useSelector((state) => state.boards);
