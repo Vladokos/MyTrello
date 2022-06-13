@@ -29,6 +29,8 @@ export const ValidateInvite = ({ socket }) => {
       } else if (data === "Added") {
         const roomId = params.boardId;
         socket.emit("room", roomId);
+
+        navigate("/board/" + params.boardId + "/" + params.name);
       }
     });
   }, [socket]);
