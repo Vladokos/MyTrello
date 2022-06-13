@@ -4,7 +4,7 @@ import { Link, useNavigate } from "react-router-dom";
 
 import { CrossMark } from "../blanks/CrossMark";
 
-export const RegistrationForm = ({ socket }) => {
+export const RegistrationForm = ({ socket, height }) => {
   const [email, setEmail] = useState("");
   const [name, setName] = useState("");
   const [password, setPassword] = useState("");
@@ -85,7 +85,7 @@ export const RegistrationForm = ({ socket }) => {
   return (
     <div className="form">
       <div className="container">
-        <div className="form__inner">
+      <div className="form__inner" style={{'height': height}}>
           <form className="regForm">
             <div className="title">Sign Up</div>
             <div className="inputs">
