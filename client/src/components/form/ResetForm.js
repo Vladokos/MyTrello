@@ -4,7 +4,7 @@ import { Link, useParams, useNavigate } from "react-router-dom";
 
 import { CrossMark } from "../blanks/CrossMark";
 
-export const ResetForm = ({ socket }) => {
+export const ResetForm = ({ socket, height }) => {
   const params = useParams();
   const navigate = useNavigate();
 
@@ -55,7 +55,7 @@ export const ResetForm = ({ socket }) => {
   return (
     <div className="form">
       <div className="container">
-        <div className="form__inner">
+      <div className="form__inner" style={{'height': height}}>
           <form className="forgetForm">
             <div className="title">Recover password</div>
             <div className="inputs">
