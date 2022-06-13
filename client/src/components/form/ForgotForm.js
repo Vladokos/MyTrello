@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import { CrossMark } from "../blanks/CrossMark";
 import { CorrectMark } from "../blanks/CorrectMark";
 
-export const ForgotForm = ({ socket }) => {
+export const ForgotForm = ({ socket, height }) => {
   const [email, setEmail] = useState("");
   const [name, setName] = useState("");
   const [incorrect, setIncorrect] = useState(false);
@@ -51,7 +51,7 @@ export const ForgotForm = ({ socket }) => {
   return (
     <div className="form">
       <div className="container">
-        <div className="form__inner">
+      <div className="form__inner" style={{'height': height}}>
           <form className="forgetForm">
             <div className="title">Recover data</div>
             <div className="inputs">
