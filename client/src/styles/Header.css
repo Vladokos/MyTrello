@@ -56,6 +56,10 @@
 .account__menu ul li {
   margin-bottom: 20px;
 }
+.account__menu ul li a {
+  text-decoration: none;
+  color: #172b4d;
+}
 .account__menu button {
   position: absolute;
 
@@ -143,7 +147,7 @@
 
     box-shadow: none;
   }
-  .favorites ul{
+  .favorites ul {
     transform: translate(0, -58px);
   }
 
@@ -215,7 +219,4 @@
 
     pointer-events: initial;
   }
-
-  
 }
-
