@@ -1,4 +1,4 @@
-.listBlock{
+.listBlock {
   background-color: rgb(235, 236, 240);
   padding-top: 15px;
   border-radius: 3px;
@@ -16,6 +16,9 @@
   background-color: #ebecf0;
 
   overflow: hidden auto;
+
+  scrollbar-color: #bfc4ce #e3e5ea; /* thumb and track color */
+  scrollbar-width: thin;
 }
 .listCreate > button {
   cursor: pointer;
