@@ -25,8 +25,10 @@
   display: flex;
   justify-content: space-between;
 }
-.scrollBoard{
-  /* transform: translateZ(10px); */
+.scrollBoard {
+  scrollbar-color: #fff6 #091e423d; /* thumb and track color */
+  scrollbar-width: thin;
+
 }
 .scrollBoard::-webkit-scrollbar {
   height: 12px;
@@ -57,4 +59,3 @@
 .sheetList div {
   height: max-content;
 }
-
