@@ -97,14 +97,26 @@ export const Board = ({ socket }) => {
       if (data !== "Error") {
         const { newToken, idUser, userName } = data;
 
-        const userId = localStorage.getItem("userId");
-
         const { boardId } = params;
 
         if (newToken) localStorage.setItem("accessToken", newToken);
 
         localStorage.setItem("userId", idUser);
         localStorage.setItem("userName", userName);
+
+        socket.emit("checkUser", { idUser, boardId });
+
+        socket.off("tokenVerify");
+      } else {
+        navigate("/error/404");
+      }
+    });
+
+    socket.on("checkUser", (data) => {
+      if (data !== "Error") {
+        const userId = localStorage.getItem("userId");
+
+        const { boardId } = params;
 
         const date = Date.now();
         dispatch(changeData({ boardId, date }));
@@ -116,10 +128,9 @@ export const Board = ({ socket }) => {
         dispatch(getCards(boardId));
 
         setFirstUpdate(0);
-
-        socket.off("tokenVerify");
       } else {
-        navigate("/error/404");
+        const userName = localStorage.getItem("userName");
+        navigate(`/${userName}/boards`);
       }
     });
   }, [params]);
@@ -179,7 +190,11 @@ export const Board = ({ socket }) => {
           dispatch(getList(toListId));
 
           break;
+        case "disconnect":
+          const userName = localStorage.getItem("userName");
+          navigate(`/${userName}/boards`);
 
+          break;
         default:
           break;
       }
@@ -219,9 +234,7 @@ export const Board = ({ socket }) => {
           toListId,
           position,
         });
-      } catch (error) {
-        
-      }
+      } catch (error) {}
     }
   };
 
