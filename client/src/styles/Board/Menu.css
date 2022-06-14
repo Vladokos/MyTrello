@@ -10,9 +10,6 @@
 
   padding: 10px 20px;
 }
-.menu-button button:hover {
-  /* background-color: #ffffff45; */
-}
 .menu {
   position: absolute;
   right: 0;
@@ -70,3 +67,13 @@
     width: 170px;
   }
 }
+
+@-moz-document url-prefix() {
+  .menu  div:nth-child(2) {
+    position: absolute;
+    top: 226px;
+
+    width: 90%;
+  }
+}
+
