@@ -5,29 +5,34 @@ import uniqid from "uniqid";
 
 import "../../styles/Board/ShareBoard.css";
 
-let link = null;
-
 export const ShareBoard = ({ height, back, close, socket, shareLink }) => {
   const params = useParams();
 
-  link = shareLink;
+  const [link, setLink] = useState(null);
+
+  useEffect(() => {
+    setLink(shareLink);
+  }, []);
 
   const generateLink = () => {
     const boardId = params.boardId;
     const boardName = params.name;
 
-    link =  `http://localhost:3000/invite/b/${boardId}/${uniqid()}/${boardName}`;
-
-    socket.emit("addLink", link, boardId);
+    const newLink = `http://localhost:3000/invite/b/${boardId}/${uniqid()}/${boardName}`;
+    setLink(newLink);
+    socket.emit("addLink", newLink, boardId);
+    socket.emit("bond", {
+      roomId: boardId,
+      message: "disconnect",
+    });
   };
-
-
 
   useEffect(() => {
     socket.on("addLink", (data) => {
       if (data === "Added") {
-        const boardId = params.boardId;
-        socket.join(boardId);
+        const roomId = params.boardId;
+
+        socket.emit("room", roomId);
       }
     });
   }, [socket]);
