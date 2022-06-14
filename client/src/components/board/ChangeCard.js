@@ -103,7 +103,7 @@ export const ChangeCard = ({
   if (!isOpen) return null;
   return (
     <div>
-      <div className="blackBG" style={{ left: 0 }}>
+      <div className="blackBG" style={{ left: 0, display: "flex" }}>
         <div className="changeCard" ref={form}>
           <div className="changeCard-title">Title</div>
           <TextareaAutosize
