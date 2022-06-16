@@ -19,6 +19,15 @@ const { Server } = require("socket.io");
 const httpServer = createServer(app);
 const io = new Server(httpServer, {});
 
+const path = require("path");
+
+// Step 1:
+app.use(express.static(path.resolve(__dirname, "../client/build")));
+// Step 2:
+app.get("*", function (request, response) {
+  response.sendFile(path.resolve(__dirname, "../client/build", "index.html"));
+});
+
 const generateAccessToken = (user_id, email) => {
   const payload = {
     user_id,

@@ -1,14 +1,15 @@
 const mongoose = require("mongoose");
 require("dotenv").config();
 
-const { MONGO_URI } = process.env;
-
 exports.connect = () => {
   mongoose
-    .connect(MONGO_URI, {
-      useUnifiedTopology: true,
-      useNewUrlParser: true,
-    })
+    .connect(
+      "mongodb+srv://Test:123qwerasdzX@project.gpgty.mongodb.net/?retryWrites=true&w=majority",
+      {
+        useUnifiedTopology: true,
+        useNewUrlParser: true,
+      }
+    )
     .then(() => {
       console.log("Successfully connected to database");
     })
