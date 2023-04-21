@@ -1,5 +1,7 @@
 const express = require("express");
 const app = express();
+const cors = require("cors");
+app.use(cors());
 
 const nodemailer = require("nodemailer");
 const bcrypt = require("bcryptjs");
@@ -21,12 +23,13 @@ const io = new Server(httpServer, {});
 
 const path = require("path");
 
+
 // Step 1:
-app.use(express.static(path.resolve(__dirname, "../client/build")));
+// app.use(express.static(path.resolve(__dirname, "./build")));
 // Step 2:
-app.get("*", function (request, response) {
-  response.sendFile(path.resolve(__dirname, "../client/build", "index.html"));
-});
+// app.get("*", function (request, response) {
+//   response.sendFile(path.resolve(__dirname, "./build/index.html"));
+// });
 
 const generateAccessToken = (user_id, email) => {
   const payload = {
@@ -103,7 +106,7 @@ app.post("/boards/create", jsonParser, async (req, res) => {
 
     const newBoard = await new dataBoards({
       nameBoard,
-      owner: idUser,
+      owner: idUser,  
       idUser,
       favorites: false,
       lastVisiting: null,
@@ -561,6 +564,7 @@ app.post("/user/change/name", jsonParser, async (req, res) => {
 });
 
 io.on("connect", (socket) => {
+  console.log(socket.id);
   socket.on("oldUser", async (refreshToken) => {
     try {
       jwt.verify(refreshToken, process.env.REFRESHTOKEN_KEY);
@@ -617,16 +621,16 @@ io.on("connect", (socket) => {
   socket.on("registration", async (email, name, password) => {
     try {
       const oldUser = await dataUsers.findOne({ email });
-
       if (oldUser) return socket.emit("registration", "Exist");
-
+      
       const encryptPassword = await bcrypt.hash(password, 12);
-
+      
       const information = await new dataUsers({
         email: email.toLowerCase(),
         name,
         password: encryptPassword,
       });
+      console.log('first')
 
       const token = generateAccessToken(information._id, email);
       const refreshToken = generateRefreshToken(information._id, email);
@@ -650,7 +654,7 @@ io.on("connect", (socket) => {
       await information.save();
 
       return socket.emit("registration", {
-        userName: data.name,
+        userName: name,
         refreshToken,
         accessToken: token,
       });
@@ -912,6 +916,6 @@ io.on("connect", (socket) => {
   });
 });
 
-httpServer.listen(5000, () => {
+httpServer.listen(process.env.PORT || 5000, () => {
   console.log("Server is running");
 });

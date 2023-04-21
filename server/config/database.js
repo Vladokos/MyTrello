@@ -4,7 +4,7 @@ require("dotenv").config();
 exports.connect = () => {
   mongoose
     .connect(
-      "mongodb+srv://Test:123qwerasdzX@project.gpgty.mongodb.net/?retryWrites=true&w=majority",
+      "mongodb://uujwwsxrjfkytb7bd543:i3j1d0xoAJFHeENHtmCX@n1-c2-mongodb-clevercloud-customers.services.clever-cloud.com:27017,n2-c2-mongodb-clevercloud-customers.services.clever-cloud.com:27017/biiqzfk1ch1nxek?replicaSet=rs0",
       {
         useUnifiedTopology: true,
         useNewUrlParser: true,
@@ -19,3 +19,4 @@ exports.connect = () => {
       process.exit(1);
     });
 };
+
