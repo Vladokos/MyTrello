@@ -14,6 +14,7 @@ import { CreateBoards } from "./CreateBoards";
 
 import starUnchecked from "../img/starUnchecked.svg";
 import starChecked from "../img/starChecked.svg";
+import { store } from "../app/store";
 
 export const Boards = ({ socket, height }) => {
   const navigate = useNavigate();
@@ -49,7 +50,10 @@ export const Boards = ({ socket, height }) => {
         localStorage.setItem("userId", idUser);
         localStorage.setItem("userName", userName);
 
-        dispatch(getBoards(idUser));
+        if (store.getState().boards.boards.length === 0) {
+          dispatch(getBoards(idUser));
+        }
+        
         socket.off("tokenVerify");
       } else {
         navigate("/error/404");

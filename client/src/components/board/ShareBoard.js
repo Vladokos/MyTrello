@@ -18,15 +18,28 @@ export const ShareBoard = ({ height, back, close, socket, shareLink }) => {
     const boardId = params.boardId;
     const boardName = params.name;
 
-    const newLink = `https://mytrello-backend.onrender.com/invite/b/${boardId}/${uniqid()}/${boardName}`;
-    // const newLink = `http://localhost:3000/invite/b/${boardId}/${uniqid()}/${boardName}`;
+    // const newLink = `https://mytrello-backend.onrender.com/invite/b/${boardId}/${uniqid()}/${boardName}`;
+    const newLink = `http://localhost:3000/invite/b/${boardId}/${uniqid()}/${boardName}`;
     setLink(newLink);
+    
     socket.emit("addLink", newLink, boardId);
     socket.emit("bond", {
       roomId: boardId,
       message: "disconnect",
     });
   };
+
+  const deleteLink = () =>{
+    const boardId = params.boardId;
+
+    setLink("");
+
+    socket.emit("addLink", "", boardId);
+    socket.emit("bond", {
+      roomId: boardId,
+      message: "disconnect",
+    });
+  }
 
   useEffect(() => {
     socket.on("addLink", (data) => {
@@ -54,7 +67,7 @@ export const ShareBoard = ({ height, back, close, socket, shareLink }) => {
           <button onClick={generateLink}>Generate link</button>
         </li>
         <li>
-          <button>Delete link</button>
+          <button onClick={deleteLink}>Delete link</button>
         </li>
       </ul>
     </div>

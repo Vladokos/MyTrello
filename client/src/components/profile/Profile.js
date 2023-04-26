@@ -64,15 +64,15 @@ export const Profile = () => {
     });
   };
 
-  useLayoutEffect(() => {
-    if (firstUpdate < 2) {
-      setFirstUpdate(firstUpdate + 1);
-      return;
-    }
-    const boardId = boards[boards.length - 1]._id;
-    const boardName = boards[boards.length - 1].nameBoard;
-    navigate("/board/" + boardId + "/" + boardName);
-  }, [boards]);
+  // useLayoutEffect(() => {
+  //   if (firstUpdate < 2) {
+  //     setFirstUpdate(firstUpdate + 1);
+  //     return;
+  //   }
+  //   const boardId = boards[boards.length - 1]._id;
+  //   const boardName = boards[boards.length - 1].nameBoard;
+  //   navigate("/board/" + boardId + "/" + boardName);
+  // }, [boards]);
 
 
 

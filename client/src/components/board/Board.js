@@ -9,6 +9,7 @@ import {
   getBoards,
   changeLists,
   changeData,
+  removeBoards,
 } from "../../features/boards/boardsSlice";
 import {
   getLists,
@@ -32,6 +33,7 @@ import { ChangeNameCard } from "./ChangeNameCard";
 import { Menu } from "./Menu";
 
 import "../../styles/Board/Board.css";
+import { store } from "../../app/store";
 
 export const Board = ({ socket }) => {
   const navigate = useNavigate();
@@ -43,8 +45,6 @@ export const Board = ({ socket }) => {
   const { boards } = useSelector((state) => state.boards);
   const { lists } = useSelector((state) => state.lists);
   const { cards, status } = useSelector((state) => state.cards);
-
-  const [firstUpdate, setFirstUpdate] = useState(0);
 
   const [createShow, setCreateShow] = useState(false);
 
@@ -121,15 +121,31 @@ export const Board = ({ socket }) => {
         const date = Date.now();
         dispatch(changeData({ boardId, date }));
 
-        dispatch(getLists(boardId));
+        if (store.getState().boards.boards.length === 0) {
+          dispatch(getBoards(userId));
+        }
+
+        const lists = store.getState().lists.lists;
+
+        const amountLists = store.getState().boards.boards.find((board) => {
+          if (board._id === boardId) {
+            return board;
+          }
+        })?.lists.length;
+
+        if (amountLists !== lists.length) {
+          dispatch(getLists(boardId));
+
+          dispatch(getCards(boardId));
+        }
+
+        socket.off("checkUser");
+      } else {
+        const userId = localStorage.getItem("userId");
+        const userName = localStorage.getItem("userName");
 
         dispatch(getBoards(userId));
 
-        dispatch(getCards(boardId));
-
-        setFirstUpdate(0);
-      } else {
-        const userName = localStorage.getItem("userName");
         navigate(`/${userName}/boards`);
       }
     });
@@ -191,7 +207,11 @@ export const Board = ({ socket }) => {
 
           break;
         case "disconnect":
+          const userId = localStorage.getItem("userId");
           const userName = localStorage.getItem("userName");
+
+          dispatch(removeBoards());
+
           navigate(`/${userName}/boards`);
 
           break;
@@ -260,23 +280,25 @@ export const Board = ({ socket }) => {
       <div className="lists" style={{ height: height - 127 }}>
         <div className="container">
           <div className="lists__inner" style={{ height: height - 200 }}>
-            {boards.length > 0? boards.map((board) => {
-              if (board._id === params.boardId) {
-                return (
-                  <div key={board._id} className="action-board">
-                    <BoardName name={board.nameBoard} socket={socket} />
-                    <Menu
-                      height={height - 108}
-                      boards={boards}
-                      lists={lists}
-                      cards={cards}
-                      socket={socket}
-                      shareLink={board.shareLink}
-                    />
-                  </div>
-                );
-              }
-            }):null}
+            {boards.length > 0
+              ? boards.map((board) => {
+                  if (board._id === params.boardId) {
+                    return (
+                      <div key={board._id} className="action-board">
+                        <BoardName name={board.nameBoard} socket={socket} />
+                        <Menu
+                          height={height - 108}
+                          boards={boards}
+                          lists={lists}
+                          cards={cards}
+                          socket={socket}
+                          shareLink={board.shareLink}
+                        />
+                      </div>
+                    );
+                  }
+                })
+              : null}
 
             <ul
               className="scrollBoard"

@@ -189,7 +189,11 @@ export const changeData = createAsyncThunk(
 const boardsSlice = createSlice({
   name: "boards",
   initialState,
-  reducers: {},
+  reducers: {
+    removeBoards(state, action) {
+      state.boards = [];
+    },
+  },
   extraReducers(builder) {
     builder
       .addCase(getBoard.pending, (state, action) => {
@@ -281,5 +285,7 @@ const boardsSlice = createSlice({
       });
   },
 });
+
+export const { removeBoards } = boardsSlice.actions;
 
 export default boardsSlice.reducer;

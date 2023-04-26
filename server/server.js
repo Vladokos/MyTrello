@@ -98,7 +98,6 @@ app.get("/boards/:id/all", async (req, res) => {
   try {
     const idUser = req.params.id;
 
-    console.log(idUser)
     const boardsData = await dataBoards.find({
       idUser,
     });
@@ -574,8 +573,12 @@ app.post("/user/change/name", jsonParser, async (req, res) => {
   }
 });
 
+  // app.get("*", (req, res, next) => {
+  //   res.sendFile(path.join(__dirname, "build", "index.html"));
+  // });
+
 io.on("connect", (socket) => {
-  console.log(socket.id);
+  
   socket.on("oldUser", async (refreshToken) => {
     try {
       jwt.verify(refreshToken, process.env.REFRESHTOKEN_KEY);
@@ -601,9 +604,7 @@ io.on("connect", (socket) => {
     }
   });
 
-  // app.get("*", (req, res, next) => {
-  //   res.sendFile(path.join(__dirname, "build", "index.html"));
-  // });
+
 
   socket.on("signIn", async (email, password) => {
     try {
@@ -646,7 +647,6 @@ io.on("connect", (socket) => {
         name,
         password: encryptPassword,
       });
-      console.log("first");
 
       const token = generateAccessToken(information._id, email);
       const refreshToken = generateRefreshToken(information._id, email);

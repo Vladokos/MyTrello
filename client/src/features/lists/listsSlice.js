@@ -252,7 +252,7 @@ const listsSlice = createSlice({
           state.lists.splice(i, 1);
         }
       }
-    },
+    }
   },
   extraReducers(builder) {
     builder

@@ -57,7 +57,7 @@ export const SignInFrom = ({ socket, height }) => {
     });
 
     socket.on("signIn", (data) => {
-      console.log(data)
+      
       if (data !== "Error") {
         const { userName, refreshToken, accessToken } = data;
 
@@ -80,7 +80,7 @@ export const SignInFrom = ({ socket, height }) => {
     e.preventDefault();
 
     if (incorrect === false && password.length >= 6) {
-      console.log("first");
+      
       socket.emit("signIn", email, password);
     }
   };
