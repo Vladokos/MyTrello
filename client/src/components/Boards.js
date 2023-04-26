@@ -94,9 +94,7 @@ export const Boards = ({ socket, height }) => {
     setHeightBody(heightRef?.current?.clientHeight);
   });
 
-  return status !== "succeeded" ? (
-    <Loader />
-  ) : (
+  return (
     <div className="boardsMenu" style={{ minHeight: height }} ref={heightRef}>
       <Header boards={boards} createShow={() => setCreateShow(true)} />
       <div className="workspace">

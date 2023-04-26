@@ -58,6 +58,7 @@ export const ChangeCard = ({
               cardId,
             });
           });
+
           break;
         case "delete":
           dispatch(deleteCard({ cardId })).then(() => {
@@ -88,9 +89,7 @@ export const ChangeCard = ({
   };
 
   useEffect(() => {
-    if (descriptionCard.length > 0) {
-      setDescription(descriptionCard);
-    }
+    setDescription(descriptionCard);
   }, [descriptionCard]);
 
   const nameInput = useRef(false);

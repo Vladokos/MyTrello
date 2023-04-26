@@ -8,7 +8,7 @@ import "../../styles/Board/ShareBoard.css";
 export const ShareBoard = ({ height, back, close, socket, shareLink }) => {
   const params = useParams();
 
-  const [link, setLink] = useState(null);
+  const [link, setLink] = useState("");
 
   useEffect(() => {
     setLink(shareLink);
@@ -18,8 +18,8 @@ export const ShareBoard = ({ height, back, close, socket, shareLink }) => {
     const boardId = params.boardId;
     const boardName = params.name;
 
-    // const newLink = `https://mytrello-backend.onrender.com/invite/b/${boardId}/${uniqid()}/${boardName}`;
-    const newLink = `http://localhost:3000/invite/b/${boardId}/${uniqid()}/${boardName}`;
+    const newLink = `https://mytrello-backend.onrender.com/invite/b/${boardId}/${uniqid()}/${boardName}`;
+    // const newLink = `http://localhost:3000/invite/b/${boardId}/${uniqid()}/${boardName}`;
     setLink(newLink);
     socket.emit("addLink", newLink, boardId);
     socket.emit("bond", {

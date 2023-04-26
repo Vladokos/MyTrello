@@ -254,15 +254,13 @@ export const Board = ({ socket }) => {
 
   const [drag, setDrag] = useState(false);
 
-  return status !== "succeeded" && firstUpdate === 0 ? (
-    <Loader />
-  ) : (
+  return (
     <div className="boardMenu" style={{ height: height }}>
       <Header boards={boards} createShow={() => setCreateShow(true)} />
       <div className="lists" style={{ height: height - 127 }}>
         <div className="container">
           <div className="lists__inner" style={{ height: height - 200 }}>
-            {boards.map((board) => {
+            {boards.length > 0? boards.map((board) => {
               if (board._id === params.boardId) {
                 return (
                   <div key={board._id} className="action-board">
@@ -278,7 +276,7 @@ export const Board = ({ socket }) => {
                   </div>
                 );
               }
-            })}
+            }):null}
 
             <ul
               className="scrollBoard"
