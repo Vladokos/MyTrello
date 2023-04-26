@@ -37,3 +37,7 @@
 .card img {
   width: 23px;
 }
+
+.cards:has(.card img) {
+  min-height: 83px;
+}

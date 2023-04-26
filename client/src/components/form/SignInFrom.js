@@ -4,8 +4,6 @@ import { Link, useNavigate } from "react-router-dom";
 
 import { CrossMark } from "../blanks/CrossMark";
 
-
-
 export const SignInFrom = ({ socket, height }) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -13,8 +11,6 @@ export const SignInFrom = ({ socket, height }) => {
   const [dataExists, setDataExists] = useState(false);
 
   const navigate = useNavigate();
-
-
 
   const validateMail =
     /[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?/;
@@ -61,6 +57,7 @@ export const SignInFrom = ({ socket, height }) => {
     });
 
     socket.on("signIn", (data) => {
+      console.log(data)
       if (data !== "Error") {
         const { userName, refreshToken, accessToken } = data;
 
@@ -82,14 +79,16 @@ export const SignInFrom = ({ socket, height }) => {
   const sendForm = (e) => {
     e.preventDefault();
 
-    if (incorrect === false && password.length >= 6)
+    if (incorrect === false && password.length >= 6) {
+      console.log("first");
       socket.emit("signIn", email, password);
+    }
   };
 
   return (
     <div className="form">
       <div className="container">
-        <div className="form__inner" style={{'height': height}}>
+        <div className="form__inner" style={{ height: height }}>
           <form className="signFrom">
             <div className="title">Sign In</div>
             <div className="inputs">

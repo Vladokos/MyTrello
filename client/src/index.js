@@ -6,7 +6,8 @@ import { Provider } from "react-redux";
 
 import { io } from "socket.io-client";
 
-const socket = io("http://localhost:3000/");
+// const socket = io(`https://mytrello-backend.onrender.com`);
+const socket = io(`http://localhost:3000/`);
 socket.on("connect", () => {
   console.log(socket.id);
 });
@@ -17,5 +18,6 @@ ReactDOM.render(
       <App socket={socket} />
     </Provider>
   </React.StrictMode>,
-  document.getElementById("root")
+  document.getElementById("root"),
+
 );

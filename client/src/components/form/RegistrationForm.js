@@ -58,7 +58,9 @@ export const RegistrationForm = ({ socket, height }) => {
     });
     socket.on("registration", (data) => {
       if (data !== "Exist") {
+
         const { userName, refreshToken, accessToken } = data;
+
 
         localStorage.setItem("accessToken", JSON.stringify(accessToken));
 

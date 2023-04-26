@@ -1,6 +1,6 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 
-import axios from "axios";
+import {axiosInstance} from "../../config";
 
 const initialState = {
   lists: [],
@@ -8,7 +8,7 @@ const initialState = {
 };
 
 export const getLists = createAsyncThunk("lists/getLists", async (boardId) => {
-  const response = await axios({
+  const response = await axiosInstance({
     config: {
       headers: {
         "Content-Type": "application/json",
@@ -31,7 +31,7 @@ export const getLists = createAsyncThunk("lists/getLists", async (boardId) => {
 });
 
 export const getList = createAsyncThunk("lists/getList", async (listId) => {
-  const response = await axios({
+  const response = await axiosInstance({
     config: {
       headers: {
         "Content-Type": "application/json",
@@ -56,7 +56,7 @@ export const getList = createAsyncThunk("lists/getList", async (listId) => {
 export const addList = createAsyncThunk(
   "lists/addList",
   async ({ nameList, boardId }) => {
-    const response = await axios({
+    const response = await axiosInstance({
       config: {
         headers: {
           "Content-Type": "application/json",
@@ -84,7 +84,7 @@ export const addList = createAsyncThunk(
 export const changeCards = createAsyncThunk(
   "lists/changeCardsPosition",
   async ({ fromListId, toListId, position, cardId }) => {
-    const response = await axios({
+    const response = await axiosInstance({
       config: {
         headers: {
           "Content-Type": "application/json",
@@ -113,7 +113,7 @@ export const changeCards = createAsyncThunk(
 export const changeName = createAsyncThunk(
   "lists/changeName",
   async ({ listId, nameList }) => {
-    const response = await axios({
+    const response = await axiosInstance({
       config: {
         headers: {
           "Content-Type": "application/json",
@@ -140,7 +140,7 @@ export const changeName = createAsyncThunk(
 export const deleteList = createAsyncThunk(
   "lists/delete",
   async ({ listId }) => {
-    const response = await axios({
+    const response = await axiosInstance({
       config: {
         headers: {
           "Content-Type": "application/json",
@@ -166,7 +166,7 @@ export const deleteList = createAsyncThunk(
 export const archiveList = createAsyncThunk(
   "lists/archive",
   async ({ listId }) => {
-    const response = await axios({
+    const response = await axiosInstance({
       config: {
         headers: {
           "Content-Type": "application/json",
@@ -192,7 +192,7 @@ export const archiveList = createAsyncThunk(
 export const unarchiveList = createAsyncThunk(
   "lists/unarchive",
   async ({ listId }) => {
-    const response = await axios({
+    const response = await axiosInstance({
       config: {
         headers: {
           "Content-Type": "application/json",

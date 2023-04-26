@@ -1,7 +1,10 @@
 const express = require("express");
 const app = express();
+const path = require("path");
+
 const cors = require("cors");
-app.use(cors());
+app.use(cors())
+
 
 const nodemailer = require("nodemailer");
 const bcrypt = require("bcryptjs");
@@ -15,21 +18,29 @@ const dataCard = require("./model/card");
 
 const jsonParser = express.json();
 
+// const prodMiddleWare = require("./middleware/prod");
+
 const { createServer } = require("http");
 const { Server } = require("socket.io");
 
+
 const httpServer = createServer(app);
-const io = new Server(httpServer, {});
+const io = new Server(httpServer, {
+  cors: {
+    origin: [
+      "http://localhost:5000/*",
+      "http://localhost:3000/*",
+      "https://mytrello-backend.onrender.com",
+      "https://mytrello-frontend.onrender.com"
+    ],
+    methods: ["GET", "POST"],
+  },
+});
 
-const path = require("path");
+
+app.use(express.static(path.join(__dirname, "build")));
 
 
-// Step 1:
-// app.use(express.static(path.resolve(__dirname, "./build")));
-// Step 2:
-// app.get("*", function (request, response) {
-//   response.sendFile(path.resolve(__dirname, "./build/index.html"));
-// });
 
 const generateAccessToken = (user_id, email) => {
   const payload = {
@@ -87,12 +98,12 @@ app.get("/boards/:id/all", async (req, res) => {
   try {
     const idUser = req.params.id;
 
+    console.log(idUser)
     const boardsData = await dataBoards.find({
       idUser,
     });
 
     if (!boardsData) return res.status(400).send("Error");
-
     return res.status(200).send(boardsData);
   } catch (error) {
     console.log(error);
@@ -106,7 +117,7 @@ app.post("/boards/create", jsonParser, async (req, res) => {
 
     const newBoard = await new dataBoards({
       nameBoard,
-      owner: idUser,  
+      owner: idUser,
       idUser,
       favorites: false,
       lastVisiting: null,
@@ -589,6 +600,11 @@ io.on("connect", (socket) => {
       return socket.emit("oldUser", "Error");
     }
   });
+
+  // app.get("*", (req, res, next) => {
+  //   res.sendFile(path.join(__dirname, "build", "index.html"));
+  // });
+
   socket.on("signIn", async (email, password) => {
     try {
       const user = await dataUsers.findOne({ email });
@@ -622,15 +638,15 @@ io.on("connect", (socket) => {
     try {
       const oldUser = await dataUsers.findOne({ email });
       if (oldUser) return socket.emit("registration", "Exist");
-      
+
       const encryptPassword = await bcrypt.hash(password, 12);
-      
+
       const information = await new dataUsers({
         email: email.toLowerCase(),
         name,
         password: encryptPassword,
       });
-      console.log('first')
+      console.log("first");
 
       const token = generateAccessToken(information._id, email);
       const refreshToken = generateRefreshToken(information._id, email);

@@ -1,6 +1,6 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 
-import axios from "axios";
+import { axiosInstance } from "../../config";
 
 const initialState = {
   boards: [],
@@ -8,7 +8,7 @@ const initialState = {
 };
 
 export const getBoard = createAsyncThunk("boards/getBoard", async (id) => {
-  const response = await axios
+  const response = await axiosInstance
     .get("/boards/" + id + "/one")
     .then((response) => {
       return response.data;
@@ -17,7 +17,7 @@ export const getBoard = createAsyncThunk("boards/getBoard", async (id) => {
 });
 
 export const getBoards = createAsyncThunk("boards/getBoards", async (id) => {
-  const response = await axios
+  const response = await axiosInstance
     .get("/boards/" + id + "/all")
     .then((response) => {
       return response.data;
@@ -28,7 +28,7 @@ export const getBoards = createAsyncThunk("boards/getBoards", async (id) => {
 export const addBoards = createAsyncThunk(
   "boards/addBoard",
   async ({ id, nameBoard }) => {
-    const response = await axios({
+    const response = await axiosInstance({
       config: {
         headers: {
           "Content-Type": "application/json",
@@ -55,7 +55,7 @@ export const addBoards = createAsyncThunk(
 export const changeLists = createAsyncThunk(
   "boards/changeListsPosition",
   async ({ position, boardId, currentListId }) => {
-    const response = await axios({
+    const response = await axiosInstance({
       config: {
         headers: {
           "Content-Type": "application/json",
@@ -83,7 +83,7 @@ export const changeLists = createAsyncThunk(
 export const changeName = createAsyncThunk(
   "boards/changeName",
   async ({ nameBoard, boardId }) => {
-    const response = await axios({
+    const response = await axiosInstance({
       config: {
         headers: {
           "Content-Type": "application/json",
@@ -110,7 +110,7 @@ export const changeName = createAsyncThunk(
 export const addFavorites = createAsyncThunk(
   "boards/addFavorites",
   async ({ boardId }) => {
-    const response = await axios({
+    const response = await axiosInstance({
       config: {
         headers: {
           "Content-Type": "application/json",
@@ -136,7 +136,7 @@ export const addFavorites = createAsyncThunk(
 export const removeFavorites = createAsyncThunk(
   "boards/removeFavorites",
   async ({ boardId }) => {
-    const response = await axios({
+    const response = await axiosInstance({
       config: {
         headers: {
           "Content-Type": "application/json",
@@ -162,7 +162,7 @@ export const removeFavorites = createAsyncThunk(
 export const changeData = createAsyncThunk(
   "boards/changeData",
   async ({ boardId, date }) => {
-    const response = await axios({
+    const response = await axiosInstance({
       config: {
         headers: {
           "Content-Type": "application/json",
@@ -267,7 +267,8 @@ const boardsSlice = createSlice({
       })
       .addCase(changeData.pending, (state, action) => {
         state.status = "loading";
-      }) .addCase(changeData.fulfilled, (state, action) => {
+      })
+      .addCase(changeData.fulfilled, (state, action) => {
         state.status = "succeeded";
 
         const { boardId, date } = action.payload;

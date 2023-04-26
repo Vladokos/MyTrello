@@ -9,7 +9,7 @@ import { CreateBoards } from "../CreateBoards";
 
 import useWindowHeight from "../../hooks/heightWindowHook";
 
-import axios from "axios";
+import {axiosInstance} from "../../config";
 
 import "../../styles/profile/Profile.css";
 
@@ -42,7 +42,7 @@ export const Profile = () => {
   });
 
   const changeName = () => {
-    axios({
+    axiosInstance({
       config: {
         headers: {
           "Content-Type": "application/json",
